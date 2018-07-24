@@ -1,21 +1,20 @@
 import React from 'react';
-import { StackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
+import LoginStack from './app/sections/navigation/LoginStack';
+import DrawerStack from './app/sections/navigation/DrawerStack';
 
-import { Login } from './app/views/Login.js'
-import { Contact } from './app/views/Contact.js';
-
-const MyRoutes = StackNavigator({
-  LoginRT: {
-    screen: Login
-  }, 
-  ContactRT: {
-    screen: Contact
-  }
+const MyRoutes = createStackNavigator({
+  LoginStack: { screen: LoginStack },
+  DrawerStack: { screen: DrawerStack },
 }, {
-  initialRouteName: 'LoginRT'
+  initialRouteName: 'DrawerStack',
+  navigationOptions: {
+    header: null
+  }
 }); 
 
 export default class App extends React.Component {
+
   render() {
     return (
       <MyRoutes />
