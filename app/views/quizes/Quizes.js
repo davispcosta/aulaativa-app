@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Card, Header } from 'react-native-elements'
+import { Card, Header, Text } from 'react-native-elements'
 
 export class Quizes extends React.Component {
 
@@ -17,7 +17,7 @@ export class Quizes extends React.Component {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                     <Card title={item.title}>
-
+                        <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text>
                     </Card>
                 )}
                 />
@@ -35,17 +35,17 @@ const styles = StyleSheet.create({
 
 const quizes = [{
     id: 0,
-    title: 'Lorem Ipslum'   
+    title: 'Revisão VP1',
+    questions: 15,
+    done: 5
 },{
     id: 1,
-    title: 'Lorem Ipslum'   
+    title: 'Questionário Diagrama de Classes',
+    questions: 15,
+    done: 5
 },{
     id: 2,
-    title: 'Lorem Ipslum'   
-},{
-    id: 3,
-    title: 'Lorem Ipslum'   
-},{
-    id: 4,
-    title: 'Lorem Ipslum'   
-},]
+    title: 'Enquete de Introdução',
+    questions: 15,
+    done: 5
+}]

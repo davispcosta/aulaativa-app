@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Header, Card, ListItem, } from 'react-native-elements'
+import { Header, Card, ListItem, Text } from 'react-native-elements'
 
 export class Classes extends React.Component {
 
@@ -27,7 +27,8 @@ export class Classes extends React.Component {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                     <Card title={item.title}>
-
+                        <Text>{item.professor}</Text>
+                        <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.alunos} ALUNOS</Text>
                     </Card>
                 )}
                 />
@@ -47,16 +48,19 @@ const classes = [
     {
         id:0,
         title: 'APIS 1',
-        description: 'Eduardo Mendes'
+        professor: 'Eduardo Mendes',
+        alunos: 15
     },
     {
         id:1,
         title: 'POO',
-        description: 'Eduardo Mendes'
+        professor: 'Eduardo Mendes',
+        alunos: 9
     },
     {
         id:2,
         title: 'Estágio 3',
-        description: 'Vitor Almeida'
+        professor: 'Vitor Almeida',
+        alunos: 6
     }
 ]

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Card, Header } from 'react-native-elements'
+import { Card, Header, Text } from 'react-native-elements'
 
 export class Events extends React.Component {
 
@@ -17,7 +17,8 @@ export class Events extends React.Component {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                     <Card title={item.title}>
-
+                        <Text>{item.description}</Text>
+                        <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text>
                     </Card>
                 )}
                 />
@@ -35,17 +36,17 @@ const styles = StyleSheet.create({
 
 const events = [{
     id: 0,
-    title: 'Lorem Ipslum'   
+    title: 'PROVA VP1',
+    description: 'Prova na quinta-feira com conteúdo de diagrama de classes.',
+    date: '16/08/2018'   
 },{
     id: 1,
-    title: 'Lorem Ipslum'   
+    title: 'ENTREGA DE TRABALHO',
+    description: 'Entrega de trabalho com todos os diagramas feitos e aplicados.',
+    date: '18/08/2018' 
 },{
     id: 2,
-    title: 'Lorem Ipslum'   
-},{
-    id: 3,
-    title: 'Lorem Ipslum'   
-},{
-    id: 4,
-    title: 'Lorem Ipslum'   
-},]
+    title: 'AULA DE GIT',
+    description: 'Treinamento para todos que não possuem conhecimento em GIT.',
+    date: '20/08/2018'    
+}]

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Card, Header } from 'react-native-elements'
+import { Card, Header, Text, Icon } from 'react-native-elements'
 
 
 export class Doubts extends React.Component {
@@ -17,7 +17,8 @@ export class Doubts extends React.Component {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                     <Card title={item.title}>
-
+                        <Text>{item.answers} RESPOSTAS</Text>
+                        <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text>
                     </Card>
                 )}
                 />
@@ -35,17 +36,12 @@ const styles = StyleSheet.create({
 
 const doubts = [{
     id: 0,
-    title: 'Lorem Ipslum'   
+    title: 'O que é a relação de associação no diagrama de classes?',
+    answers: 15,
+    date: '12/08/2018'   
 },{
     id: 1,
-    title: 'Lorem Ipslum'   
-},{
-    id: 2,
-    title: 'Lorem Ipslum'   
-},{
-    id: 3,
-    title: 'Lorem Ipslum'   
-},{
-    id: 4,
-    title: 'Lorem Ipslum'   
-},]
+    title: 'Onde irá ser a próxima aula?',
+    answers: 2,
+    date: '15/07/2018'
+}]

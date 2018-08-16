@@ -6,7 +6,7 @@ import { Header } from 'react-native-elements';
 import { Board } from '../views/board/Board'
 import { Doubts } from '../views/doubts/Doubts'
 import { Events } from '../views/events/Events'
-import { Missions } from '../views/missions/Missions'
+import { Status } from '../views/status/Status'
 import { Quizes } from '../views/quizes/Quizes'
 
 
@@ -20,23 +20,23 @@ export class MaterialTabs extends React.Component {
           key: 'board',
           icon: 'book',
           label: 'Quadro',
-          barColor: '#388E3C',
+          barColor: '#9C00FF',
           pressColor: 'rgba(255, 255, 255, 0.16)'
         },
         {
           id: 1,
-          key: 'missions',
-          icon: 'flag',
-          label: 'Missões',
-          barColor: '#B71C1C',
+          key: 'events',
+          icon: 'calendar',
+          label: 'Eventos',
+          barColor: '#9C00FF',
           pressColor: 'rgba(255, 255, 255, 0.16)'
         },
         {
           id: 2,
-          key: 'events',
-          icon: 'calendar',
-          label: 'Eventos',
-          barColor: '#00796B',
+          key: 'status',
+          icon: 'face',
+          label: 'Status',
+          barColor: '#9C00FF',
           pressColor: 'rgba(255, 255, 255, 0.16)'
         }, 
         {
@@ -44,22 +44,22 @@ export class MaterialTabs extends React.Component {
             key: 'quizes',
             icon: 'spellcheck',
             label: 'Quizes',
-            barColor: '#FFA000',
+            barColor: '#9C00FF',
             pressColor: 'rgba(255, 255, 255, 0.16)'
         },{
             id: 4,
             key: 'doubts',
             icon: 'comment-question',
             label: 'Dúvidas',
-            barColor: '#2196F3',
+            barColor: '#9C00FF',
             pressColor: 'rgba(255, 255, 255, 0.16)'
         }
     ]
 
     views = [<Board navigation={this.props.navigation}/>, 
-    <Missions />, 
-    <Events />, 
-    < Quizes/>, 
+    <Events />,
+    <Status />, 
+    <Quizes />, 
     <Doubts />]
 
     state = {
@@ -93,7 +93,7 @@ export class MaterialTabs extends React.Component {
             <Header
                 leftComponent={{ icon: 'arrow-back', color: '#fff', onPress: this.onPress }}
                 backgroundColor='#9C00FF'
-                centerComponent={{ text: 'APIS1', style: { color: '#fff' } }}
+                centerComponent={{ text: 'APIS1', style: { color: '#fff', fontWeight: "800" } }}
             />
             {this.views[this.state.activeView]}
           </View>
