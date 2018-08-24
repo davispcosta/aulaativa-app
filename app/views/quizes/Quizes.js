@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Card, Header, Text } from 'react-native-elements'
+import { Card, Header, Text, Button } from 'react-native-elements'
+import Question from './Question'
 
 export class Quizes extends React.Component {
 
@@ -16,8 +17,14 @@ export class Quizes extends React.Component {
                 data={quizes}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
-                    <Card title={item.title}>
+                    <Card title={item.title} >
                         <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text>
+                        <Button
+                            rightIcon={{name: 'arrow-forward'}}
+                            backgroundColor='#9C00FF'
+                            title='COMEÇAR'
+                            onPress={() => this.props.navigation.navigate('Question', { screen: Question})}
+                        />
                     </Card>
                 )}
                 />

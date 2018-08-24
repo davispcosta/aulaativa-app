@@ -57,10 +57,10 @@ export class MaterialTabs extends React.Component {
     ]
 
     views = [<Board navigation={this.props.navigation}/>, 
-    <Events />,
-    <Status />, 
-    <Quizes />, 
-    <Doubts />]
+    <Events navigation={this.props.navigation}/>,
+    <Status  navigation={this.props.navigation} />, 
+    <Quizes navigation={this.props.navigation} />, 
+    <Doubts  navigation={this.props.navigation} />]
 
     state = {
         activeTab: this.tabs[0],
