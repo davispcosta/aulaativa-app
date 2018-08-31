@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements'
+import { ChooseRegister } from './ChooseRegister'
+import { MaterialTabs } from '../../sections/MaterialTabs'
 
 export class LoginForm extends React.Component {
     
@@ -8,29 +10,36 @@ export class LoginForm extends React.Component {
         return(
             <View style={styles.container}>
 
-                <FormValidationMessage>Usuário e/ou senha incorreto(s)</FormValidationMessage>
+                {/* <FormValidationMessage>Usuário e/ou senha incorreto(s)</FormValidationMessage> */}
 
-                <FormLabel>EMAIL</FormLabel>
                 <FormInput
+                placeholder='Email'
                 keyboardType='email-address' />
                 
-                <FormLabel>SENHA</FormLabel>
-                <FormInput />
+                <FormInput 
+                placeholder='Senha'
+                />
 
                 <View style={styles.options}>
 
                 </View>
 
                 <Button
-                    large
-                    backgroundColor='#FFCC00'
-                    color='#9C00FF'
-                    rightIcon={{name: 'chevron-right', color: '#9C00FF'}}
+                    small
+                    buttonStyle={styles.enterBtn}
+                    backgroundColor='#9C00FF'
+                    color='#FFFFFF'
+                    rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
                     title='ENTRAR'
+                    rounded={true}
+                    onPress={() => this.props.navigation.navigate('MaterialTabs', { screen: MaterialTabs})}
                     fontWeight='800' />
 
                 <Button
-                    title="Cadastre-se"
+                    title="Não possui conta? Cadastre-se"
+                    backgroundColor={"#1fe0"}
+                    color='#9C00FF'
+                    onPress={() => this.props.navigation.navigate('ChooseRegisterScreen', { screen: ChooseRegister})}
                 />
 
             </View>
@@ -40,10 +49,13 @@ export class LoginForm extends React.Component {
 
 const styles = StyleSheet.create({ 
     container: {
-        padding: 20
+        padding: 30
     },
     label: {
         color:'#FFCC00'
+    },
+    enterBtn: {
+        marginVertical: 20
     },
     options: {
 
