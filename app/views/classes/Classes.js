@@ -1,6 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Header, Card, ListItem, Text } from 'react-native-elements'
+import { StyleSheet, View, Image, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { Header, Card, ListItem, Text, Icon, Button } from 'react-native-elements'
+import { MaterialTabs } from '../../sections/MaterialTabs';
+import { NewClass } from './NewClass'
+import { Profile } from '../profile/Profile'
 
 export class Classes extends React.Component {
 
@@ -18,18 +21,46 @@ export class Classes extends React.Component {
 
                 <Header
                     backgroundColor='#9C00FF'
-                    leftComponent={{ icon: 'menu', color: '#fff', onPress: this.onPress }}
-                    centerComponent={{ text: 'TURMAS', style: { color: '#fff' } }}
+                    centerComponent={{ text: 'TURMAS', style: { color: '#fff', fontWeight: "800" }  }}
+                    rightComponent={
+                    <Icon type='font-awesome' 
+                    name='user' color='#f1f1f1'
+                    onPress={() => this.props.navigation.navigate('Profile', { screen: Profile})}
+                    />}
                     />
+
+                <Button
+                    title="NOVA TURMA" 
+                    titleStyle={{ fontWeight: '700'}}
+                    buttonStyle={{marginTop: 20, backgroundColor: "#9C00FF"}}
+                    onPress={() => this.props.navigation.navigate('NewClass', { screen: NewClass})}
+                />
 
                 <FlatList
                 data={classes}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
-                    <Card title={item.title}>
-                        <Text>{item.professor}</Text>
-                        <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.alunos} ALUNOS</Text>
+                    <TouchableWithoutFeedback
+                    onPress={() => this.props.navigation.navigate('MaterialTabs', { screen: MaterialTabs})}
+                    >
+                    <Card
+                        flexDirection="row"
+                    >
+                        <Icon
+                            raised
+                            containerStyle={{backgroundColor:'#AFAFAF'}}
+                            name='class'
+                            color='#f1f1f1'
+                            />
+                         <View style={{marginLeft: 20}}>
+                            <Text
+                            style={{fontFamily: 'Montserrat'}}
+                            h4>{item.title}</Text>
+                            <Text>{item.professor}</Text>
+                            <Text style={{color: "gray"}}>{item.alunos} ALUNOS</Text>
+                        </View>
                     </Card>
+                    </TouchableWithoutFeedback>
                 )}
                 />
 

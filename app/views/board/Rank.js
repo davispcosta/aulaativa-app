@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Card, Header } from 'react-native-elements'
+import { StyleSheet, ScrollView, View, KeyboardAvoidingView, FlatList } from 'react-native';
+import { Card, Header, Text, Icon } from 'react-native-elements'
 
 export class Rank extends React.Component {
 
@@ -16,16 +16,29 @@ export class Rank extends React.Component {
                     backgroundColor='#9C00FF'
                     centerComponent={{ text: 'APIS1', style: { color: '#fff' } }}
                 />
+                <ScrollView>
 
-                <FlatList
-                data={students}
-                keyExtractor={item => item.title}
-                renderItem={({item}) => (
-                    <Card title={item.title}>
+                    <Text style={{alignSelf: 'center', marginTop: 10,}} h2>RANK</Text>
 
-                    </Card>
-                )}
-                />
+                    <FlatList
+                    data={students}
+                    keyExtractor={item => item.title}
+                    renderItem={({item}) => (
+                        <Card flexDirection='row' wrapperStyle={styles.studentCard}>
+                            <Icon
+                                raised
+                                containerStyle={{backgroundColor:'#AFAFAF'}}
+                                name='user'
+                                type='font-awesome'
+                                color='#f1f1f1'
+                            /> 
+                            <Text>Davi P. Costa</Text>
+                            <Text>1º</Text> 
+                        </Card>
+                    )}
+                    />
+
+                </ScrollView>
             </View>
         );
     }
@@ -36,6 +49,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    studentCard: {
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    }
 });
 
 const students = [{
@@ -49,6 +66,9 @@ const students = [{
     title: 'Lorem Ipslum'   
 },{
     id: 3,
+    title: 'Lorem Ipslum'   
+},{
+    id: 4,
     title: 'Lorem Ipslum'   
 },{
     id: 4,

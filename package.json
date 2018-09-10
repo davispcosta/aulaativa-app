@@ -1,11 +1,16 @@
 {
-  "name": "AulaAtivaAPP",
+  "name": "aulaativa",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
     "react-native-scripts": "1.14.0",
     "jest-expo": "~27.0.0",
     "react-test-renderer": "16.3.1"
+  },
+  "rnpm": {
+    "assets": [
+      "./app/assets/fonts/"
+    ]
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
@@ -20,6 +25,7 @@
   },
   "dependencies": {
     "expo": "^27.0.1",
+    "npm": "^6.4.1",
     "react": "16.3.1",
     "react-native": "~0.55.2",
     "react-native-elements": "^0.19.1",

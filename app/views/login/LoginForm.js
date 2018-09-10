@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements'
 import { ChooseRegister } from './ChooseRegister'
-import { MaterialTabs } from '../../sections/MaterialTabs'
+import { Classes } from '../classes/Classes'
 
 export class LoginForm extends React.Component {
     
@@ -32,7 +32,7 @@ export class LoginForm extends React.Component {
                     rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
                     title='ENTRAR'
                     rounded={true}
-                    onPress={() => this.props.navigation.navigate('MaterialTabs', { screen: MaterialTabs})}
+                    onPress={() => this.props.navigation.navigate('Classes', { screen: Classes})}
                     fontWeight='800' />
 
                 <Button

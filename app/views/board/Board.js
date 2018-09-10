@@ -1,28 +1,70 @@
 import React from 'react';
-import { StyleSheet, ScrollView, Image, KeyboardAvoidingView, FlatList, Alert } from 'react-native';
-import { Header, Card, Button, Text } from 'react-native-elements';
+import { StyleSheet, ScrollView, View, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { Card, Button, Text, Icon } from 'react-native-elements';
 import { Rank } from './Rank';
+import { Profile } from '../profile/Profile';
+import { NewNotification } from './NewNotification';
 
 export class Board extends React.Component {
+    
+    constructor() {
+        super();
+        this.state = {
+            isProfessor: false
+        }
+    }
 
-    render() { 
+    render() {
+        const isProfessor = this.state.isProfessor;
+        let profCard = null;
+        let newOnMural = null;
+
+        if(isProfessor) {
+            newOnMural = <Button
+                            title="ADICIONAR NO MURAL" 
+                            titleStyle={{ fontWeight: '700'}}
+                            buttonStyle={{marginTop: 20, backgroundColor: "#9C00FF"}}
+                            onPress={() => this.props.navigation.navigate('NewNotification', { screen: NewNotification})}
+                        />
+        } else {
+            profCard = <TouchableWithoutFeedback
+                        onPress={() => this.props.navigation.navigate('Profile', { screen: Profile})}>
+                            <Card flexDirection="row" wrapperStyle={{alignItems: 'center',}}>
+                                <Icon
+                                    raised
+                                    containerStyle={{backgroundColor:'#AFAFAF'}}
+                                    name='user'
+                                    type='font-awesome'
+                                    color='#f1f1f1'
+                                />
+
+                                <View style={{marginLeft: 20}}>
+                                    <Text>Professor</Text>
+                                    <Text h4>Adriano Augusto</Text>
+                                </View>
+                            </Card>
+                        </TouchableWithoutFeedback>
+        }
+
         return(
             <ScrollView style={styles.container}>
-                <Card title='Professor' containerStyle={styles.ProfCard} titleStyle={styles.ProfCardTitle}>
-                    <Text>Adriano Augusto</Text>
-                </Card>
 
-                <Button
-                    buttonStyle={styles.rankBtn}
-                    large
-                    fontWeight="800"
-                    rightIcon={{name: 'arrow-forward'}}
-                    backgroundColor='#9C00FF'
-                    title='RANK'
-                    onPress={() => this.props.navigation.navigate('Rank', { screen: Rank})}
-                />
+                {profCard}
+                <TouchableWithoutFeedback
+                onPress={() => this.props.navigation.navigate('Rank', { screen: Rank})}>
+                    
+                    <Card containerStyle={{marginBottom: 20, backgroundColor: '#9C00FF'}} wrapperStyle={styles.rankBtn}
+                    flexDirection='row'>
+                        <Icon color='#f1f1f1' type='font-awesome' name='trophy'/>
+                        <Text h3 style={{color: "white", fontWeight: 'bold',}}>RANK</Text>
+                        <Icon color='#f1f1f1' type='materialicons' name='keyboard-arrow-right' />
+                    </Card>
 
-                <Text h4 style={styles.subtitle}>MURAL</Text>
+                </TouchableWithoutFeedback>
+
+                <Text h5 style={styles.subtitle}>MURAL</Text>
+
+                {newOnMural}
 
                 <FlatList
                 data={news}
@@ -46,12 +88,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    ProfCardTitle: {
-        alignSelf: 'flex-start',
-    },
     rankBtn: {
-        margin: 20,
-        justifyContent: 'space-around'
+        padding: 10,
+        justifyContent: 'space-around',
     },
     subtitle: {
         alignSelf: 'center',
