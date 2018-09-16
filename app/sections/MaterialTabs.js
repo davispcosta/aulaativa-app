@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet, Image, Alert } from 'react-native'
+import { View } from 'react-native'
+import { Constants } from '../Constants'
 import Icon from '@expo/vector-icons/MaterialCommunityIcons'
-import { Header } from 'react-native-elements';
 
 import { Board } from '../views/board/Board'
 import { Doubts } from '../views/doubts/Doubts'
@@ -11,6 +11,7 @@ import { Quizes } from '../views/quizes/Quizes'
 
 
 import BottomNavigation, { IconTab, Badge, FullTab } from 'react-native-material-bottom-navigation'  
+import { HeaderSection } from './HeaderSection';
 
 export class MaterialTabs extends React.Component {
 
@@ -20,7 +21,7 @@ export class MaterialTabs extends React.Component {
           key: 'board',
           icon: 'book',
           label: 'Quadro',
-          barColor: '#9C00FF',
+          barColor: Constants.Colors.Primary,
           pressColor: 'rgba(255, 255, 255, 0.16)'
         },
         {
@@ -28,7 +29,7 @@ export class MaterialTabs extends React.Component {
           key: 'events',
           icon: 'calendar',
           label: 'Eventos',
-          barColor: '#9C00FF',
+          barColor: Constants.Colors.Primary,
           pressColor: 'rgba(255, 255, 255, 0.16)'
         },
         {
@@ -36,7 +37,7 @@ export class MaterialTabs extends React.Component {
           key: 'status',
           icon: 'face',
           label: 'Status',
-          barColor: '#9C00FF',
+          barColor: Constants.Colors.Primary,
           pressColor: 'rgba(255, 255, 255, 0.16)'
         }, 
         {
@@ -44,14 +45,14 @@ export class MaterialTabs extends React.Component {
             key: 'quizes',
             icon: 'spellcheck',
             label: 'Quizes',
-            barColor: '#9C00FF',
+            barColor: Constants.Colors.Primary,
             pressColor: 'rgba(255, 255, 255, 0.16)'
         },{
             id: 4,
             key: 'doubts',
             icon: 'comment-question',
             label: 'Dúvidas',
-            barColor: '#9C00FF',
+            barColor: Constants.Colors.Primary,
             pressColor: 'rgba(255, 255, 255, 0.16)'
         }
     ]
@@ -82,19 +83,13 @@ export class MaterialTabs extends React.Component {
       />
     )
 
-    onPress = () => {
-      this.props.navigation.navigate('Classes')
-    }
+
   
     render() {
       return (
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
-            <Header
-                leftComponent={{ icon: 'arrow-back', color: '#fff', onPress: this.onPress }}
-                backgroundColor='#9C00FF'
-                centerComponent={{ text: 'APIS1', style: { color: '#fff', fontWeight: "800" } }}
-            />
+            <HeaderSection navigation={this.props.navigation} goBack={true} />
             {this.views[this.state.activeView]}
           </View>
           <BottomNavigation

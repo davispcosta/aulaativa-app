@@ -1,12 +1,13 @@
 import React from 'react';
 import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
+import { Font } from 'expo'
 import * as firebase from 'firebase';
 
 import { Login } from './app//views/login/Login';
 import { Register } from './app//views/login/Register';
 import { ChooseRegister } from './app/views/login/ChooseRegister';
-import { Classes } from './app//views/classes/Classes';
+import { Classes } from './app/views/classes/Classes';
 import { Rank } from './app/views/board/Rank';
 import { Question } from './app/views/quizes/Question';
 import { MaterialTabs } from './app/sections/MaterialTabs';
@@ -14,6 +15,7 @@ import { SubscribeClass } from './app/views/classes/SubscribeClass';
 import { Profile } from './app/views/profile/Profile';
 import { NewClass } from './app/views/classes/NewClass';
 import { NewNotification } from './app/views/board/NewNotification';
+import Loading from './app/views/login/Loading';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZar2BXYpbFMpxUz5Vt8zeozIdOiwD25M",
@@ -23,8 +25,11 @@ const firebaseConfig = {
   storageBucket: "aula-ativa-api-38773.appspot.com",
 }
 firebase.initializeApp(firebaseConfig);
+const settings = {timestampsInSnapshots: true};
+firebase.firestore().settings(settings);
 
 const NavigationStack = createStackNavigator({
+    Loading: {screen: Loading},
     LoginScreen: { screen: Login },
     RegisterScreen: { screen: Register },
     Classes: { screen: Classes },
@@ -46,9 +51,15 @@ export default class App extends React.Component {
     fontLoaded: false,
   }
   async componentWillMount() {
-    await Expo.Font.loadAsync({
-      'Montserrat': require('./app/assets/fonts/MontserratRegular.ttf'),
-      'MontserratThin': require('./app/assets/fonts/MontserratThin.ttf'),
+    await Font.loadAsync({
+      'montserrat': require('./app/assets/fonts/MontserratRegular.ttf'),
+      'montserrat_thin': require('./app/assets/fonts/MontserratThin.ttf'),
+      'montserrat_bold': require('./app/assets/fonts/MontserratBold.ttf'),
+      'montserrat_black': require('./app/assets/fonts/MontserratBlack.ttf'),
+      'montserrat_light': require('./app/assets/fonts/MontserratLight.ttf'),
+      'montserrat_medium': require('./app/assets/fonts/MontserratMedium.ttf'),
+      'montserrat_extra_bold': require('./app/assets/fonts/MontserratExtraBold.ttf'),
+      'montserrat_semi_bold': require('./app/assets/fonts/MontserratSemiBold.ttf'),
     });
     this.setState({ fontLoaded: true})
   }

@@ -1,12 +1,13 @@
 import React from 'react';
 import { StyleSheet, View, Image, KeyboardAvoidingView } from 'react-native';
 import { LoginForm } from './LoginForm';
+import { Constants } from '../../Constants';
 
 export class Login extends React.Component {
 
     render() { 
         return(
-            <View style={styles.container}>
+            <KeyboardAvoidingView behavior="padding" enabled style={styles.container}>
                 <View style={styles.cardContainer}>
 
                     <View style={styles.logoContainer} >
@@ -21,7 +22,7 @@ export class Login extends React.Component {
                         <LoginForm navigation={this.props.navigation} />
                     </View>
                 </View>
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -29,7 +30,7 @@ export class Login extends React.Component {
 const styles = StyleSheet.create({ 
     container: {
         flex: 1,
-        backgroundColor: '#9C00FF',
+        backgroundColor: Constants.Colors.Primary,
         padding: 20,
         paddingTop: 40,
     },

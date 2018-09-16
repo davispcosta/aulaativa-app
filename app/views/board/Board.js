@@ -4,6 +4,7 @@ import { Card, Button, Text, Icon } from 'react-native-elements';
 import { Rank } from './Rank';
 import { Profile } from '../profile/Profile';
 import { NewNotification } from './NewNotification';
+import { Constants } from '../../Constants';
 
 export class Board extends React.Component {
     
@@ -23,7 +24,7 @@ export class Board extends React.Component {
             newOnMural = <Button
                             title="ADICIONAR NO MURAL" 
                             titleStyle={{ fontWeight: '700'}}
-                            buttonStyle={{marginTop: 20, backgroundColor: "#9C00FF"}}
+                            buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
                             onPress={() => this.props.navigation.navigate('NewNotification', { screen: NewNotification})}
                         />
         } else {
@@ -53,7 +54,7 @@ export class Board extends React.Component {
                 <TouchableWithoutFeedback
                 onPress={() => this.props.navigation.navigate('Rank', { screen: Rank})}>
                     
-                    <Card containerStyle={{marginBottom: 20, backgroundColor: '#9C00FF'}} wrapperStyle={styles.rankBtn}
+                    <Card containerStyle={{marginBottom: 20, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
                     flexDirection='row'>
                         <Icon color='#f1f1f1' type='font-awesome' name='trophy'/>
                         <Text h3 style={{color: "white", fontWeight: 'bold',}}>RANK</Text>

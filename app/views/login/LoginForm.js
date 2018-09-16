@@ -1,10 +1,11 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-native-elements'
+import { FormInput, FormValidationMessage, Button } from 'react-native-elements'
 import { ChooseRegister } from './ChooseRegister'
 import { Classes } from '../classes/Classes'
 
 import * as firebase from 'firebase';
+import { Constants } from '../../Constants';
 
 export class LoginForm extends React.Component {
 
@@ -20,7 +21,7 @@ export class LoginForm extends React.Component {
         try {
             firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(function(user){
                 console.log(user)
-                navigation.navigate('Classes', { screen: Classes})
+                navigation.navigate('Classes', { email: user.email})
             }).catch(function (error) {
                 console.log(error)
                 alert(error.message)
@@ -37,23 +38,22 @@ export class LoginForm extends React.Component {
                 {/* <FormValidationMessage>Usuário e/ou senha incorreto(s)</FormValidationMessage> */}
 
                 <FormInput
+                autoCapitalize='none'
                 placeholder='Email'
                 onChangeText={(email) => this.setState({email})}
                 keyboardType='email-address' />
                 
                 <FormInput 
                 placeholder='Senha'
+                secureTextEntry={true}
+                autoCapitalize='none'
                 onChangeText={(password) => this.setState({password})}
                 />
-
-                <View style={styles.options}>
-
-                </View>
 
                 <Button
                     small
                     buttonStyle={styles.enterBtn}
-                    backgroundColor='#9C00FF'
+                    backgroundColor={Constants.Colors.Primary}
                     color='#FFFFFF'
                     rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
                     title='ENTRAR'
@@ -64,7 +64,7 @@ export class LoginForm extends React.Component {
                 <Button
                     title="Não possui conta? Cadastre-se"
                     backgroundColor={"#1fe0"}
-                    color='#9C00FF'
+                    color={Constants.Colors.Primary}
                     onPress={() => this.props.navigation.navigate('ChooseRegisterScreen', { screen: ChooseRegister})}
                 />
 
@@ -82,8 +82,5 @@ const styles = StyleSheet.create({
     },
     enterBtn: {
         marginVertical: 20
-    },
-    options: {
-
     }
 });

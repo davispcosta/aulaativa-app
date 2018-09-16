@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage, Button, Text } from 'react-native-elements'
 import { Register} from './Register'
+import { Constants } from '../../Constants';
 
 export class ChooseRegister extends React.Component {
 
@@ -11,18 +12,18 @@ export class ChooseRegister extends React.Component {
                 <Text h2 style={styles.title}>Que tipo de usuário você é?</Text>
                 <Button
                 large
-                backgroundColor='#9C00FF'
+                backgroundColor={Constants.Colors.Primary}
                 fontWeight='800'
                 buttonStyle={styles.btn} title='PROFESSOR'
-                onPress={() => this.props.navigation.navigate('RegisterScreen', { screen: Register})}
+                onPress={() => this.props.navigation.push('RegisterScreen', { rule: 'Professor'})}
                 />
                 
                 <Button
                 large
-                backgroundColor='#9C00FF'
+                backgroundColor={Constants.Colors.Primary}
                 fontWeight='800'
                 buttonStyle={styles.btn} title='ALUNO'
-                onPress={() => this.props.navigation.navigate('RegisterScreen', { screen: Register})}
+                onPress={() => this.props.navigation.push('RegisterScreen', { rule: 'Student'})}
                 />
             </ScrollView>
         );
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20
     },
     title: {
-        color: '#9C00FF',
+        color: Constants.Colors.Primary,
         alignSelf: 'center',
         marginTop: 20,
     },

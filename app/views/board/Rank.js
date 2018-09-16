@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, ScrollView, View, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Card, Header, Text, Icon } from 'react-native-elements'
+import { Card, Text, Icon } from 'react-native-elements'
+import { HeaderSection } from '../../sections/HeaderSection'
 
 export class Rank extends React.Component {
 
@@ -8,14 +9,14 @@ export class Rank extends React.Component {
         header: null
     }
 
+    goBack = () => {
+        this.props.navigation.goBack()
+    }
+
     render() { 
         return(
             <View style={styles.container}>
-                <Header
-                    leftComponent={{ icon: 'arrow-back', color: '#fff' }}
-                    backgroundColor='#9C00FF'
-                    centerComponent={{ text: 'APIS1', style: { color: '#fff' } }}
-                />
+                <HeaderSection navigation={this.props.navigation} goBack={true} />
                 <ScrollView>
 
                     <Text style={{alignSelf: 'center', marginTop: 10,}} h2>RANK</Text>

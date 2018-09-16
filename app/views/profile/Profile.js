@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, FlatList, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import { Header, Text, Icon, Card } from 'react-native-elements'
+import { Constants } from '../../Constants';
 
 export class Profile extends Component {
   
@@ -10,13 +11,17 @@ export class Profile extends Component {
     };
   }
 
+  goBack = () => {
+    this.props.navigation.goBack()
+  }
+
   render() {
     return (
       <View style={styles.container}>
 
         <Header
-          leftComponent={{ icon: 'arrow-back', color: '#fff' }}
-          backgroundColor='#9C00FF'
+          leftComponent={{ icon: 'arrow-back', color: '#fff', onPress: this.goBack }}
+          backgroundColor={Constants.Colors.Primary}
           centerComponent={{ text: 'APIS1', style: { color: '#fff' } }}
         />
 
@@ -48,7 +53,7 @@ export class Profile extends Component {
                 />
                 <View style={{marginLeft: 20}}>
                   <Text
-                    style={{fontFamily: 'Montserrat'}}
+                    style={{fontFamily: 'montserrat'}}
                     h4>{item.title}</Text>
                   <Text>{item.professor}</Text>
                   <Text style={{color: "gray"}}>{item.alunos} ALUNOS</Text>
