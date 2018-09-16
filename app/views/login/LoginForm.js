@@ -4,7 +4,31 @@ import { FormLabel, FormInput, FormValidationMessage, Button } from 'react-nativ
 import { ChooseRegister } from './ChooseRegister'
 import { Classes } from '../classes/Classes'
 
+import * as firebase from 'firebase';
+
 export class LoginForm extends React.Component {
+
+    constructor (props) {
+        super(props);
+        this.state = {
+            email: '',
+            password: ''
+        }
+    }
+
+    login = (navigation) => {
+        try {
+            firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(function(user){
+                console.log(user)
+                navigation.navigate('Classes', { screen: Classes})
+            }).catch(function (error) {
+                console.log(error)
+                alert(error.message)
+            })
+        } catch(error) {
+            console.log(error.toString())
+        }
+    }
     
     render() { 
         return(
@@ -14,10 +38,12 @@ export class LoginForm extends React.Component {
 
                 <FormInput
                 placeholder='Email'
+                onChangeText={(email) => this.setState({email})}
                 keyboardType='email-address' />
                 
                 <FormInput 
                 placeholder='Senha'
+                onChangeText={(password) => this.setState({password})}
                 />
 
                 <View style={styles.options}>
@@ -32,7 +58,7 @@ export class LoginForm extends React.Component {
                     rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
                     title='ENTRAR'
                     rounded={true}
-                    onPress={() => this.props.navigation.navigate('Classes', { screen: Classes})}
+                    onPress={() => this.login(this.props.navigation)}
                     fontWeight='800' />
 
                 <Button

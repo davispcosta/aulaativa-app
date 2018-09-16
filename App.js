@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
+import * as firebase from 'firebase';
 
 import { Login } from './app//views/login/Login';
 import { Register } from './app//views/login/Register';
@@ -14,15 +15,24 @@ import { Profile } from './app/views/profile/Profile';
 import { NewClass } from './app/views/classes/NewClass';
 import { NewNotification } from './app/views/board/NewNotification';
 
+const firebaseConfig = {
+  apiKey: "AIzaSyCZar2BXYpbFMpxUz5Vt8zeozIdOiwD25M",
+  authDomain: "aula-ativa-api-38773.firebaseapp.com",
+  databaseURL: "https://aula-ativa-api-38773.firebaseio.com",
+  projectId: "aula-ativa-api-38773",
+  storageBucket: "aula-ativa-api-38773.appspot.com",
+}
+firebase.initializeApp(firebaseConfig);
+
 const NavigationStack = createStackNavigator({
+    LoginScreen: { screen: Login },
+    RegisterScreen: { screen: Register },
     Classes: { screen: Classes },
     NewClass: { screen: NewClass},
     MaterialTabs: { screen: MaterialTabs },
     Question: { screen: Question },
     NewNotification: { screen: NewNotification },
     Profile: { screen: Profile },
-    LoginScreen: { screen: Login },
-    RegisterScreen: { screen: Register },
     ChooseRegisterScreen: { screen: ChooseRegister },
     Rank: { screen: Rank },
     SubscribeClass: { screen: SubscribeClass }
