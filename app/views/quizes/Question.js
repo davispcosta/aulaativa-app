@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, KeyboardAvoidingView, FlatList } from 'react-native';
 import { Card, Header, Text } from 'react-native-elements'
+import { HeaderSection } from '../../sections/HeaderSection';
 
 export class Question extends React.Component {
 
@@ -11,11 +12,7 @@ export class Question extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Header
-                    leftComponent={{ icon: 'arrow-back', color: '#fff', onPress: this.onPress }}
-                    backgroundColor='#9C00FF'
-                    centerComponent={{ text: 'APIS1', style: { color: '#fff', fontWeight: "800" } }}
-                />
+                <HeaderSection navigation={this.props.navigation} goBack={true} />
                 <ScrollView>
                     <Card wrapperStyle={styles.questionWrapper}>
                         <Text>Lorem ipslum dolor sit amet, consectetur adipiscing elit?</Text>

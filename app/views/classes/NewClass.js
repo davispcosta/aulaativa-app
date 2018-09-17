@@ -38,7 +38,7 @@ export class NewClass extends Component {
       <View style={styles.container}>
         <HeaderSection navigation={this.props.navigation} goBack={true} />
 
-        <ScrollView style={styles.formContainer}>
+        <ScrollView keyboardShouldPersistTaps={"always"} style={styles.formContainer}>
           
           <Text h2 style={styles.title}>NOVA TURMA</Text>
 

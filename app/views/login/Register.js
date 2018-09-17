@@ -50,7 +50,7 @@ export class Register extends React.Component {
 
     render() { 
         return(
-            <ScrollView style={styles.container}>
+            <ScrollView style={styles.container} keyboardShouldPersistTaps={"always"}>
                 <View style={styles.cardContainer}>
                     <Spinner visible={false} textContent={"Carregando..."} textStyle={{ color: '#FFF'}} />
                     <Text h2 style={styles.title}>CADASTRO</Text>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Header, Icon } from 'react-native-elements';
 import { Constants } from '../Constants';
+import * as firebase from 'firebase';
 
 export class HeaderSection extends Component {
   constructor(props) {
@@ -10,8 +11,8 @@ export class HeaderSection extends Component {
     };
   }
 
-  goBack = () => {
-    this.props.navigation.goBack()
+  goBack = (navigation) => {
+    navigation.goBack()
   }
 
   logOut = (navigation) => {
@@ -32,12 +33,12 @@ export class HeaderSection extends Component {
     var leftAction = null
     if(this.props.goBack == true) {
       leftAction = <TouchableWithoutFeedback
-        onPress={() => this.goBack()}>
+        onPress={() => this.goBack(this.props.navigation)}>
         <Icon name='arrow-back' color='#fff'></Icon>
       </TouchableWithoutFeedback>
     } else if (this.props.logOut == true) {
       leftAction = <TouchableWithoutFeedback
-        onPress={() => this.logOut()}>
+        onPress={() => this.logOut(this.props.navigation)}>
         <Icon type='material-community' name='exit-to-app' color='#f1f1f1'></Icon>
       </TouchableWithoutFeedback>
     }

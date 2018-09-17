@@ -18,7 +18,7 @@ export class Quizes extends React.Component {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                     <TouchableWithoutFeedback
-                    onPress={() => this.props.navigation.navigate('Question', { screen: Question})}>
+                    onPress={() => this.props.navigation.navigate('Question')}>
                     <Card title={item.title} >
                         <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text>
                     </Card>

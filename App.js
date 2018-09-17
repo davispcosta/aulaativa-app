@@ -28,6 +28,8 @@ firebase.initializeApp(firebaseConfig);
 const settings = {timestampsInSnapshots: true};
 firebase.firestore().settings(settings);
 
+console.ignoredYellowBox = ['Setting a timer'];
+
 const NavigationStack = createStackNavigator({
     Loading: {screen: Loading},
     LoginScreen: { screen: Login },
