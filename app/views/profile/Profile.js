@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, FlatList, TouchableWithoutFeedback, ScrollView } from 'react-native';
-import { Header, Text, Icon, Card } from 'react-native-elements'
+import { Text, Icon, Card } from 'react-native-elements'
 import { Constants } from '../../Constants';
+import { HeaderSection } from '../../sections/HeaderSection'
 
 export class Profile extends Component {
   
@@ -19,11 +20,7 @@ export class Profile extends Component {
     return (
       <View style={styles.container}>
 
-        <Header
-          leftComponent={{ icon: 'arrow-back', color: '#fff', onPress: this.goBack }}
-          backgroundColor={Constants.Colors.Primary}
-          centerComponent={{ text: 'APIS1', style: { color: '#fff' } }}
-        />
+        <HeaderSection navigation={this.props.navigation} goBack={true} />
 
         <ScrollView>
 

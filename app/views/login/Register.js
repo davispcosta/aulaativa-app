@@ -32,16 +32,9 @@ export class Register extends React.Component {
                 return;
             }
             firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((authData) => {
-                console.log('AUTHDATA')
-                console.log(authData)
-                let user = {}
-                user.email = this.state.email
-                user.name = this.state.name
-                user.rule = this.state.rule
-                user.uid = authData.user.uid
 
                 ref = firebase.firestore().collection('users') 
-                ref.add({ user }).then((response) => {
+                ref.add({ email: this.state.email, name: this.state.name, rule: this.state.rule, uid: authData.user.uid }).then((response) => {
                     this.props.navigation.push('Classes')
                 }).catch((error) => {
                     alert(error.message)

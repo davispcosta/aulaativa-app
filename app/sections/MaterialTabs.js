@@ -15,46 +15,54 @@ import { HeaderSection } from './HeaderSection';
 
 export class MaterialTabs extends React.Component {
 
+    constructor(props){
+      super(props);
+      this.state = {
+        activeTab: this.tabs[0],
+        activeView: 0
+      }
+    }
+
     tabs = [
-        {
-          id: 0,
-          key: 'board',
-          icon: 'book',
-          label: 'Quadro',
+      {
+        id: 0,
+        key: 'board',
+        icon: 'book',
+        label: 'Quadro',
+        barColor: Constants.Colors.Primary,
+        pressColor: 'rgba(255, 255, 255, 0.16)'
+      },
+      {
+        id: 1,
+        key: 'events',
+        icon: 'calendar',
+        label: 'Eventos',
+        barColor: Constants.Colors.Primary,
+        pressColor: 'rgba(255, 255, 255, 0.16)'
+      },
+      {
+        id: 2,
+        key: 'status',
+        icon: 'face',
+        label: 'Status',
+        barColor: Constants.Colors.Primary,
+        pressColor: 'rgba(255, 255, 255, 0.16)'
+      }, 
+      {
+          id: 3,
+          key: 'quizes',
+          icon: 'spellcheck',
+          label: 'Quizes',
           barColor: Constants.Colors.Primary,
           pressColor: 'rgba(255, 255, 255, 0.16)'
-        },
-        {
-          id: 1,
-          key: 'events',
-          icon: 'calendar',
-          label: 'Eventos',
+      },{
+          id: 4,
+          key: 'doubts',
+          icon: 'comment-question',
+          label: 'Dúvidas',
           barColor: Constants.Colors.Primary,
           pressColor: 'rgba(255, 255, 255, 0.16)'
-        },
-        {
-          id: 2,
-          key: 'status',
-          icon: 'face',
-          label: 'Status',
-          barColor: Constants.Colors.Primary,
-          pressColor: 'rgba(255, 255, 255, 0.16)'
-        }, 
-        {
-            id: 3,
-            key: 'quizes',
-            icon: 'spellcheck',
-            label: 'Quizes',
-            barColor: Constants.Colors.Primary,
-            pressColor: 'rgba(255, 255, 255, 0.16)'
-        },{
-            id: 4,
-            key: 'doubts',
-            icon: 'comment-question',
-            label: 'Dúvidas',
-            barColor: Constants.Colors.Primary,
-            pressColor: 'rgba(255, 255, 255, 0.16)'
-        }
+      }
     ]
 
     views = [<Board navigation={this.props.navigation}/>, 
@@ -62,11 +70,6 @@ export class MaterialTabs extends React.Component {
     <Status  navigation={this.props.navigation} />, 
     <Quizes navigation={this.props.navigation} />, 
     <Doubts  navigation={this.props.navigation} />]
-
-    state = {
-        activeTab: this.tabs[0],
-        activeView: 0
-    }
 
     renderIcon = icon => ({ isActive }) => (
       <Icon size={24} color="white" name={icon} />
@@ -83,8 +86,6 @@ export class MaterialTabs extends React.Component {
       />
     )
 
-
-  
     render() {
       return (
         <View style={{ flex: 1 }}>

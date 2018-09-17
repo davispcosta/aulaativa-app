@@ -38,7 +38,7 @@ export class NewClass extends Component {
       <View style={styles.container}>
         <HeaderSection navigation={this.props.navigation} goBack={true} />
 
-        <ScrollView>
+        <ScrollView style={styles.formContainer}>
           
           <Text h2 style={styles.title}>NOVA TURMA</Text>
 
@@ -70,7 +70,13 @@ export class NewClass extends Component {
 
 const styles = StyleSheet.create({ 
   container: {
-      flex: 1,
+    flex: 1
+  },
+  formContainer: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    paddingTop: 60,
+    paddingHorizontal: 20
   },
   title: {
     color: Constants.Colors.Primary,

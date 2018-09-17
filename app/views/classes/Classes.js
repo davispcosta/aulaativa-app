@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, FlatList, TouchableWithoutFeedback, RefreshControl } from 'react-native';
-import { Header, Card, Text, Icon, Button } from 'react-native-elements'
+import { Card, Text, Icon, Button } from 'react-native-elements'
+import { HeaderSection } from '../../sections/HeaderSection'
 import { Constants } from '../../Constants'
 import * as firebase from 'firebase';
 
@@ -14,29 +15,15 @@ export class Classes extends React.Component {
         super(props);
         this.state = {
             classes: [],
-            refreshing: false
+            refreshing: false,
+            user: {}
         }
         this.loadClasses()
     }
 
-    logOut = (navigation) => {
-        try {
-            firebase.auth().signOut().then(function(){
-                navigation.navigate('LoginScreen')
-            }).catch(function (error) {
-                console.log(error)
-                alert(error.message)
-            })
-        } catch(error) {
-            console.log(error.toString())
-        }
-    }
-
     loadClasses = () => {
         const { currentUser } = firebase.auth();
-        console.log('CURRENT')
-        console.log(currentUser.uid)
-
+        
         ref = firebase.firestore().collection("classes")
         let array = []
         ref.where("professorUid", "==", currentUser.uid).get().then(function(querySnapshot) {
@@ -59,20 +46,7 @@ export class Classes extends React.Component {
         return(
             <View style={styles.container}>
 
-                <Header
-                    backgroundColor={Constants.Colors.Primary}
-                    leftComponent={
-                        <Icon type='material-community' 
-                        name='exit-to-app' color='#f1f1f1'
-                        onPress={() => this.logOut(this.props.navigation)}
-                        />}
-                    centerComponent={{ text: 'TURMAS', style: { color: '#fff', fontFamily: 'montserrat_bold' }  }}
-                    rightComponent={
-                        <Icon type='font-awesome' 
-                        name='user' color='#f1f1f1'
-                        onPress={() => this.props.navigation.navigate('Profile')}
-                        />}
-                    />
+                <HeaderSection navigation={this.props.navigation} logOut={true} goToProfile={true}/>
 
                 <ScrollView
                     refreshControl={
