@@ -19,6 +19,23 @@ export class Classes extends React.Component {
             user: {}
         }
         this.loadClasses()
+        this.loadUser()
+    }
+
+    loadUser = () => {
+        const { currentUser } = firebase.auth();
+
+        ref = firebase.firestore().collection("users")
+        ref.where("uid", "==", currentUser.uid).get().then(function(querySnapshot) {
+            var user = {}
+            querySnapshot.forEach(function(doc) {
+                user = doc.data();
+            })
+            this.setState({ user: user })
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
     }
 
     loadClasses = () => {

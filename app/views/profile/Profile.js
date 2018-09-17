@@ -3,13 +3,53 @@ import { StyleSheet, View, FlatList, TouchableWithoutFeedback, ScrollView } from
 import { Text, Icon, Card } from 'react-native-elements'
 import { Constants } from '../../Constants';
 import { HeaderSection } from '../../sections/HeaderSection'
+import * as firebase from 'firebase';
 
 export class Profile extends Component {
   
   constructor(props) {
     super(props);
     this.state = {
-    };
+      user: '',
+      classes: []
+    }
+  }
+
+  componentDidMount = () => {
+    this.loadUser();
+    this.loadClasses();
+  }
+
+  loadUser = () => {
+    const { currentUser } = firebase.auth();
+
+    ref = firebase.firestore().collection("users")
+    ref.where("uid", "==", currentUser.uid).get().then(function(querySnapshot) {
+        var user = {}
+        querySnapshot.forEach(function(doc) {
+            user = doc.data();
+        })
+        this.setState({ user: user })
+    }.bind(this)).catch(function (error) {
+        console.log(error)
+        alert(error.message)
+    })
+  }
+
+  loadClasses = () => {
+    const { currentUser } = firebase.auth();
+    
+    ref = firebase.firestore().collection("classes")
+    let array = []
+    ref.where("professorUid", "==", currentUser.uid).get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            array.push(doc.data());
+        })
+        this.setState({ classes: array, refreshing: false})
+    }.bind(this)).catch(function (error) {
+        console.log(error)
+        alert(error.message)
+    })
   }
 
   goBack = () => {
@@ -29,17 +69,16 @@ export class Profile extends Component {
           </View>
           
           <View style={{paddingLeft: 20, marginVertical: 20}}>
-            <Text h3>Adriano Augusto</Text>
+            <Text h3>{ this.state.user.name }</Text>
             <Text h4>Contato</Text>
-            <Text>adriano@gmail.com</Text>
-            <Text>(85) 985489885</Text>
+            <Text>{ this.state.user.email }</Text>
           </View>
 
           <Text h4 style={{alignSelf: 'center',}}>Disciplinas</Text>
 
           <FlatList
-            data={classes}
-            keyExtractor={item => item.id.toString()}
+            data={this.state.classes}
+            keyExtractor={item => item.uid}
             renderItem={({item}) => (
               <Card flexDirection="row">
                 <Icon
@@ -51,9 +90,9 @@ export class Profile extends Component {
                 <View style={{marginLeft: 20}}>
                   <Text
                     style={{fontFamily: 'montserrat'}}
-                    h4>{item.title}</Text>
-                  <Text>{item.professor}</Text>
-                  <Text style={{color: "gray"}}>{item.alunos} ALUNOS</Text>
+                    h4>{item.name}</Text>
+                  {/* <Text>{item.professor}</Text>
+                  <Text style={{color: "gray"}}>{item.alunos} ALUNOS</Text> */}
                 </View>
               </Card>
             )}
@@ -77,25 +116,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   }
 });
-
-
-const classes = [
-  {
-      id:0,
-      title: 'APIS 1',
-      professor: 'Eduardo Mendes',
-      alunos: 15
-  },
-  {
-      id:1,
-      title: 'POO',
-      professor: 'Eduardo Mendes',
-      alunos: 9
-  },
-  {
-      id:2,
-      title: 'Estágio 3',
-      professor: 'Vitor Almeida',
-      alunos: 6
-  }
-]
