@@ -59,11 +59,32 @@ export class Classes extends React.Component {
         this.loadClasses()
     }
     
-    render() { 
+    render() {
+        
+        var btnNew;
+
+        if(this.state.user.role == "Professor") {
+            btnNew = <Button
+            title="NOVA TURMA" 
+            titleStyle={{ fontWeight: '700'}}
+            buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
+            onPress={() => this.props.navigation.navigate('NewClass')}
+            />
+        } else {
+            btnNew = <Button
+            title="INSCREVER-SE EM NOVA TURMA" 
+            titleStyle={{ fontWeight: '700'}}
+            buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
+            onPress={() => this.props.navigation.navigate('SubscribeClass')}
+            />
+        }
+        
         return(
             <View style={styles.container}>
 
                 <HeaderSection navigation={this.props.navigation} logOut={true} goToProfile={true}/>
+
+                { btnNew }
 
                 <ScrollView
                     refreshControl={
@@ -71,19 +92,14 @@ export class Classes extends React.Component {
                     }
                 >
 
-                    <Button
-                        title="NOVA TURMA" 
-                        titleStyle={{ fontWeight: '700'}}
-                        buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-                        onPress={() => this.props.navigation.navigate('NewClass')}
-                    />
+                    
 
                     <FlatList
                     data={this.state.classes}
                     keyExtractor={item => item.uid.toString()}
                     renderItem={({item}) => (
                         <TouchableWithoutFeedback
-                        onPress={() => this.props.navigation.navigate('MaterialTabs')}
+                        onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: item.uid.toString() })}
                         >
                         <Card
                             flexDirection="row"

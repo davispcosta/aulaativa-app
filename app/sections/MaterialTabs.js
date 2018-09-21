@@ -65,11 +65,28 @@ export class MaterialTabs extends React.Component {
       }
     ]
 
-    views = [<Board navigation={this.props.navigation}/>, 
-    <Events navigation={this.props.navigation}/>,
-    <Status  navigation={this.props.navigation} />, 
-    <Quizes navigation={this.props.navigation} />, 
-    <Doubts  navigation={this.props.navigation} />]
+    views = [
+    <Board 
+      navigation={this.props.navigation} 
+      user={this.props.navigation.state.params.user}
+      classUid={this.props.navigation.state.params.classUid}/>, 
+    <Events 
+      navigation={this.props.navigation}
+      user={this.props.navigation.state.params.user}
+      classUid={this.props.navigation.state.params.classUid}/>, 
+    <Status 
+      navigation={this.props.navigation}
+      user={this.props.navigation.state.params.user}
+      classUid={this.props.navigation.state.params.classUid}/>,  
+    <Quizes 
+      navigation={this.props.navigation}
+      user={this.props.navigation.state.params.user}
+      classUid={this.props.navigation.state.params.classUid}/>, 
+    <Doubts 
+      navigation={this.props.navigation}
+      user={this.props.navigation.state.params.user}
+      classUid={this.props.navigation.state.params.classUid}/>
+    ]
 
     renderIcon = icon => ({ isActive }) => (
       <Icon size={24} color="white" name={icon} />

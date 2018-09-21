@@ -10,14 +10,15 @@ import { ChooseRegister } from './app/views/login/ChooseRegister';
 import { Rank } from './app/views/board/Rank';
 import { Question } from './app/views/quizes/Question';
 import { MaterialTabs } from './app/sections/MaterialTabs';
-import { SubscribeClass } from './app/views/classes/SubscribeClass';
 import { Profile } from './app/views/profile/Profile';
 import { Classes } from './app/views/classes/Classes';
 import { NewClass } from './app/views/classes/NewClass';
+import { NewEvent } from './app/views/events/NewEvent';
 import { SubscribeClass } from './app/views/classes/SubscribeClass';
 import { NewNotification } from './app/views/board/NewNotification';
-import Loading from './app/views/login/Loading';
 import { Doubt } from './app/views/doubts/Doubt';
+import { NewDoubt } from './app/views/doubts/NewDoubt';
+import Loading from './app/views/login/Loading';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZar2BXYpbFMpxUz5Vt8zeozIdOiwD25M",
@@ -26,6 +27,7 @@ const firebaseConfig = {
   projectId: "aula-ativa-api-38773",
   storageBucket: "aula-ativa-api-38773.appspot.com",
 }
+
 firebase.initializeApp(firebaseConfig);
 const settings = {timestampsInSnapshots: true};
 firebase.firestore().settings(settings);
@@ -38,9 +40,10 @@ const NavigationStack = createStackNavigator({
     RegisterScreen: { screen: Register },
     Classes: { screen: Classes },
     NewClass: { screen: NewClass},
+    NewEvent: { screen: NewEvent },
     SubscribeClass: { screen: SubscribeClass},
     Doubt: { screen: Doubt},
-    NewDoubts: { screen: NewDoubt }
+    NewDoubt: { screen: NewDoubt },
     MaterialTabs: { screen: MaterialTabs },
     Question: { screen: Question },
     NewNotification: { screen: NewNotification },

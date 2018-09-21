@@ -11,9 +11,9 @@ export class SubscribeClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      classUid = '',
-      refreshing = true,
-      classes = []
+      classUid: '',
+      refreshing: false,
+      classes: []
     };
     this.loadClasses()
   }

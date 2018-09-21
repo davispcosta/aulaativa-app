@@ -43,6 +43,7 @@ export class NewClass extends Component {
           />
 
           <FormInput placeholder="Quantidade de Faltas"
+          keyboardType="numeric"
           onChangeText={(qntAbsence) => this.setState({qntAbsence})}
           />
 

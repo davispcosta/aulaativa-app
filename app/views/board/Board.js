@@ -1,31 +1,55 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, ScrollView, View, FlatList, TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import { Card, Button, Text, Icon } from 'react-native-elements';
 import { Rank } from './Rank';
 import { Profile } from '../profile/Profile';
-import { NewNotification } from './NewNotification';
 import { Constants } from '../../Constants';
+import * as firebase from 'firebase';
 
 export class Board extends React.Component {
     
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            isProfessor: false
+            user: this.props.user,
+            classUid: this.props.classUid,
+            refreshing: false,
+            notifications: []
         }
+        this.loadBoard()
+    }
+
+    loadBoard = () => {
+        const { currentUser } = firebase.auth();
+        
+        ref = firebase.firestore().collection("notifications")
+        let array = []
+        ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                array.push(doc.data());
+            })
+            this.setState({ notifications: array, refreshing: false})
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
+    }
+
+    onRefresh = () => {
+        this.setState({ refreshing: true})
+        this.loadBoard()
     }
 
     render() {
-        const isProfessor = this.state.isProfessor;
         let profCard = null;
         let newOnMural = null;
 
-        if(isProfessor) {
+        if(this.state.user.role == "Professor") {
             newOnMural = <Button
                             title="ADICIONAR NO MURAL" 
                             titleStyle={{ fontWeight: '700'}}
                             buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-                            onPress={() => this.props.navigation.navigate('NewNotification', { screen: NewNotification})}
+                            onPress={() => this.props.navigation.navigate('NewNotification', { classUid: this.state.classUid})}
                         />
         } else {
             profCard = <TouchableWithoutFeedback
@@ -48,9 +72,14 @@ export class Board extends React.Component {
         }
 
         return(
-            <ScrollView style={styles.container}>
+            <ScrollView 
+                style={styles.container}
+                refreshControl={
+                    <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
+                }>
 
                 {profCard}
+                
                 <TouchableWithoutFeedback
                 onPress={() => this.props.navigation.navigate('Rank', { screen: Rank})}>
                     
@@ -68,13 +97,12 @@ export class Board extends React.Component {
                 {newOnMural}
 
                 <FlatList
-                data={news}
+                data={this.state.notifications}
                 style={styles.list}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={item => item.uid.toString()}
                 renderItem={({item}) => (
                     <Card title={item.title}>
                         <Text>{item.description}</Text>
-                        <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text>
                     </Card>
                 )}
                 />
@@ -100,20 +128,3 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
 });
-
-const news = [{
-    id: 0,
-    title: 'Mudança de Sala',
-    description: 'Apartir da próxima aula iremos ter aula na sala 41.',
-    date: '16/08/2018' 
-},{
-    id: 1,
-    title: 'Feriado',
-    description: 'Por motivos do feriado, não haverá aula na próxima quinta.',
-    date: '12/08/2018',  
-},{
-    id: 2,
-    title: 'Adiar Entrega',
-    description: 'A pedidos, o trabalho poderá ser entregue até sexta.',
-    date: '10/08/2018'    
-}]

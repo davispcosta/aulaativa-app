@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Card, Header, Text } from 'react-native-elements'
+import { StyleSheet, ScrollView, Image, KeyboardAvoidingView, FlatList, RefreshControl } from 'react-native';
+import {  Card, Button, Text, Icon } from 'react-native-elements';
+import { Constants } from '../../Constants';
+import * as firebase from 'firebase';
 
 export class Events extends React.Component {
 
@@ -8,21 +10,68 @@ export class Events extends React.Component {
         header: null
     }
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: this.props.user,
+            classUid: this.props.classUid,
+            refreshing: false,
+            events: []
+        }
+        this.loadEvents()
+    }
+
+    loadEvents = () => {
+        const { currentUser } = firebase.auth();
+        
+        ref = firebase.firestore().collection("events")
+        let array = []
+        ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                array.push(doc.data());
+            })
+            this.setState({ events: array, refreshing: false})
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
+    }
+
+    onRefresh = () => {
+        this.setState({ refreshing: true})
+        this.loadEvents()
+    }
+
     render() { 
+        let newEvent = null;
+        if(this.state.user.role == "Professor") {
+            newEvent = <Button
+                            title="ADICIONAR EVENTO" 
+                            titleStyle={{ fontWeight: '700'}}
+                            buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
+                            onPress={() => this.props.navigation.navigate('NewEvent', { classUid: this.state.classUid})}
+                        />
+        } 
+
         return(
-            <View style={styles.container}>
+            <ScrollView style={styles.container} 
+            refreshControl={
+                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
+            }>
+
+                { newEvent }
 
                 <FlatList
-                data={events}
-                keyExtractor={item => item.id.toString()}
+                data={this.state.events}
+                keyExtractor={item => item.uid.toString()}
                 renderItem={({item}) => (
                     <Card title={item.title}>
                         <Text>{item.description}</Text>
-                        <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text>
+                        {/* <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text> */}
                     </Card>
                 )}
                 />
-            </View>
+            </ScrollView>
         );
     }
 
@@ -33,20 +82,3 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 });
-
-const events = [{
-    id: 0,
-    title: 'PROVA VP1',
-    description: 'Prova na quinta-feira com conteúdo de diagrama de classes.',
-    date: '16/08/2018'   
-},{
-    id: 1,
-    title: 'ENTREGA DE TRABALHO',
-    description: 'Entrega de trabalho com todos os diagramas feitos e aplicados.',
-    date: '18/08/2018' 
-},{
-    id: 2,
-    title: 'AULA DE GIT',
-    description: 'Treinamento para todos que não possuem conhecimento em GIT.',
-    date: '20/08/2018'    
-}]
