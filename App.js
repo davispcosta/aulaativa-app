@@ -7,15 +7,17 @@ import * as firebase from 'firebase';
 import { Login } from './app//views/login/Login';
 import { Register } from './app//views/login/Register';
 import { ChooseRegister } from './app/views/login/ChooseRegister';
-import { Classes } from './app/views/classes/Classes';
 import { Rank } from './app/views/board/Rank';
 import { Question } from './app/views/quizes/Question';
 import { MaterialTabs } from './app/sections/MaterialTabs';
 import { SubscribeClass } from './app/views/classes/SubscribeClass';
 import { Profile } from './app/views/profile/Profile';
+import { Classes } from './app/views/classes/Classes';
 import { NewClass } from './app/views/classes/NewClass';
+import { SubscribeClass } from './app/views/classes/SubscribeClass';
 import { NewNotification } from './app/views/board/NewNotification';
 import Loading from './app/views/login/Loading';
+import { Doubt } from './app/views/doubts/Doubt';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZar2BXYpbFMpxUz5Vt8zeozIdOiwD25M",
@@ -36,6 +38,9 @@ const NavigationStack = createStackNavigator({
     RegisterScreen: { screen: Register },
     Classes: { screen: Classes },
     NewClass: { screen: NewClass},
+    SubscribeClass: { screen: SubscribeClass},
+    Doubt: { screen: Doubt},
+    NewDoubts: { screen: NewDoubt }
     MaterialTabs: { screen: MaterialTabs },
     Question: { screen: Question },
     NewNotification: { screen: NewNotification },

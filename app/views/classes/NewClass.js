@@ -15,10 +15,6 @@ export class NewClass extends Component {
     };
   }
 
-  goBack = () => {
-    this.props.navigation.goBack()
-  }
-
   newClass = () => {
     const { currentUser } = firebase.auth();
 

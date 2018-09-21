@@ -12,6 +12,14 @@ export class Doubts extends React.Component {
     render() { 
         return(
             <View style={styles.container}>
+
+                <Button
+                    title="NOVA DÚVIDA" 
+                    titleStyle={{ fontWeight: '700'}}
+                    buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
+                    onPress={() => this.props.navigation.navigate('NewDoubt')}
+                />
+                    
                 <FlatList
                 data={doubts}
                 keyExtractor={item => item.id.toString()}
