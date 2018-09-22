@@ -101,9 +101,7 @@ export class Classes extends React.Component {
                         <TouchableWithoutFeedback
                         onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: item.uid.toString() })}
                         >
-                        <Card
-                            flexDirection="row"
-                        >
+                        <Card flexDirection="row">
                             <Icon
                                 raised
                                 containerStyle={{backgroundColor:'#AFAFAF'}}

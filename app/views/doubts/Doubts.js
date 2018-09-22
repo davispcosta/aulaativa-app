@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SrollView, Image, KeyboardAvoidingView, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, ScrollView, Image, KeyboardAvoidingView, FlatList, RefreshControl, TouchableWithoutFeedback } from 'react-native';
 import { Card, Button, Text, Icon } from 'react-native-elements'
 import { Constants } from '../../Constants';
 import * as firebase from 'firebase';
@@ -44,7 +44,8 @@ export class Doubts extends React.Component {
 
     render() { 
         return(
-            <SrollView style={styles.container} 
+            
+            <ScrollView style={styles.container} 
             refreshControl={
                 <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
             }>
@@ -60,13 +61,18 @@ export class Doubts extends React.Component {
                 data={this.state.doubts}
                 keyExtractor={item => item.uid.toString()}
                 renderItem={({item}) => (
+                    <TouchableWithoutFeedback
+                        onPress={() => this.props.navigation.navigate('Doubt', { user: this.state.user, doubt: item })}
+                    >
                     <Card title={item.title}>
                         {/* <Text>{item.answers} RESPOSTAS</Text>
                         <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text> */}
                     </Card>
+                    </TouchableWithoutFeedback>
                 )}
                 />
-            </SrollView>
+                
+            </ScrollView>
         );
     }
 
