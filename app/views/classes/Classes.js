@@ -18,7 +18,6 @@ export class Classes extends React.Component {
             refreshing: false,
             user: {}
         }
-        this.loadClasses()
         this.loadUser()
     }
 
@@ -31,7 +30,7 @@ export class Classes extends React.Component {
             querySnapshot.forEach(function(doc) {
                 user = doc.data();
             })
-            this.setState({ user: user })
+            this.setState({ user: user }, () => this.loadClasses())
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -40,10 +39,20 @@ export class Classes extends React.Component {
 
     loadClasses = () => {
         const { currentUser } = firebase.auth();
-        
-        ref = firebase.firestore().collection("classes")
+
+        let table;
+        let uid;
+        if(this.state.user.role == "Professor") {
+            table = "classes"
+            uid = "professorUid"
+        } else {
+            table = "subscriptions"
+            uid = "studentUid"
+        }
+
+        ref = firebase.firestore().collection(table)
         let array = []
-        ref.where("professorUid", "==", currentUser.uid).get().then(function(querySnapshot) {
+        ref.where(uid, "==", currentUser.uid).get().then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 array.push(doc.data());
             })
@@ -75,7 +84,7 @@ export class Classes extends React.Component {
             title="INSCREVER-SE EM NOVA TURMA" 
             titleStyle={{ fontWeight: '700'}}
             buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-            onPress={() => this.props.navigation.navigate('SubscribeClass')}
+            onPress={() => this.props.navigation.navigate('SubscribeClass', { studentUid: this.state.user.uid })}
             />
         }
         
@@ -99,7 +108,7 @@ export class Classes extends React.Component {
                     keyExtractor={item => item.uid.toString()}
                     renderItem={({item}) => (
                         <TouchableWithoutFeedback
-                        onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: item.uid.toString() })}
+                        onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: this.state.user.role == "Professor" ? item.uid.toString() : item.classUid.toString() })}
                         >
                         <Card flexDirection="row">
                             <Icon

@@ -8,7 +8,7 @@ export class Status extends React.Component {
         header: null
     }
 
-    generateFaults() {
+    generateFaults = () => {
         const faults = [];
         for(let i=0; i<10; i++) {
             faults.push(

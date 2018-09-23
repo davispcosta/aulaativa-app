@@ -8,9 +8,14 @@ import { Login } from './app//views/login/Login';
 import { Register } from './app//views/login/Register';
 import { ChooseRegister } from './app/views/login/ChooseRegister';
 import { Rank } from './app/views/board/Rank';
+import { NewQuiz } from './app/views/quizes/NewQuiz';
+import { EditQuiz } from './app/views/quizes/EditQuiz';
 import { Question } from './app/views/quizes/Question';
+import { NewQuestion } from './app/views/quizes/NewQuestion';
+import { EditQuestion } from './app/views/quizes/EditQuestion';
 import { MaterialTabs } from './app/sections/MaterialTabs';
-import { Profile } from './app/views/profile/Profile';
+import { UserProfile } from './app/views/profile/UserProfile';
+import { ProfessorProfile } from './app/views/profile/ProfessorProfile';
 import { Classes } from './app/views/classes/Classes';
 import { NewClass } from './app/views/classes/NewClass';
 import { NewEvent } from './app/views/events/NewEvent';
@@ -45,9 +50,14 @@ const NavigationStack = createStackNavigator({
     Doubt: { screen: Doubt},
     NewDoubt: { screen: NewDoubt },
     MaterialTabs: { screen: MaterialTabs },
+    NewQuiz: { screen: NewQuiz },
+    EditQuiz: { screen: EditQuiz },
+    NewQuestion: { screen: NewQuestion },
+    EditQuestion: { screen: EditQuestion },
     Question: { screen: Question },
     NewNotification: { screen: NewNotification },
-    Profile: { screen: Profile },
+    UserProfile: { screen: UserProfile },
+    ProfessorProfile: { screen: ProfessorProfile },
     ChooseRegisterScreen: { screen: ChooseRegister },
     Rank: { screen: Rank },
     SubscribeClass: { screen: SubscribeClass }

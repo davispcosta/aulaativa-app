@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, ScrollView, View, FlatList, TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import { Card, Button, Text, Icon } from 'react-native-elements';
 import { Rank } from './Rank';
-import { Profile } from '../profile/Profile';
+import { Profile } from '../profile/UserProfile';
 import { Constants } from '../../Constants';
 import * as firebase from 'firebase';
 
@@ -13,15 +13,41 @@ export class Board extends React.Component {
         this.state = {
             user: this.props.user,
             classUid: this.props.classUid,
+            professor: {},
             refreshing: false,
             notifications: []
         }
-        this.loadBoard()
+        this.loadNotifications()
+        this.loadClass()
     }
 
-    loadBoard = () => {
-        const { currentUser } = firebase.auth();
-        
+    loadProfessor = (professorUid) => {
+        ref = firebase.firestore().collection("users")
+        ref.where("uid", "==", professorUid).get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                professor = doc.data();
+            })
+            this.setState({ professor: professor })
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
+    }
+
+    loadClass = () => {
+        ref = firebase.firestore().collection("classes")
+        ref.where("uid", "==", this.state.classUid).get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                classroom = doc.data();
+            })
+            this.loadProfessor(classroom.professorUid)
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
+    }
+
+    loadNotifications = () => {
         ref = firebase.firestore().collection("notifications")
         let array = []
         ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
@@ -37,7 +63,7 @@ export class Board extends React.Component {
 
     onRefresh = () => {
         this.setState({ refreshing: true})
-        this.loadBoard()
+        this.loadNotifications()
     }
 
     render() {
@@ -53,7 +79,7 @@ export class Board extends React.Component {
                         />
         } else {
             profCard = <TouchableWithoutFeedback
-                        onPress={() => this.props.navigation.navigate('Profile', { screen: Profile})}>
+                        onPress={() => this.props.navigation.navigate('ProfessorProfile', { uid: this.state.professor.uid})}>
                             <Card flexDirection="row" wrapperStyle={{alignItems: 'center',}}>
                                 <Icon
                                     raised
@@ -65,7 +91,7 @@ export class Board extends React.Component {
 
                                 <View style={{marginLeft: 20}}>
                                     <Text>Professor</Text>
-                                    <Text h4>Adriano Augusto</Text>
+                                    <Text h4>{ this.state.professor.name}</Text>
                                 </View>
                             </Card>
                         </TouchableWithoutFeedback>

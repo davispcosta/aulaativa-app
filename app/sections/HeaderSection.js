@@ -46,7 +46,7 @@ export class HeaderSection extends Component {
     var rightAction = null
     if(this.props.goToProfile == true) {
       rightAction = <TouchableWithoutFeedback
-        onPress={() =>  this.props.navigation.navigate('Profile')}>
+        onPress={() =>  this.props.navigation.navigate('UserProfile')}>
         <Icon type='font-awesome' name='user' color='#f1f1f1'></Icon>
       </TouchableWithoutFeedback>
     }
