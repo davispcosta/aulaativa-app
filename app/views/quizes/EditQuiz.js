@@ -39,6 +39,21 @@ export class EditQuiz extends Component {
     }
 
   render() {
+
+    var emptyDiv;
+    if(this.state.questions.length == 0) {
+        emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui classes adicionadas ainda.</Text>
+                    <Image 
+                    style={styles.emptyIcon} 
+                    resizeMode='contain'
+                    source={require('../../assets/img/pencils.png')}
+                    />
+                </View>
+    } else {
+        emptyDiv = null;
+    }
+
     return(
         <View style={styles.container}>
             <HeaderSection navigation={this.props.navigation} goBack={true} />
@@ -54,6 +69,8 @@ export class EditQuiz extends Component {
                     buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
                     onPress={() => this.props.navigation.navigate('NewQuestion', { quizUid: this.state.quizUid})}
                 />
+
+                { emptyDiv }
 
                 <FlatList
                 data={this.state.questions}

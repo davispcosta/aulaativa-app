@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, FlatList, TouchableWithoutFeedback, RefreshControl } from 'react-native';
+import { StyleSheet, View, ScrollView, Image, FlatList, ActivityIndicator, TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import { Card, Text, Icon, Button } from 'react-native-elements'
 import { HeaderSection } from '../../sections/HeaderSection'
 import { Constants } from '../../Constants'
@@ -16,6 +16,7 @@ export class Classes extends React.Component {
         this.state = {
             classes: [],
             refreshing: false,
+            loading: true,
             user: {}
         }
         this.loadUser()
@@ -56,7 +57,7 @@ export class Classes extends React.Component {
             querySnapshot.forEach(function(doc) {
                 array.push(doc.data());
             })
-            this.setState({ classes: array, refreshing: false})
+            this.setState({ classes: array, refreshing: false, loading: false})
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -79,13 +80,34 @@ export class Classes extends React.Component {
             buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
             onPress={() => this.props.navigation.navigate('NewClass')}
             />
-        } else {
+        } else if(this.state.user.role == "Student") {
             btnNew = <Button
             title="INSCREVER-SE EM NOVA TURMA" 
             titleStyle={{ fontWeight: '700'}}
             buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
             onPress={() => this.props.navigation.navigate('SubscribeClass', { studentUid: this.state.user.uid })}
             />
+        }
+
+        var emptyDiv;
+        if(this.state.classes.length == 0 && !this.state.loading) {
+            emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui classes adicionadas ainda.</Text>
+                        <Image 
+                        style={styles.emptyIcon} 
+                        resizeMode='contain'
+                        source={require('../../assets/img/pencils.png')}
+                        />
+                    </View>
+        } else {
+            emptyDiv = null;
+        }
+
+        var loadingDiv;
+        if(this.state.loading == true) {
+            loadingDiv = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
+        } else {
+            loadingDiv = null
         }
         
         return(
@@ -101,7 +123,9 @@ export class Classes extends React.Component {
                     }
                 >
 
-                    
+                    { loadingDiv }
+
+                    { emptyDiv }
 
                     <FlatList
                     data={this.state.classes}
@@ -141,4 +165,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
+    emptyIcon: {
+        width: 100
+    }
 });

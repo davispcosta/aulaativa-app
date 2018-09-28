@@ -59,6 +59,21 @@ export class EditQuestion extends Component {
     }
 
   render() {
+
+    var emptyDiv;
+    if(this.state.alternatives.length == 0) {
+        emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui classes adicionadas ainda.</Text>
+                    <Image 
+                    style={styles.emptyIcon} 
+                    resizeMode='contain'
+                    source={require('../../assets/img/pencils.png')}
+                    />
+                </View>
+    } else {
+        emptyDiv = null;
+    }
+
     return(
         <View style={styles.container}>
             <HeaderSection navigation={this.props.navigation} goBack={true} />
@@ -89,6 +104,8 @@ export class EditQuestion extends Component {
                     title='ADICIONAR'
                     rounded={true}
                     fontWeight='800' />
+
+                { emptyDiv }
 
                 <FlatList
                 data={this.state.alternatives}
