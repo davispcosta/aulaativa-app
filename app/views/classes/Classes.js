@@ -15,10 +15,12 @@ export class Classes extends React.Component {
         super(props);
         this.state = {
             classes: [],
+            myclasses: [],
             subscription: {},
             refreshing: false,
             loading: true,
-            user: {}
+            user: {},
+            subscriptions: []
         }
         this.loadUser()
     }
@@ -32,7 +34,9 @@ export class Classes extends React.Component {
             querySnapshot.forEach(function (doc) {
                 user = doc.data();
             })
-            this.setState({ user: user }, () => this.loadClasses())
+            this.setState({ user: user },
+                () => { this.loadClasses() },
+                () => { this.loadUsersSubscriptions() })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -65,6 +69,38 @@ export class Classes extends React.Component {
             console.log(error)
             alert(error.message)
         })
+
+    }
+
+    loadUsersSubscriptions = () => {
+        ref = firebase.firestore().collection("subscriptions")
+        ref.where("studentUid", "==", this.state.user.uid)
+            .where("accepted", "==", true).get().then(function (querySnapshot) {
+                var subs = []
+                querySnapshot.forEach(function (doc) {
+                    subs.push(doc.data())
+                })
+                this.setState({ subscriptions: subs }, () => { this.myclasses() })
+            }.bind(this)).catch(function (error) {
+                console.log(error)
+                alert(error.message)
+            })
+    }
+
+    myClasses = () => {
+        if (this.state.user.role == "Student") {
+            let array = []
+            this.state.classes.forEach(function (classes) {
+                this.state.subscriptions.forEach(function (subs) {
+                    if (classes.uid == subs.classUid) {
+                        this.state.myclasses.push(classes)
+                    } else {
+                        array.push(classes)
+                    }
+                })
+            })
+            this.setState({ classes: array })
+        }
     }
 
     loadSubscription = (userUid, classUid) => {
@@ -135,63 +171,109 @@ export class Classes extends React.Component {
 
         var btnNew;
         var allClasses;
+        var allMyClasses;
 
         if (this.state.user.role == "Professor") {
             btnNew = <Button
                 title="NOVA TURMA"
                 titleStyle={{ fontWeight: '700' }}
                 buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                onPress={() => this.props.navigation.navigate('NewClass')}
+                onPress={() => this.props.navigation.navigate('NewClass', { instituitionUid: this.state.user.instituitionUid })}
             />
-            allClasses = <FlatList
-                data={this.state.classes}
-                keyExtractor={item => item.uid.toString()}
-                renderItem={({ item }) => (
-                    <TouchableWithoutFeedback
-                        onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: item.uid.toString() })}
-                    >
-                        <Card flexDirection="row">
-                            <Icon
-                                raised
-                                containerStyle={{ backgroundColor: '#AFAFAF' }}
-                                name='class'
-                                color='#f1f1f1'
-                            />
-                            <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
-                                <Text
-                                    fontFamily='montserrat_semi_bold'
-                                    style={{ color: Constants.Colors.Primary }}
-                                    h5>{item.name}</Text>
-                            </View>
-                        </Card>
-                    </TouchableWithoutFeedback>
-                )}
-            />
+            allClasses = <View>
+                <Text style={styles.baseText} h5> Minhas disciplinas: </Text>
+                <FlatList
+                    data={this.state.classes}
+                    keyExtractor={item => item.uid.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableWithoutFeedback
+                            onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: item.uid.toString() })}
+                        >
+                            <Card flexDirection="row">
+                                <Icon
+                                    raised
+                                    containerStyle={{ backgroundColor: '#AFAFAF' }}
+                                    name='class'
+                                    color='#f1f1f1'
+                                />
+                                <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
+                                    <Text
+                                        fontFamily='montserrat_semi_bold'
+                                        style={{ color: Constants.Colors.Primary }}
+                                        h5>{item.name}</Text>
+                                </View>
+                            </Card>
+                        </TouchableWithoutFeedback>
+                    )}
+                />
+            </View>
 
         } else {
-            allClasses = <FlatList
-                data={this.state.classes}
-                keyExtractor={item => item.uid.toString()}
-                renderItem={({ item }) => (
-                    <TouchableWithoutFeedback
-                        onPress={() => this.loadSubscription(this.state.user.uid, item.uid)}
-                    >
-                        <Card flexDirection="row">
-                            <Icon
-                                raised
-                                containerStyle={{ backgroundColor: '#AFAFAF' }}
-                                name='class'
-                                color='#f1f1f1'
-                            />
-                            <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
-                                <Text
-                                    fontFamily='montserrat_semi_bold'
-                                    style={{ color: Constants.Colors.Primary }}
-                                    h5>{item.name}</Text>
-                            </View>
-                        </Card>
-                    </TouchableWithoutFeedback>
-                )} />
+            if (this.state.myclasses.length == 0) {
+                allMyClasses = <Text style={styles.baseText} h5>Você ainda não se cadastrou em nenhuma discipina.</Text>
+            } else {
+                allMyClasses = <View>
+                    <Text h4 style={styles.baseText} h5>Minhas disciplinas: </Text>
+                    <FlatList
+                        data={this.state.myclasses}
+                        keyExtractor={item => item.uid.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableWithoutFeedback
+                                onPress={() => this.loadSubscription(this.state.user.uid, item.uid)}
+                            >
+                                <Card flexDirection="row">
+                                    <Icon
+                                        raised
+                                        containerStyle={{ backgroundColor: '#AFAFAF' }}
+                                        name='class'
+                                        color='#f1f1f1'
+                                    />
+                                    <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
+                                        <Text
+                                            fontFamily='montserrat_semi_bold'
+                                            style={{ color: Constants.Colors.Primary }}
+                                            h5>{item.name}</Text>
+                                    </View>
+                                </Card>
+                            </TouchableWithoutFeedback>
+                        )} />
+                </View>
+            }
+
+            <View
+                style={{
+                    borderBottomColor: Constants.Colors.Primary,
+                    borderBottomWidth: 1,
+                }}
+            />
+
+            allClasses = <View>
+                <Text style={styles.baseText} h5> Outras disciplinas desse curso: </Text>
+                <FlatList
+                    data={this.state.classes}
+                    keyExtractor={item => item.uid.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableWithoutFeedback
+                            onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: item.uid.toString() })}
+                        >
+                            <Card flexDirection="row">
+                                <Icon
+                                    raised
+                                    containerStyle={{ backgroundColor: '#AFAFAF' }}
+                                    name='class'
+                                    color='#f1f1f1'
+                                />
+                                <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
+                                    <Text
+                                        fontFamily='montserrat_semi_bold'
+                                        style={{ color: Constants.Colors.Primary }}
+                                        h5>{item.name}</Text>
+                                </View>
+                            </Card>
+                        </TouchableWithoutFeedback>
+                    )}
+                />
+            </View>
         }
 
         var emptyDiv;
@@ -220,6 +302,7 @@ export class Classes extends React.Component {
                 <HeaderSection navigation={this.props.navigation} logOut={true} goToProfile={true} />
 
                 {btnNew}
+                {allMyClasses}
                 {allClasses}
 
                 <ScrollView
@@ -241,5 +324,11 @@ const styles = StyleSheet.create({
     },
     emptyIcon: {
         width: 100
+    },
+    baseText: {
+        color: Constants.Colors.Primary,
+        paddingHorizontal: 20,
+        paddingTop: 20,
+        fontFamily: "montserrat_bold"
     }
 });

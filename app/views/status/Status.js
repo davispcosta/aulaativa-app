@@ -20,7 +20,12 @@ export class Status extends React.Component {
             usersAccepted: [],
             unsupportedUsers: []
         }
-        this.loadUser()
+    }
+
+    componentDidMount = () => {
+        this.loadUser();
+        this.loadUnsupportedSubscriptions();
+        this.loadSupportedSubscriptions();
     }
 
     loadUser = () => {
@@ -32,9 +37,7 @@ export class Status extends React.Component {
             querySnapshot.forEach(function (doc) {
                 user = doc.data();
             })
-            this.setState({ user: user },
-                () => { this.loadUnsupportedSubscriptions() },
-                () => { this.loadSupportedSubscriptions() })
+            this.setState({ user: user })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -42,35 +45,39 @@ export class Status extends React.Component {
     }
 
     loadAcceptedUsers = () => {
-        let array = []
-        ref = firebase.firestore().collection("users")
-        this.state.subsAccepted.forEach((element) => {
-            ref.where("uid", "==", element.studentUid).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    array.push(doc.data())
+        if (this.state.subsAccepted.length > 0) {
+            let array = []
+            ref = firebase.firestore().collection("users")
+            this.state.subsAccepted.forEach((element) => {
+                ref.where("uid", "==", element.studentUid).get().then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                        array.push(doc.data())
+                    })
+                    this.setState({ usersAccepted: array })
+                }.bind(this)).catch(function (error) {
+                    console.log(error)
+                    alert(error.message)
                 })
-                this.setState({ usersAccepted: array })
-            }.bind(this)).catch(function (error) {
-                console.log(error)
-                alert(error.message)
             })
-        })
+        }
     }
 
     loadUnsupportedUsers = () => {
-        let array = []
-        ref = firebase.firestore().collection("users")
-        this.state.unsupportedSubs.forEach((element) => {
-            ref.where("uid", "==", element.studentUid).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    array.push(doc.data())
+        if (this.state.unsupportedSubs.length > 0) {
+            let array = []
+            ref = firebase.firestore().collection("users")
+            this.state.unsupportedSubs.forEach((element) => {
+                ref.where("uid", "==", element.studentUid).get().then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                        array.push(doc.data())
+                    })
+                    this.setState({ unsupportedUsers: array })
+                }.bind(this)).catch(function (error) {
+                    console.log(error)
+                    alert(error.message)
                 })
-                this.setState({ unsupportedUsers: array })
-            }.bind(this)).catch(function (error) {
-                console.log(error)
-                alert(error.message)
             })
-        })
+        }
     }
 
     loadUnsupportedSubscriptions = () => {
@@ -89,14 +96,16 @@ export class Status extends React.Component {
     }
 
     loadSupportedSubscriptions = () => {
+        alert('cheguei')
         ref = firebase.firestore().collection("subscriptions")
         ref.where("classUid", "==", this.state.classUid)
             .where("accepted", "==", true).get().then(function (querySnapshot) {
-                var subs = []
+                var sub = []
                 querySnapshot.forEach(function (doc) {
-                    subs.push(doc.data())
+                    sub.push(doc.data())
                 })
-                this.setState({ subsAccepted: subs }, () => this.loadAcceptedUsers())
+                alert('aqui tb')
+                this.setState({ subsAccepted: sub }, () => { this.loadAcceptedUsers() })
             }.bind(this)).catch(function (error) {
                 console.log(error)
                 alert(error.message)
@@ -104,19 +113,27 @@ export class Status extends React.Component {
     }
 
     acceptedRequest = (uid) => {
-        alert(
+        let subscriptionUid =
             this.state.unsupportedSubs.find(function (element) {
                 return element.studentUid == uid
-            }).uid
-        )
-        // firebase.firestore().doc('accepted').update({
-        //     'accepted': true
-        // })
+            }).uid;
+
+        // ref = firebase.firestore().collection('subscriptions')
+        //                 .doc(subscriptionUid)
+        //                 .set({accepted: true});
+    }
+
+    refuseRequest = (uid) => {
+        console.log('rejeitar')
+
+        ref = firebase.firestore().collection('subscriptions')
+
+        //ref.where()
     }
 
     generateFaults() {
         const faults = [];
-        for(let i=0; i<10; i++) {
+        for (let i = 0; i < 10; i++) {
             faults.push(
                 <Icon
                     key={i}
@@ -130,8 +147,12 @@ export class Status extends React.Component {
 
     render() {
         let screen = null;
-
+        let usersActive = null;
         if (this.state.user.role == "Professor") {
+            if (this.state.unsupportedUsers.length == 0) {
+                screen = <Text style={styles.subtitle} h4>Sem solicitações de novos alunos.</Text>
+
+            } else {
                 screen = <View>
                     <Text style={styles.subtitle} h4>Novas solicitações:</Text>
                     <FlatList
@@ -149,7 +170,7 @@ export class Status extends React.Component {
                                     title="Rejeitar"
                                     titleStyle={{ fontWeight: '700' }}
                                     buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                                    onPress={() => console.log('rejeitei')}
+                                    onPress={() => this.refuseRequest(item.uid)}
                                 />
                             </Card>
                         )} />
@@ -159,15 +180,24 @@ export class Status extends React.Component {
                             borderBottomWidth: 1,
                         }}
                     />
+                </View>
+
+            }
+            if (this.state.usersAccepted.length == 0) {
+                usersActive = <Text style={styles.subtitle} h4>Sem alunos ativos.</Text>
+
+            } else {
+                usersActive = <View>
                     <Text style={styles.subtitle} h4>Alunos ativos:</Text>
                     <FlatList
                         data={this.state.usersAccepted}
                         keyExtractor={item => item.uid.toString()}
                         renderItem={({ item }) => (
-                            <Card title={item.name}>
+                            <Card title={item.name + ' - ' + item.role}>
                             </Card>
                         )} />
                 </View>
+            }
         } else {
             screen =
                 <View>
@@ -182,7 +212,7 @@ export class Status extends React.Component {
                     <FlatList
                         data={achievements}
                         keyExtractor={item => item.id.toString()}
-                        renderItem={({item}) => (
+                        renderItem={({ item }) => (
                             <Card title={item.title}>
                             </Card>
                         )}
@@ -193,6 +223,7 @@ export class Status extends React.Component {
         return (
             <View style={styles.container}>
                 {screen}
+                {usersActive}
             </View>
         );
     }
@@ -220,7 +251,7 @@ const styles = StyleSheet.create({
 const achievements = [{
     id: 0,
     title: 'Trabalho Entregue',
-},{
+}, {
     id: 1,
     title: 'Ponto Na VP1',
 }]

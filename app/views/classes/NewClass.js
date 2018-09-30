@@ -11,7 +11,8 @@ export class NewClass extends Component {
     super(props);
     this.state = {
       name: '',
-      qntAbsence: ''
+      qntAbsence: '',
+      instituitionUid: this.props.navigation.state.params.instituitionUid
     };
   }
 
@@ -21,7 +22,7 @@ export class NewClass extends Component {
     var newKey = firebase.database().ref().child('classes').push().key;
 
     ref = firebase.firestore().collection('classes') 
-    ref.add({ uid: newKey, qntAbsence: this.state.qntAbsence, name: this.state.name, professorUid: currentUser.uid}).then((response) => {
+    ref.add({ uid: newKey, qntAbsence: this.state.qntAbsence, name: this.state.name, professorUid: currentUser.uid, instituitionUid: this.state.instituitionUid}).then((response) => {
         this.props.navigation.goBack()
     }).catch((error) => {
         alert(error.message)
