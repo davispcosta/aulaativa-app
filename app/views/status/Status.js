@@ -132,7 +132,6 @@ export class Status extends React.Component {
         let screen = null;
 
         if (this.state.user.role == "Professor") {
-            if (this.state.unsupportedSubs.length > 0) {
                 screen = <View>
                     <Text style={styles.subtitle} h4>Novas solicitações:</Text>
                     <FlatList
@@ -169,9 +168,6 @@ export class Status extends React.Component {
                             </Card>
                         )} />
                 </View>
-            } else {
-                screen = <Text>Sem solicitações de alunos.</Text>
-            }
         } else {
             screen =
                 <View>
