@@ -11,6 +11,7 @@ export class SubscribeClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      studentUid: this.props.navigation.state.params.studentUid,
       classUid: '',
       refreshing: false,
       classes: []
@@ -34,7 +35,22 @@ export class SubscribeClass extends Component {
     })
   }
 
+  subscribeClass = () => {
+    var newKey = firebase.database().ref().child('subscriptions').push().key;
+
+    ref = firebase.firestore().collection('subscriptions') 
+    ref.add({ uid: newKey, qntAbsence: 0, exp: 0, studentUid: this.state.studentUid, classUid: this.state.classUid}).then((response) => {
+        this.props.navigation.goBack()
+    }).catch((error) => {
+        alert(error.message)
+    })
+  }
+
   render() {
+
+    let cursos = this.state.classes.map( classroom => {
+      return <Picker.Item key={classroom.uid} value={classroom.uid} label={classroom.name} style={{ width:"100%" }} />
+    });
     return (
       <View style={styles.container}>
         <HeaderSection navigation={this.props.navigation} goBack={true} />
@@ -46,9 +62,8 @@ export class SubscribeClass extends Component {
           <Picker
             selectedValue={this.state.classUid}
             style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue, itemIndex) => this.setState({classUid: itemValue})}>
-            <Picker.Item label="Java" value="java" />
-            <Picker.Item label="JavaScript" value="js" />
+            onValueChange={(uid) => this.setState({classUid: uid}, () => { console.log("this.state.uid"); console.log(this.state.uid) })}>
+            {cursos}
           </Picker>
 
           <Button
@@ -56,7 +71,7 @@ export class SubscribeClass extends Component {
             backgroundColor={Constants.Colors.Primary}
             color='#FFFFFF'
             buttonStyle={styles.registerBtn}
-            onPress={ () => this.newClass()}
+            onPress={ () => this.subscribeClass()}
             rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
             title='INSCREVER-SE'
             rounded={true}

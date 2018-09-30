@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, Picker } from 'react-native';
-import { FormLabel, FormInput, FormValidationMessage, Button, Text } from 'react-native-elements';
+import { FormInput, Button, Text } from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { HeaderSection } from '../../sections/HeaderSection';
 import * as firebase from 'firebase';
 import { Constants } from '../../Constants';
 
@@ -66,51 +67,55 @@ export class Register extends React.Component {
 
     render() { 
         return(
-            <ScrollView style={styles.container} keyboardShouldPersistTaps={"always"}>
-                <View style={styles.cardContainer}>
-                    <Spinner visible={false} textContent={"Carregando..."} textStyle={{ color: '#FFF'}} />
-                    <Text h2 style={styles.title}>CADASTRO</Text>
+            <View style={{flex: 1}} >
+                <HeaderSection navigation={this.props.navigation} goBack={true} />
 
-                    <FormInput placeholder="Email"
-                    autoCapitalize="none"
-                    keyboardType='email-address'
-                    onChangeText={(email) => this.setState({email})}/>
+                <ScrollView style={styles.container} keyboardShouldPersistTaps={"always"}>
+                    <View style={styles.cardContainer}>
+                        <Spinner visible={false} textContent={"Carregando..."} textStyle={{ color: '#FFF'}} />
+                        <Text h2 style={styles.title}>CADASTRO</Text>
 
-                    <FormInput placeholder="Nome"
-                    onChangeText={(name) => this.setState({name})}/>
-                    {/* <FormValidationMessage>Campo inválido</FormValidationMessage> */}
+                        <FormInput placeholder="Email"
+                        autoCapitalize="none"
+                        keyboardType='email-address'
+                        onChangeText={(email) => this.setState({email})}/>
 
-                    <FormInput placeholder="Senha"
-                    autoCapitalize="none"
-                    secureTextEntry={true}
-                    onChangeText={(password) => this.setState({password})}/>
-                    {/* <FormValidationMessage>Campo inválido</FormValidationMessage> */}
+                        <FormInput placeholder="Nome"
+                        onChangeText={(name) => this.setState({name})}/>
+                        {/* <FormValidationMessage>Campo inválido</FormValidationMessage> */}
 
-                    <Text h5 style={styles.baseText}>
-                        Escolha sua instituição:
-                    </Text>
-                    <Picker
-                        style={styles.pickerBase}
-                        selectedValue = {this.state.instituitionUid}
-                        onValueChange={(itemValue, itemIndex) => this.setState({instituitionUid: itemValue})}>
-                        {this.state.instituitions.map((item, key) => {
-                            return (<Picker.Item label = {item.name} value = {item.uid} key = {key}/>)
-                        })}
-                    </Picker>
+                        <FormInput placeholder="Senha"
+                        autoCapitalize="none"
+                        secureTextEntry={true}
+                        onChangeText={(password) => this.setState({password})}/>
+                        {/* <FormValidationMessage>Campo inválido</FormValidationMessage> */}
 
-                    <Button
-                    small
-                    backgroundColor={Constants.Colors.Primary}
-                    color='#FFFFFF'
-                    buttonStyle={styles.registerBtn}
-                    rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
-                    title='CONTINUAR'
-                    rounded={true}
-                    onPress={() => this.register()}
-                    fontWeight='800' />
+                        <Text h5 style={styles.baseText}>
+                            Escolha sua instituição:
+                        </Text>
+                        <Picker
+                            style={styles.pickerBase}
+                            selectedValue = {this.state.instituitionUid}
+                            onValueChange={(itemValue, itemIndex) => this.setState({instituitionUid: itemValue})}>
+                            {this.state.instituitions.map((item, key) => {
+                                return (<Picker.Item label = {item.name} value = {item.uid} key = {key}/>)
+                            })}
+                        </Picker>
 
-                </View>
-            </ScrollView>
+                        <Button
+                        small
+                        backgroundColor={Constants.Colors.Primary}
+                        color='#FFFFFF'
+                        buttonStyle={styles.registerBtn}
+                        rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
+                        title='CONTINUAR'
+                        rounded={true}
+                        onPress={() => this.register()}
+                        fontWeight='800' />
+
+                    </View>
+                </ScrollView>
+            </View>
         );
     }
 }
@@ -119,7 +124,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF',
-        paddingTop: 60,
+        paddingTop: 20,
         paddingHorizontal: 20        
     },
     cardContainer: {

@@ -17,6 +17,7 @@ export class Classes extends React.Component {
             classes: [],
             subscription: {},
             refreshing: false,
+            loading: true,
             user: {}
         }
         this.loadUser()
@@ -193,6 +194,27 @@ export class Classes extends React.Component {
                 )} />
         }
 
+        var emptyDiv;
+        if (this.state.classes.length == 0 && !this.state.loading) {
+            emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30 }} h4>Você não possui classes adicionadas ainda.</Text>
+                <Image
+                    style={styles.emptyIcon}
+                    resizeMode='contain'
+                    source={require('../../assets/img/pencils.png')}
+                />
+            </View>
+        } else {
+            emptyDiv = null;
+        }
+
+        var loadingDiv;
+        if (this.state.loading == true) {
+            loadingDiv = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
+        } else {
+            loadingDiv = null
+        }
+
         return (
             <View style={styles.container}>
                 <HeaderSection navigation={this.props.navigation} logOut={true} goToProfile={true} />
@@ -204,8 +226,10 @@ export class Classes extends React.Component {
                     refreshControl={
                         <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
                     }>
-                </ScrollView>
 
+                    {loadingDiv}
+                    {emptyDiv}
+                </ScrollView>
             </View>
         );
     }
@@ -215,4 +239,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1
     },
+    emptyIcon: {
+        width: 100
+    }
 });

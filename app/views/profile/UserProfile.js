@@ -5,7 +5,7 @@ import { Constants } from '../../Constants';
 import { HeaderSection } from '../../sections/HeaderSection'
 import * as firebase from 'firebase';
 
-export class Profile extends Component {
+export class UserProfile extends Component {
   
   constructor(props) {
     super(props);
@@ -17,7 +17,6 @@ export class Profile extends Component {
 
   componentDidMount = () => {
     this.loadUser();
-    this.loadClasses();
   }
 
   loadUser = () => {
@@ -30,6 +29,7 @@ export class Profile extends Component {
             user = doc.data();
         })
         this.setState({ user: user })
+        this.loadClasses();
     }.bind(this)).catch(function (error) {
         console.log(error)
         alert(error.message)
@@ -37,11 +37,20 @@ export class Profile extends Component {
   }
 
   loadClasses = () => {
+
+    if(this.state.user.role == "Professor") {
+      table = "classes"
+      uid = "professorUid"
+  } else {
+      table = "subscriptions"
+      uid = "studentUid"
+  }
+
     const { currentUser } = firebase.auth();
     
-    ref = firebase.firestore().collection("classes")
+    ref = firebase.firestore().collection(table)
     let array = []
-    ref.where("professorUid", "==", currentUser.uid).get().then(function(querySnapshot) {
+    ref.where(uid, "==", currentUser.uid).get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
             array.push(doc.data());
         })
