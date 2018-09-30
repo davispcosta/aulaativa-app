@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, FlatList, TouchableWithoutFeedback, RefreshControl } from 'react-native';
+import { StyleSheet, View, ScrollView, Alert, FlatList, TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import { Card, Text, Icon, Button } from 'react-native-elements'
 import { HeaderSection } from '../../sections/HeaderSection'
 import { Constants } from '../../Constants'
@@ -15,10 +15,10 @@ export class Classes extends React.Component {
         super(props);
         this.state = {
             classes: [],
+            subscription: {},
             refreshing: false,
             user: {}
         }
-        this.loadClasses()
         this.loadUser()
     }
 
@@ -26,12 +26,12 @@ export class Classes extends React.Component {
         const { currentUser } = firebase.auth();
 
         ref = firebase.firestore().collection("users")
-        ref.where("uid", "==", currentUser.uid).get().then(function(querySnapshot) {
+        ref.where("uid", "==", currentUser.uid).get().then(function (querySnapshot) {
             var user = {}
-            querySnapshot.forEach(function(doc) {
+            querySnapshot.forEach(function (doc) {
                 user = doc.data();
             })
-            this.setState({ user: user })
+            this.setState({ user: user }, () => this.loadClasses())
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -40,87 +40,170 @@ export class Classes extends React.Component {
 
     loadClasses = () => {
         const { currentUser } = firebase.auth();
-        
+
         ref = firebase.firestore().collection("classes")
         let array = []
-        ref.where("professorUid", "==", currentUser.uid).get().then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc) {
+
+        let uid;
+        let userUid;
+
+        if (this.state.user.role == "Professor") {
+            uid = "professorUid"
+            userUid = currentUser.uid
+        } else {
+            uid = "instituitionUid"
+            userUid = this.state.user.instituitionUid
+        }
+
+        ref.where(uid, "==", userUid).get().then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
                 array.push(doc.data());
             })
-            this.setState({ classes: array, refreshing: false})
+            this.setState({ classes: array, refreshing: false })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
         })
     }
 
-    onRefresh = () => {
-        this.setState({ refreshing: true})
-        this.loadClasses()
+    loadSubscription = (userUid, classUid) => {
+        const { currenstUser } = firebase.auth();
+
+        ref = firebase.firestore().collection('subscriptions')
+        let subs = {}
+        ref.where("studentUid", "==", userUid)
+            .where("classUid", "==", classUid).get().then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                    subs = doc.data();
+                })
+                this.setState({ subscription: subs }, () => {
+                    this.verifySubscription(classUid)
+                })
+            }.bind(this)).catch(function (error) {
+                console.log(error)
+                alert(error.message)
+            })
     }
-    
-    render() {
-        
-        var btnNew;
 
-        if(this.state.user.role == "Professor") {
-            btnNew = <Button
-            title="NOVA TURMA" 
-            titleStyle={{ fontWeight: '700'}}
-            buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-            onPress={() => this.props.navigation.navigate('NewClass')}
-            />
+    verifySubscription = (classUid) => {
+        if (this.state.subscription.uid == undefined) {
+            Alert.alert(
+                'Atenção!',
+                'Você não está inscrito nessa disciplina.',
+                [
+                    { text: 'Inscrever-se?', onPress: () => this.seekSubscription(classUid) },
+                    { text: 'Cancelar', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                    { text: 'Ok', onPress: () => console.log('OK Pressed') },
+                ],
+                { cancelable: false }
+            )
+        } else if (!this.state.subscription.accepted) {
+            Alert.alert(
+                'Atenção!',
+                'Sua requisição para essa disciplina ainda não foi aceita.',
+                [
+                    { text: 'Cancelar', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                    { text: 'Ok', onPress: () => console.log('OK Pressed') },
+                ],
+                { cancelable: false }
+            )
         } else {
-            btnNew = <Button
-            title="INSCREVER-SE EM NOVA TURMA" 
-            titleStyle={{ fontWeight: '700'}}
-            buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-            onPress={() => this.props.navigation.navigate('SubscribeClass')}
-            />
+            this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: classUid })
         }
-        
-        return(
-            <View style={styles.container}>
+    }
 
-                <HeaderSection navigation={this.props.navigation} logOut={true} goToProfile={true}/>
+    seekSubscription = (classUid) => {
+        const { currentUser } = firebase.auth();
 
-                { btnNew }
+        var newKey = firebase.database().ref().child('subscriptions').push().key;
 
-                <ScrollView
-                    refreshControl={
-                        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
-                    }
-                >
+        ref = firebase.firestore().collection('subscriptions')
+        ref.add({ accepted: false, classUid: classUid, exp: 0, qntAbsence: 0, studentUid: currentUser.uid, uid: newKey }).then((response) => {
+            alert('Solicitação enviada com sucesso.')
+        }).catch((error) => {
+            alert(error.message)
+        })
+    }
 
-                    
+    onRefresh = () => {
+        this.setState({ refreshing: true })
+        this.loadUser()
+    }
 
-                    <FlatList
-                    data={this.state.classes}
-                    keyExtractor={item => item.uid.toString()}
-                    renderItem={({item}) => (
-                        <TouchableWithoutFeedback
+    render() {
+
+        var btnNew;
+        var allClasses;
+
+        if (this.state.user.role == "Professor") {
+            btnNew = <Button
+                title="NOVA TURMA"
+                titleStyle={{ fontWeight: '700' }}
+                buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
+                onPress={() => this.props.navigation.navigate('NewClass')}
+            />
+            allClasses = <FlatList
+                data={this.state.classes}
+                keyExtractor={item => item.uid.toString()}
+                renderItem={({ item }) => (
+                    <TouchableWithoutFeedback
                         onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: item.uid.toString() })}
-                        >
+                    >
                         <Card flexDirection="row">
                             <Icon
                                 raised
-                                containerStyle={{backgroundColor:'#AFAFAF'}}
+                                containerStyle={{ backgroundColor: '#AFAFAF' }}
                                 name='class'
                                 color='#f1f1f1'
-                                />
-                            <View style={{marginLeft: 20, width: 0, flexGrow: 1, flex: 1}}>
+                            />
+                            <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
                                 <Text
-                                fontFamily='montserrat_semi_bold'
-                                style={{color: Constants.Colors.Primary}}
-                                h5>{item.name}</Text>
-                                {/* <Text>{item.professor}</Text> */}
-                                {/* <Text style={{color: "gray"}}>{item.alunos} alunos</Text> */}
+                                    fontFamily='montserrat_semi_bold'
+                                    style={{ color: Constants.Colors.Primary }}
+                                    h5>{item.name}</Text>
                             </View>
                         </Card>
-                        </TouchableWithoutFeedback>
-                    )}
-                    />
+                    </TouchableWithoutFeedback>
+                )}
+            />
 
+        } else {
+            allClasses = <FlatList
+                data={this.state.classes}
+                keyExtractor={item => item.uid.toString()}
+                renderItem={({ item }) => (
+                    <TouchableWithoutFeedback
+                        onPress={() => this.loadSubscription(this.state.user.uid, item.uid)}
+                    >
+                        <Card flexDirection="row">
+                            <Icon
+                                raised
+                                containerStyle={{ backgroundColor: '#AFAFAF' }}
+                                name='class'
+                                color='#f1f1f1'
+                            />
+                            <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
+                                <Text
+                                    fontFamily='montserrat_semi_bold'
+                                    style={{ color: Constants.Colors.Primary }}
+                                    h5>{item.name}</Text>
+                            </View>
+                        </Card>
+                    </TouchableWithoutFeedback>
+                )} />
+        }
+
+        return (
+            <View style={styles.container}>
+                <HeaderSection navigation={this.props.navigation} logOut={true} goToProfile={true} />
+
+                {btnNew}
+                {allClasses}
+
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                    }>
                 </ScrollView>
 
             </View>
@@ -128,7 +211,7 @@ export class Classes extends React.Component {
     }
 }
 
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
     container: {
         flex: 1
     },
