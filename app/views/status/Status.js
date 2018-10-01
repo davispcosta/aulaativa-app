@@ -96,7 +96,6 @@ export class Status extends React.Component {
     }
 
     loadSupportedSubscriptions = () => {
-        alert('cheguei')
         ref = firebase.firestore().collection("subscriptions")
         ref.where("classUid", "==", this.state.classUid)
             .where("accepted", "==", true).get().then(function (querySnapshot) {
@@ -104,7 +103,6 @@ export class Status extends React.Component {
                 querySnapshot.forEach(function (doc) {
                     sub.push(doc.data())
                 })
-                alert('aqui tb')
                 this.setState({ subsAccepted: sub }, () => { this.loadAcceptedUsers() })
             }.bind(this)).catch(function (error) {
                 console.log(error)
@@ -118,17 +116,35 @@ export class Status extends React.Component {
                 return element.studentUid == uid
             }).uid;
 
-        // ref = firebase.firestore().collection('subscriptions')
-        //                 .doc(subscriptionUid)
-        //                 .set({accepted: true});
+        ref = firebase.firestore().collection('subscriptions')
+
+        ref.where("uid", "==", subscriptionUid)
+            .get()
+            .then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                    console.log(doc.id, ' => ', doc.data())
+                    ref.doc(doc.id).update({ accepted: true })
+                })
+            })
+
     }
 
     refuseRequest = (uid) => {
-        console.log('rejeitar')
+        let subscriptionUid =
+            this.state.unsupportedSubs.find(function (element) {
+                return element.studentUid == uid
+            }).uid;
 
         ref = firebase.firestore().collection('subscriptions')
 
-        //ref.where()
+        ref.where("uid", "==", subscriptionUid)
+            .get()
+            .then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                    console.log(doc.id, ' => ', doc.data())
+                })
+            })
+
     }
 
     generateFaults() {
@@ -148,10 +164,10 @@ export class Status extends React.Component {
     render() {
         let screen = null;
         let usersActive = null;
+
         if (this.state.user.role == "Professor") {
             if (this.state.unsupportedUsers.length == 0) {
                 screen = <Text style={styles.subtitle} h4>Sem solicitações de novos alunos.</Text>
-
             } else {
                 screen = <View>
                     <Text style={styles.subtitle} h4>Novas solicitações:</Text>
@@ -174,14 +190,7 @@ export class Status extends React.Component {
                                 />
                             </Card>
                         )} />
-                    <View
-                        style={{
-                            borderBottomColor: 'black',
-                            borderBottomWidth: 1,
-                        }}
-                    />
                 </View>
-
             }
             if (this.state.usersAccepted.length == 0) {
                 usersActive = <Text style={styles.subtitle} h4>Sem alunos ativos.</Text>
@@ -223,6 +232,12 @@ export class Status extends React.Component {
         return (
             <View style={styles.container}>
                 {screen}
+                <View
+                    style={{
+                        borderBottomColor: 'black',
+                        borderBottomWidth: 1,
+                    }}
+                />
                 {usersActive}
             </View>
         );
