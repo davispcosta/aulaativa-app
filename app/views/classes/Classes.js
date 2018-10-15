@@ -208,9 +208,9 @@ export class Classes extends React.Component {
                 />
             </View>
 
-        } else {
+        } else if(this.state.user.role == "Student") {
             if (this.state.myclasses.length == 0) {
-                allMyClasses = <Text style={styles.baseText} h5>Você ainda não se cadastrou em nenhuma discipina.</Text>
+                allMyClasses = <Text style={styles.baseText} h5>Você ainda não se cadastrou em nenhuma disciplina.</Text>
             } else {
                 allMyClasses = <View>
                     <Text h4 style={styles.baseText} h5>Minhas disciplinas: </Text>
@@ -219,7 +219,7 @@ export class Classes extends React.Component {
                         keyExtractor={item => item.uid.toString()}
                         renderItem={({ item }) => (
                             <TouchableWithoutFeedback
-                                onPress={() => this.loadSubscription(this.state.user.uid, item.uid)}
+                                onPress={() => this.verifySubscription(item.uid)}
                             >
                                 <Card flexDirection="row">
                                     <Icon
@@ -254,7 +254,7 @@ export class Classes extends React.Component {
                     keyExtractor={item => item.uid.toString()}
                     renderItem={({ item }) => (
                         <TouchableWithoutFeedback
-                            onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classUid: item.uid.toString() })}
+                            onPress={() => this.loadSubscription(this.state.user.uid, item.uid)}
                         >
                             <Card flexDirection="row">
                                 <Icon
