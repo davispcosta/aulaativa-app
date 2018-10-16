@@ -9,6 +9,22 @@ export class Question extends React.Component {
         header: null
     }
 
+    loadQuestons = () => {
+        const { currentUser } = firebase.auth();
+        
+        ref = firebase.firestore().collection("quizes")
+        let array = []
+        ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                array.push(doc.data());
+            })
+            this.setState({ quizes: array, refreshing: false, loading: false})
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
+    }
+
     render() {
         return (
             <View style={styles.container}>

@@ -60,7 +60,7 @@ export class Classes extends React.Component {
             querySnapshot.forEach(function (doc) {
                 array.push(doc.data());
             })
-            this.setState({ classes: array, refreshing: false })
+            this.setState({ classes: array, refreshing: false, loading: false })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -131,6 +131,11 @@ export class Classes extends React.Component {
         this.loadUser()
     }
 
+    unMount = () => {
+        let mountNode = React.findDOMNode(this.refs.wassup);
+        let unmount = React.unmountComponentAtNode(mountNode)
+    }
+
     render() {
 
         var btnNew;
@@ -168,7 +173,7 @@ export class Classes extends React.Component {
                 )}
             />
 
-        } else {
+        } else if (this.state.user.role == "Student") {
             allClasses = <FlatList
                 data={this.state.classes}
                 keyExtractor={item => item.uid.toString()}
@@ -216,16 +221,16 @@ export class Classes extends React.Component {
         }
 
         return (
-            <View style={styles.container}>
-                <HeaderSection navigation={this.props.navigation} logOut={true} goToProfile={true} />
+            <View style={styles.container} ref="wassup">
+                <HeaderSection unmount={this.unMount()} navigation={this.props.navigation} logOut={true} goToProfile={true} />
 
                 {btnNew}
-                {allClasses}
 
                 <ScrollView
                     refreshControl={
                         <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
                     }>
+                    {allClasses}
 
                     {loadingDiv}
                     {emptyDiv}

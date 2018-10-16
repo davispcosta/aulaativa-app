@@ -18,6 +18,7 @@ export class HeaderSection extends Component {
   logOut = (navigation) => {
     try {
       firebase.auth().signOut().then(function(){
+          this.props.unmount();
           navigation.navigate('LoginScreen')
       }).catch(function (error) {
           console.log(error)

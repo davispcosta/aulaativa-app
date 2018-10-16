@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
+import { StyleSheet, ScrollView, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
 import { Card, Header, Text, Icon, Button } from 'react-native-elements'
 import * as firebase from 'firebase';
 import { Constants } from '../../Constants';
@@ -132,34 +132,32 @@ export class Status extends React.Component {
         let screen = null;
 
         if (this.state.user.role == "Professor") {
-                screen = <View>
-                    <Text style={styles.subtitle} h4>Novas solicitações:</Text>
+                screen = 
+                <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{ marginTop: 20,}} h4>Solicitações</Text>
                     <FlatList
                         data={this.state.unsupportedUsers}
                         keyExtractor={item => item.uid.toString()}
                         renderItem={({ item }) => (
-                            <Card title={item.name + ' - ' + item.role}>
-                                <Button
-                                    title="Aceitar"
-                                    titleStyle={{ fontWeight: '700' }}
-                                    buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                                    onPress={() => this.acceptedRequest(item.uid)}
-                                />
-                                <Button
-                                    title="Rejeitar"
-                                    titleStyle={{ fontWeight: '700' }}
-                                    buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                                    onPress={() => console.log('rejeitei')}
-                                />
+                            <Card style={{flex: 1}} flexDirection="column">
+                                <Text h5>Solicitante: {item.name}</Text>
+                                <View style={{flexDirection: 'row',}}>
+                                    <Button
+                                        title="Aceitar"
+                                        titleStyle={{ fontWeight: '700' }}
+                                        buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
+                                        onPress={() => this.acceptedRequest(item.uid)}
+                                    />
+                                    <Button
+                                        title="Rejeitar"
+                                        titleStyle={{ fontWeight: '700' }}
+                                        buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
+                                        onPress={() => console.log('rejeitei')}
+                                    />
+                                </View>
                             </Card>
                         )} />
-                    <View
-                        style={{
-                            borderBottomColor: 'black',
-                            borderBottomWidth: 1,
-                        }}
-                    />
-                    <Text style={styles.subtitle} h4>Alunos ativos:</Text>
+                    <Text h4>Alunos</Text>
                     <FlatList
                         data={this.state.usersAccepted}
                         keyExtractor={item => item.uid.toString()}
@@ -167,8 +165,8 @@ export class Status extends React.Component {
                             <Card title={item.name}>
                             </Card>
                         )} />
-                </View>
-        } else {
+                </ScrollView>
+        } else if (this.state.user.role == "Student")  {
             screen =
                 <View>
                     <Text style={styles.subtitle} h4>EXPERIÊNCIA</Text>
@@ -201,10 +199,6 @@ export class Status extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-    },
-    subtitle: {
-        margin: 20,
     },
     xpBar: {
         width: "80%",
