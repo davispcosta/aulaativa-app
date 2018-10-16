@@ -14,7 +14,7 @@ export class Quizes extends React.Component {
         super(props);
         this.state = {
             user: this.props.user,
-            classUid: this.props.classUid,
+            classUid: this.props.classroom.uid,
             refreshing: false,
             loading: true,
             quizes: []

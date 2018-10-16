@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, ScrollView, View, KeyboardAvoidingView, FlatList } from 'react-native';
 import { Card, Text, Icon } from 'react-native-elements'
 import { HeaderSection } from '../../sections/HeaderSection'
+import * as firebase from 'firebase';
 
 export class Rank extends React.Component {
 
@@ -9,8 +10,32 @@ export class Rank extends React.Component {
         header: null
     }
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            rank: [],
+            refreshing: false,
+            loadingRank: false
+        }
+        this.loadRank()
+    }
+
     goBack = () => {
         this.props.navigation.goBack()
+    }
+
+    loadRank = () => {
+        ref = firebase.firestore().collection("subscriptions")
+        let array = []
+        ref.where("classUid", "==", this.props.navigation.state.params.classroom.uid).orderBy("exp").get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                array.push(doc.data());
+            })
+            this.setState({ rank: array.reverse(), refreshing: false, loadingBoard: false})
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
     }
 
     render() { 
@@ -22,9 +47,9 @@ export class Rank extends React.Component {
                     <Text style={{alignSelf: 'center', marginTop: 10,}} h2>RANK</Text>
 
                     <FlatList
-                    data={students}
+                    data={this.state.rank}
                     keyExtractor={item => item.title}
-                    renderItem={({item}) => (
+                    renderItem={({item, index}) => (
                         <Card flexDirection='row' wrapperStyle={styles.studentCard}>
                             <Icon
                                 raised
@@ -33,8 +58,9 @@ export class Rank extends React.Component {
                                 type='font-awesome'
                                 color='#f1f1f1'
                             /> 
-                            <Text>Davi P. Costa</Text>
-                            <Text>1º</Text> 
+                            <Text>{item.name}</Text>
+                            <Text>{index+1}º</Text> 
+                            <Text>{item.exp}exp</Text> 
                         </Card>
                     )}
                     />
