@@ -151,10 +151,10 @@ export class Board extends React.Component {
                 </TouchableWithoutFeedback>
 
                 <TouchableWithoutFeedback
-                onPress={() => this.props.navigation.navigate('Achievements', { screen: Achievements})}>                    
+                onPress={() => this.props.navigation.navigate('Achievements', { classroom: this.state.classroom })}>                    
                     <Card containerStyle={{marginBottom: 20, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
                     flexDirection='row'>
-                        <Icon color='#f1f1f1' type='material-community' name='medal'/>
+                        <Icon color='#f1f1f1' type='ionicon' name='ios-medal'/>
                         <Text h3 style={{color: "white", fontWeight: 'bold',}}>CONQUISTAS</Text>
                         <Icon color='#f1f1f1' type='materialicons' name='keyboard-arrow-right' />
                     </Card>

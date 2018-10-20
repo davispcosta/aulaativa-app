@@ -24,7 +24,6 @@ import { NewNotification } from './app/views/board/NewNotification';
 import { Doubt } from './app/views/doubts/Doubt';
 import { NewDoubt } from './app/views/doubts/NewDoubt';
 import Loading from './app/views/login/Loading';
-import { NewQuestion } from './app/views/quizes/NewQuestion';
 import { Achievements } from './app/views/achievements/Achievements';
 import { NewAchievement } from './app/views/achievements/NewAchievement';
 

@@ -10,7 +10,7 @@ export class NewAchievement extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      classUid: this.props.navigation.state.params.classUid,
+      classroom: this.props.navigation.state.params.classroom,
       title: '',
     };
   }
@@ -21,7 +21,7 @@ export class NewAchievement extends Component {
     ref = firebase.firestore().collection('achievements') 
     ref.add({ uid: newKey, 
       title: this.state.title, 
-      classUid: this.state.classUid
+      classUid: this.state.classroom.uid
     }).then((response) => {
         this.props.navigation.goBack()
     }).catch((error) => {
@@ -45,7 +45,7 @@ export class NewAchievement extends Component {
             backgroundColor={Constants.Colors.Primary}
             color='#FFFFFF'
             buttonStyle={styles.registerBtn}
-            onPress={ () => this.newQuestion()}
+            onPress={ () => this.newAchievement()}
             rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
             title='SALVAR'
             rounded={true}

@@ -9,7 +9,7 @@ export class Achievements extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        classUid: this.props.navigation.state.params.classUid,
+        classroom: this.props.navigation.state.params.classroom,
         refreshing: false,
         loading: false,
         achievements: []
@@ -20,7 +20,7 @@ export class Achievements extends Component {
   loadAchievements = () => {    
     ref = firebase.firestore().collection("achievements")
     let array = []
-    ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
+    ref.where("classUid", "==", this.state.classroom.uid).get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
             array.push(doc.data());
         })
@@ -65,7 +65,7 @@ export class Achievements extends Component {
             title="ADICIONAR CONQUISTA" 
             titleStyle={{ fontWeight: '700'}}
             buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-            onPress={() => this.props.navigation.navigate('NewAchievement', { classUid: this.state.classUid})}
+            onPress={() => this.props.navigation.navigate('NewAchievement', { classroom: this.state.classroom})}
           />
 
           { emptyDiv }
@@ -76,7 +76,7 @@ export class Achievements extends Component {
             renderItem={({item}) => (
                 <TouchableWithoutFeedback
                 onPress={() => this.props.navigation.navigate('AchievementToStudents', { achievement: item })}>
-                <Card title={item.name} >
+                <Card title={item.title} >
                 </Card>
                 </TouchableWithoutFeedback>
             )}
@@ -87,3 +87,18 @@ export class Achievements extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1
+  },
+  emptyIcon: {
+      width: 100
+  },
+  baseText: {
+      color: Constants.Colors.Primary,
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      fontFamily: "montserrat_bold"
+  }
+});
