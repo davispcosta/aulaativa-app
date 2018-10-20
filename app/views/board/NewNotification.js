@@ -10,7 +10,7 @@ export class NewNotification extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      classUid: this.props.navigation.state.params.classUid,
+      classroom: this.props.navigation.state.params.classroom,
       title: '',
       description: '',
     };
@@ -25,7 +25,7 @@ export class NewNotification extends Component {
     ref.add({ uid: newKey, 
       title: this.state.title, 
       description: this.state.description, 
-      classUid: this.state.classUid, 
+      classUid: this.state.classroom.uid, 
       date: new Date()
     }).then((response) => {
         this.props.navigation.goBack()

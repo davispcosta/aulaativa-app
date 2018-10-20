@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Header, Icon } from 'react-native-elements';
+import { StackActions, NavigationActions } from 'react-navigation'
 import { Constants } from '../Constants';
 import * as firebase from 'firebase';
 
@@ -18,13 +19,11 @@ export class HeaderSection extends Component {
   logOut = (navigation) => {
     try {
       firebase.auth().signOut().then(function(){
-          navigation.dispatch(NavigationActions.reset(
-            {
-               index: 0,
-               actions: [
-                 NavigationActions.navigate({ routeName: 'Login'})
-               ]
-             }));
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'LoginScreen'})]
+        });
+          navigation.dispatch(resetAction)
       }).catch(function (error) {
           console.log(error)
           alert(error.message)
@@ -33,8 +32,6 @@ export class HeaderSection extends Component {
       console.log(error.toString())
     }
 }
-
-
   render() {
     var leftAction = null
     if(this.props.goBack == true) {
@@ -61,7 +58,7 @@ export class HeaderSection extends Component {
         <Header
             leftComponent={leftAction}
             backgroundColor={Constants.Colors.Primary}
-            centerComponent={{ text: 'APIS1', style: { color: '#fff', fontFamily: "montserrat_bold" } }}
+            centerComponent={{ text: this.props.title, style: { color: '#fff', fontFamily: "montserrat_bold" } }}
             rightComponent={rightAction}
         />
     );

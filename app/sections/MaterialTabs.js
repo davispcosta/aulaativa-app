@@ -69,23 +69,23 @@ export class MaterialTabs extends React.Component {
     <Board 
       navigation={this.props.navigation} 
       user={this.props.navigation.state.params.user}
-      classUid={this.props.navigation.state.params.classUid}/>, 
+      classroom={this.props.navigation.state.params.classroom}/>, 
     <Events 
       navigation={this.props.navigation}
       user={this.props.navigation.state.params.user}
-      classUid={this.props.navigation.state.params.classUid}/>, 
+      classroom={this.props.navigation.state.params.classroom}/>, 
     <Status 
       navigation={this.props.navigation}
       user={this.props.navigation.state.params.user}
-      classUid={this.props.navigation.state.params.classUid}/>,  
+      classroom={this.props.navigation.state.params.classroom}/>,  
     <Quizes 
       navigation={this.props.navigation}
       user={this.props.navigation.state.params.user}
-      classUid={this.props.navigation.state.params.classUid}/>, 
+      classroom={this.props.navigation.state.params.classroom}/>, 
     <Doubts 
       navigation={this.props.navigation}
       user={this.props.navigation.state.params.user}
-      classUid={this.props.navigation.state.params.classUid}/>
+      classroom={this.props.navigation.state.params.classroom}/>
     ]
 
     renderIcon = icon => ({ isActive }) => (
@@ -107,7 +107,7 @@ export class MaterialTabs extends React.Component {
       return (
         <View style={{ flex: 1 }}>
           <View style={{ flex: 1 }}>
-            <HeaderSection navigation={this.props.navigation} goBack={true} />
+            <HeaderSection title={this.props.navigation.state.params.classroom.name} navigation={this.props.navigation} goBack={true} />
             {this.views[this.state.activeView]}
           </View>
           <BottomNavigation

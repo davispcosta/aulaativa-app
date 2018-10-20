@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
+import { StyleSheet, ScrollView, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
 import { Card, Header, Text, Icon, Button } from 'react-native-elements'
 import * as firebase from 'firebase';
 import { Constants } from '../../Constants';
@@ -13,19 +13,36 @@ export class Status extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            classUid: this.props.navigation.state.params.classUid,
+            classUid: this.props.classroom.uid,
             user: {},
+            status: {},
             subsAccepted: [],
             unsupportedSubs: [],
             usersAccepted: [],
-            unsupportedUsers: []
+            unsupportedUsers: [],
+            achievements: []
         }
     }
 
     componentDidMount = () => {
-        this.loadUser();
-        this.loadUnsupportedSubscriptions();
-        this.loadSupportedSubscriptions();
+        this.loadUser();        
+    }
+
+    loadStatus = () => {
+        console.log('status')
+        const { currentUser } = firebase.auth();
+
+        ref = firebase.firestore().collection("subscriptions").where("classUid", "==", this.state.classUid)
+        ref.where("studentUid", "==", currentUser.uid).get().then(function (querySnapshot) {
+            var status = {}
+            querySnapshot.forEach(function (doc) {
+                status = doc.data();
+            })
+            this.setState({ status: status }, () => { console.log(this.state.status)})
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
     }
 
     loadUser = () => {
@@ -37,7 +54,14 @@ export class Status extends React.Component {
             querySnapshot.forEach(function (doc) {
                 user = doc.data();
             })
-            this.setState({ user: user })
+            this.setState({ user: user }, () =>{
+                if(user.role == "Professor") {
+                    this.loadUnsupportedSubscriptions();
+                    this.loadSupportedSubscriptions();
+                } else if(user.role == "Student") {
+                    this.loadStatus()
+                }
+            })            
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -129,6 +153,20 @@ export class Status extends React.Component {
 
     }
 
+    addFault = () => {
+        const { currentUser } = firebase.auth();
+
+        ref = firebase.firestore().collection("subscriptions")
+        ref.where("classUid", "==", this.state.classUid)
+            .where("studentUid", "==", currentUser.uid)
+            .get()
+            .then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                    ref.doc(doc.id).update({ qntAbsence: this.state.status.qntAbsence + 1 })
+                })
+            })
+    }
+
     refuseRequest = (uid) => {
         let subscriptionUid =
             this.state.unsupportedSubs.find(function (element) {
@@ -147,9 +185,9 @@ export class Status extends React.Component {
 
     }
 
-    generateFaults() {
+    generateFaults(classFaults, statusFaults) {
         const faults = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < classFaults; i++) {
             faults.push(
                 <Icon
                     key={i}
@@ -169,34 +207,37 @@ export class Status extends React.Component {
             if (this.state.unsupportedUsers.length == 0) {
                 screen = <Text style={styles.subtitle} h4>Sem solicitações de novos alunos.</Text>
             } else {
-                screen = <View>
-                    <Text style={styles.subtitle} h4>Novas solicitações:</Text>
+                screen = <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Text style={{ marginTop: 20 }} h4>Solicitações</Text>
                     <FlatList
                         data={this.state.unsupportedUsers}
                         keyExtractor={item => item.uid.toString()}
                         renderItem={({ item }) => (
-                            <Card title={item.name + ' - ' + item.role}>
-                                <Button
-                                    title="Aceitar"
-                                    titleStyle={{ fontWeight: '700' }}
-                                    buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                                    onPress={() => this.acceptedRequest(item.uid)}
-                                />
-                                <Button
-                                    title="Rejeitar"
-                                    titleStyle={{ fontWeight: '700' }}
-                                    buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                                    onPress={() => this.refuseRequest(item.uid)}
-                                />
+                            <Card style={{flex: 1}} flexDirection="column">
+                                <Text h5>Solicitante: {item.name}</Text>
+                                <View style={{flexDirection: 'row',}}>
+                                    <Button
+                                        title="Aceitar"
+                                        titleStyle={{ fontWeight: '700' }}
+                                        buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
+                                        onPress={() => this.acceptedRequest(item.uid)}
+                                    />
+                                    <Button
+                                        title="Rejeitar"
+                                        titleStyle={{ fontWeight: '700' }}
+                                        buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
+                                        onPress={() => console.log('rejeitei')}
+                                    />
+                                </View>
                             </Card>
                         )} />
-                </View>
+                </ScrollView>
             }
             if (this.state.usersAccepted.length == 0) {
                 usersActive = <Text style={styles.subtitle} h4>Sem alunos ativos.</Text>
 
             } else {
-                usersActive = <View>
+                usersActive = <ScrollView>
                     <Text style={styles.subtitle} h4>Alunos ativos:</Text>
                     <FlatList
                         data={this.state.usersAccepted}
@@ -205,21 +246,27 @@ export class Status extends React.Component {
                             <Card title={item.name + ' - ' + item.role}>
                             </Card>
                         )} />
-                </View>
+                </ScrollView>
             }
-        } else {
+        } else if (this.state.user.role == "Student")  {            
             screen =
                 <View>
                     <Text style={styles.subtitle} h4>EXPERIÊNCIA</Text>
                     <View style={styles.xpBar}></View>
-                    <Text h5>220 xp</Text>
-                    <Text style={styles.subtitle} h4>FALTAS</Text>
-                    <View style={styles.faults}>
-                        {this.generateFaults()}
+                    <Text h5>{this.state.status.exp} xp</Text>
+                    <Text style={styles.subtitle} h4>{this.state.status.qntAbsence} FALTAS</Text>
+                    <View style={styles.faults}>                        
+                        {this.generateFaults(this.props.classroom.qntAbsence, this.state.status.qntAbsence)}                        
                     </View>
+                    <Button
+                        title="Adicionar Faulta"
+                        titleStyle={{ fontWeight: '700' }}
+                        buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
+                        onPress={() => this.addFault()}
+                    />
                     <Text style={styles.subtitle} h4>CONQUISTAS</Text>
                     <FlatList
-                        data={achievements}
+                        data={this.state.achievements}
                         keyExtractor={item => item.id.toString()}
                         renderItem={({ item }) => (
                             <Card title={item.title}>
@@ -247,10 +294,6 @@ export class Status extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-    },
-    subtitle: {
-        margin: 20,
     },
     xpBar: {
         width: "80%",
@@ -262,11 +305,3 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     }
 });
-
-const achievements = [{
-    id: 0,
-    title: 'Trabalho Entregue',
-}, {
-    id: 1,
-    title: 'Ponto Na VP1',
-}]

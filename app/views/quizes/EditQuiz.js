@@ -41,7 +41,7 @@ export class EditQuiz extends Component {
     var emptyDiv;
     if(this.state.questions.length == 0) {
         emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui classes adicionadas ainda.</Text>
+                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui questões adicionadas ainda.</Text>
                     <Image 
                     style={styles.emptyIcon} 
                     resizeMode='contain'

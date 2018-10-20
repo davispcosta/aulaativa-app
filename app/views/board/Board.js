@@ -12,7 +12,7 @@ export class Board extends React.Component {
         super(props);
         this.state = {
             user: this.props.user,
-            classUid: this.props.classUid,
+            classroom: this.props.classroom,
             professor: {},
             loadingBoard: true,
             loadingProfessor: true,
@@ -37,8 +37,10 @@ export class Board extends React.Component {
     }
 
     loadClass = () => {
+        console.log('this.props.classroom')
+        console.log(this.props.classroom)
         ref = firebase.firestore().collection("classes")
-        ref.where("uid", "==", this.state.classUid).get().then(function(querySnapshot) {
+        ref.where("uid", "==", this.props.classroom.uid).get().then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 classroom = doc.data();
             })
@@ -52,7 +54,7 @@ export class Board extends React.Component {
     loadNotifications = () => {
         ref = firebase.firestore().collection("notifications")
         let array = []
-        ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
+        ref.where("classUid", "==", this.state.classroom.uid).get().then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 array.push(doc.data());
             })
@@ -77,7 +79,7 @@ export class Board extends React.Component {
                             title="ADICIONAR NO MURAL" 
                             titleStyle={{ fontWeight: '700'}}
                             buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-                            onPress={() => this.props.navigation.navigate('NewNotification', { classUid: this.state.classUid})}
+                            onPress={() => this.props.navigation.navigate('NewNotification', { classroom: this.state.classroom})}
                         />
         } else if(this.state.user.role == "Student" && !this.state.loadingProfessor){
             profCard = <TouchableWithoutFeedback
@@ -138,7 +140,8 @@ export class Board extends React.Component {
                 { profCard }
                 
                 <TouchableWithoutFeedback
-                onPress={() => this.props.navigation.navigate('Rank', { screen: Rank})}>                    
+                onPress={() => this.props.navigation.navigate('Rank', { classroom: this.state.classroom })}>
+                    
                     <Card containerStyle={{marginBottom: 20, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
                     flexDirection='row'>
                         <Icon color='#f1f1f1' type='font-awesome' name='trophy'/>
