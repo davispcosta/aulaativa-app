@@ -138,23 +138,29 @@ export class Board extends React.Component {
                 { profCard }
                 
                 <TouchableWithoutFeedback
-                onPress={() => this.props.navigation.navigate('Rank', { screen: Rank})}>
-                    
+                onPress={() => this.props.navigation.navigate('Rank', { screen: Rank})}>                    
                     <Card containerStyle={{marginBottom: 20, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
                     flexDirection='row'>
                         <Icon color='#f1f1f1' type='font-awesome' name='trophy'/>
                         <Text h3 style={{color: "white", fontWeight: 'bold',}}>RANK</Text>
                         <Icon color='#f1f1f1' type='materialicons' name='keyboard-arrow-right' />
                     </Card>
+                </TouchableWithoutFeedback>
 
+                <TouchableWithoutFeedback
+                onPress={() => this.props.navigation.navigate('Achievements', { screen: Achievements})}>                    
+                    <Card containerStyle={{marginBottom: 20, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
+                    flexDirection='row'>
+                        <Icon color='#f1f1f1' type='material-community' name='medal'/>
+                        <Text h3 style={{color: "white", fontWeight: 'bold',}}>CONQUISTAS</Text>
+                        <Icon color='#f1f1f1' type='materialicons' name='keyboard-arrow-right' />
+                    </Card>
                 </TouchableWithoutFeedback>
 
                 <Text h5 style={styles.subtitle}>MURAL</Text>
 
                 {newOnMural}
-
                 { loadingBoardDiv }
-
                 { emptyDiv }
 
                 <FlatList

@@ -18,7 +18,13 @@ export class HeaderSection extends Component {
   logOut = (navigation) => {
     try {
       firebase.auth().signOut().then(function(){
-          navigation.navigate('LoginScreen')
+          navigation.dispatch(NavigationActions.reset(
+            {
+               index: 0,
+               actions: [
+                 NavigationActions.navigate({ routeName: 'Login'})
+               ]
+             }));
       }).catch(function (error) {
           console.log(error)
           alert(error.message)

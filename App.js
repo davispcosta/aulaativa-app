@@ -24,6 +24,9 @@ import { NewNotification } from './app/views/board/NewNotification';
 import { Doubt } from './app/views/doubts/Doubt';
 import { NewDoubt } from './app/views/doubts/NewDoubt';
 import Loading from './app/views/login/Loading';
+import { NewQuestion } from './app/views/quizes/NewQuestion';
+import { Achievements } from './app/views/achievements/Achievements';
+import { NewAchievement } from './app/views/achievements/NewAchievement';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZar2BXYpbFMpxUz5Vt8zeozIdOiwD25M",
@@ -41,7 +44,7 @@ console.ignoredYellowBox = ['Setting a timer'];
 
 const NavigationStack = createStackNavigator({
     Loading: {screen: Loading},
-    LoginScreen: { screen: Login },
+    Login: { screen: Login },
     RegisterScreen: { screen: Register },
     Classes: { screen: Classes },
     NewClass: { screen: NewClass},
@@ -60,7 +63,9 @@ const NavigationStack = createStackNavigator({
     ProfessorProfile: { screen: ProfessorProfile },
     ChooseRegisterScreen: { screen: ChooseRegister },
     Rank: { screen: Rank },
-    SubscribeClass: { screen: SubscribeClass }
+    SubscribeClass: { screen: SubscribeClass },
+    Achievements: { screen: Achievements },
+    NewAchievement: { screen: NewAchievement }
 }, {
     navigationOptions: {
       header: null
