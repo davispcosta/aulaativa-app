@@ -5,7 +5,7 @@ import { Constants } from '../../Constants';
 import { HeaderSection } from '../../sections/HeaderSection';
 import * as firebase from 'firebase';
 
-export class NewAchievement extends Component {
+export class AchievementToStudents extends Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -15,12 +15,12 @@ export class NewAchievement extends Component {
         subsAccepted: [],
         achievementToStudents: []
       }
-      this.loadStudents()
+      this.loadSupportedSubscriptions()
     }
     
     loadSupportedSubscriptions = () => {
         ref = firebase.firestore().collection("subscriptions")
-        ref.where("classUid", "==", this.state.classUid)
+        ref.where("classUid", "==", this.state.achievement.classUid)
             .where("accepted", "==", true).get().then(function (querySnapshot) {
                 var sub = []
                 querySnapshot.forEach(function (doc) {
@@ -41,7 +41,12 @@ export class NewAchievement extends Component {
                 ref.where("uid", "==", element.studentUid).get().then(function (querySnapshot) {
                     querySnapshot.forEach(function (doc) {
                         array.push(doc.data())
-                    })
+                        console.log('OOOOI')
+                        this.state.achievementToStudents.push({ uid: doc.data().uid, checked: false }, () => {
+                            console.log('OOOOI')
+                            console.log(this.state.achievementToStudents)
+                        })
+                    }.bind(this))
                     this.setState({ students: array })                    
                 }.bind(this)).catch(function (error) {
                     console.log(error)
@@ -51,26 +56,19 @@ export class NewAchievement extends Component {
         }
     }
 
-    toogleStudent = (item) => {
-        if(this.state.achievementToStudents.includes(item)) {
-            var array = [...this.state.achievementToStudents]
-            var index = array.indexOf(item)
-            array.splice(index, 1)
-            this.setState({achievementToStudents: array})
-            item.checked = false
-        } else {
-            var array = [...this.state.achievementToStudents]
-            array.push(item)
-            this.setState({achievementToStudents: array})
-            item.checked = true
-        }
+    toogleStudent = (index) => {                
+        var array = [...this.state.achievementToStudents]
+        array[index].checked = !array[index].checked;
+        this.setState({achievementToStudents: array})        
     }
 
-    getStudentCard = (item) => {
+    getStudentCard = (item, index) => {
         if(item.checked) {
-            return <Card class="checked" title={item.name} id={'student-'+item.id}></Card>
+            return <Card class="checked" title={this.state.students[index].name}>
+                Esse aluno irá receber a conquista!
+            </Card>
         } else {
-            return <Card title={item.name} id={'student-'+item.id}></Card>
+            return <Card title={this.state.students[index].name}></Card>
         }
     }
 
@@ -93,7 +91,7 @@ export class NewAchievement extends Component {
     render() {
 
         var emptyDiv;
-        if(this.state.achievements.length == 0) {
+        if(this.state.students.length == 0) {
             emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
                         <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Não há alunos na turma.</Text>
                         <Image 
@@ -110,10 +108,7 @@ export class NewAchievement extends Component {
           <View style={styles.container}>
             <HeaderSection navigation={this.props.navigation} goBack={true} />
     
-            <ScrollView 
-                refreshControl={
-                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
-            }>
+            <ScrollView>
     
               <Button
                 title="ADICIONAR AOS ALUNOS" 
@@ -125,12 +120,12 @@ export class NewAchievement extends Component {
               { emptyDiv }
     
               <FlatList
-                data={this.state.students}
+                data={this.state.achievementToStudents}
                 keyExtractor={item => item.uid.toString()}
-                renderItem={({item}) => (
+                renderItem={({item, index}) => (
                     <TouchableWithoutFeedback
-                    onPress={() => this.toogleStudent(item)}>
-                    { this.getStudentCard() }                
+                    onPress={() => this.toogleStudent(index)}>
+                    { this.getStudentCard(item, index) }                
                     </TouchableWithoutFeedback>
                 )}
               />

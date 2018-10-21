@@ -4,6 +4,8 @@ import { createStackNavigator } from 'react-navigation';
 import { Font } from 'expo'
 import * as firebase from 'firebase';
 
+import Loading from './app/views/login/Loading';
+
 import { Login } from './app//views/login/Login';
 import { Register } from './app//views/login/Register';
 import { ChooseRegister } from './app/views/login/ChooseRegister';
@@ -23,9 +25,9 @@ import { SubscribeClass } from './app/views/classes/SubscribeClass';
 import { NewNotification } from './app/views/board/NewNotification';
 import { Doubt } from './app/views/doubts/Doubt';
 import { NewDoubt } from './app/views/doubts/NewDoubt';
-import Loading from './app/views/login/Loading';
 import { Achievements } from './app/views/achievements/Achievements';
 import { NewAchievement } from './app/views/achievements/NewAchievement';
+import { AchievementToStudents } from './app/views/achievements/AchievementToStudent';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZar2BXYpbFMpxUz5Vt8zeozIdOiwD25M",
@@ -64,7 +66,8 @@ const NavigationStack = createStackNavigator({
     Rank: { screen: Rank },
     SubscribeClass: { screen: SubscribeClass },
     Achievements: { screen: Achievements },
-    NewAchievement: { screen: NewAchievement }
+    NewAchievement: { screen: NewAchievement },
+    AchievementToStudents: { screen: AchievementToStudents }
 }, {
     navigationOptions: {
       header: null
