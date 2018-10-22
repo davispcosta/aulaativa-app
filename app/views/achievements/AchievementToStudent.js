@@ -12,8 +12,7 @@ export class AchievementToStudents extends Component {
         achievement: this.props.navigation.state.params.achievement,
         loading: false,
         students: [],
-        subsAccepted: [],
-        achievementToStudents: []
+        subsAccepted: []
       }
       this.loadSupportedSubscriptions()
     }
@@ -41,12 +40,8 @@ export class AchievementToStudents extends Component {
                 ref.where("uid", "==", element.studentUid).get().then(function (querySnapshot) {
                     querySnapshot.forEach(function (doc) {
                         array.push(doc.data())
-                        console.log('OOOOI')
-                        this.state.achievementToStudents.push({ uid: doc.data().uid, checked: false }, () => {
-                            console.log('OOOOI')
-                            console.log(this.state.achievementToStudents)
-                        })
-                    }.bind(this))
+                    });
+                    array.forEach(function (obj) { obj.checked = false })
                     this.setState({ students: array })                    
                 }.bind(this)).catch(function (error) {
                     console.log(error)
@@ -57,34 +52,37 @@ export class AchievementToStudents extends Component {
     }
 
     toogleStudent = (index) => {                
-        var array = [...this.state.achievementToStudents]
+        var array = [...this.state.students]
         array[index].checked = !array[index].checked;
-        this.setState({achievementToStudents: array})        
+        this.setState({students: array})        
     }
 
-    getStudentCard = (item, index) => {
+    getStudentCard = (item) => {
         if(item.checked) {
-            return <Card class="checked" title={this.state.students[index].name}>
-                Esse aluno irá receber a conquista!
+            return <Card class="checked" title={item.name}>
+                <Text>Esse aluno irá receber a conquista!</Text>
             </Card>
         } else {
-            return <Card title={this.state.students[index].name}></Card>
+            return <Card title={item.name}></Card>
         }
     }
 
     loadAchievementsToStudents = () => {
-        this.state.achievementToStudents.map( (student) => {
-            var newKey = firebase.database().ref().child('studentAchievements').push().key;
+        this.state.students.map( (student) => {
 
-            ref = firebase.firestore().collection('studentAchievements') 
-            ref.add({ uid: newKey, 
-            studentUid: student.uid,
-            achievementUid: this.state.achievement.uid
-            }).then((response) => {
-                this.props.navigation.goBack()
-            }).catch((error) => {
-                alert(error.message)
-            })     
+            if(student.checked) {
+                var newKey = firebase.database().ref().child('studentAchievements').push().key;
+
+                ref = firebase.firestore().collection('studentAchievements') 
+                ref.add({ uid: newKey, 
+                studentUid: student.uid,
+                achievementUid: this.state.achievement.uid
+                }).then((response) => {
+                    this.props.navigation.goBack()
+                }).catch((error) => {
+                    alert(error.message)
+                })
+            }            
         })          
     }
 
@@ -110,17 +108,10 @@ export class AchievementToStudents extends Component {
     
             <ScrollView>
     
-              <Button
-                title="ADICIONAR AOS ALUNOS" 
-                titleStyle={{ fontWeight: '700'}}
-                buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-                onPress={() => this.loadAchievementsToStudents()}
-              />
-    
               { emptyDiv }
     
               <FlatList
-                data={this.state.achievementToStudents}
+                data={this.state.students}
                 keyExtractor={item => item.uid.toString()}
                 renderItem={({item, index}) => (
                     <TouchableWithoutFeedback
@@ -129,6 +120,17 @@ export class AchievementToStudents extends Component {
                     </TouchableWithoutFeedback>
                 )}
               />
+
+              <Button
+                small
+                backgroundColor={Constants.Colors.Primary}
+                color='#FFFFFF'
+                buttonStyle={styles.registerBtn}
+                onPress={ () => this.loadAchievementsToStudents()}
+                rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
+                title='ADICIONAR'
+                rounded={true}
+                fontWeight='800' />
             
             </ScrollView>
           </View>
@@ -139,5 +141,11 @@ export class AchievementToStudents extends Component {
 const styles = StyleSheet.create({ 
     container: {
         flex: 1
-    }    
+    },
+    checked: {
+        backgroundColor: 'red'
+    },
+    registerBtn: {
+        marginTop: 40
+    }
 });
