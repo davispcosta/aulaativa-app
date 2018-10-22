@@ -9,20 +9,67 @@ export class Question extends React.Component {
         header: null
     }
 
-    loadQuestons = () => {
+    constructor(props) {
+        super(props);
+        this.state = {
+            quizUid: this.props.navigation.state.params.quizUid,
+            questions: [],
+            allAlternatives: []
+        };
+    }
+
+    loadQuestions = () => {
         const { currentUser } = firebase.auth();
-        
-        ref = firebase.firestore().collection("quizes")
+
+        ref = firebase.firestore().collection("questions")
         let array = []
-        ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc) {
+        ref.where("quizUid", "==", this.state.quizUid).get().then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
                 array.push(doc.data());
             })
-            this.setState({ quizes: array, refreshing: false, loading: false})
+            this.setState({ questions: array, refreshing: false, loading: false }, () => this.loadAlternatives())
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
         })
+    }
+
+    loadAlternatives = () => {
+        const { currentUser } = firebase.auth();
+
+        ref = firebase.firestore().collection("alternatives")
+        let array = []
+        this.state.questions.forEach(function (doc) {
+            ref.where("questionUid", "==", doc.uid).get().then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                    array.push(doc.data());
+                })
+                this.setState({ allAlternatives: array, refreshing: false, loading: false }, () => this.mountQuiz())
+            }.bind(this)).catch(function (error) {
+                console.log(error)
+                alert(error.message)
+            })
+        })
+    }
+
+    alternativesInYourQuestions = (uid) => {
+        let array = []
+        this.state.answers.forEach(function (doc){
+            if(doc.questionUid == uid){
+                array.push(doc);
+            }
+        })
+        return array;
+    }
+
+    verifyAlternative = (item) => {
+        if(item.isRight){
+            //pintar a alternativa de verde
+        } else {
+            //pintar a alternativa de vermelho
+        }
+
+        //bloquear troca de alternativa
     }
 
     render() {
@@ -30,27 +77,34 @@ export class Question extends React.Component {
             <View style={styles.container}>
                 <HeaderSection navigation={this.props.navigation} goBack={true} />
                 <ScrollView>
-                    <Card wrapperStyle={styles.questionWrapper}>
-                        <Text>Lorem ipslum dolor sit amet, consectetur adipiscing elit?</Text>
-                    </Card>
-                    <Text h4 style={{alignSelf: 'center', fontWeight: '800', marginVertical: 20}}>ALTERNATIVAS</Text>
                     <FlatList
-                    data={alternatives}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={({item}) => (
-                        <Card flexDirection='row' wrapperStyle={{alignItems:'center'}}>
-                            <Text h3 style={{color:'#9C00FF', marginRight: 20}}>{item.letter}</Text>
-                            <Text>{item.answer}</Text>
-                        </Card>
-                    )}
+                        data={this.state.classes}
+                        keyExtractor={item => item.uid.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableWithoutFeedback
+                                onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classroom: item })}>
+                                <Card wrapperStyle={styles.questionWrapper}>
+                                    <Text onPress={this.verifyAlternative(item)}>{item.question}</Text>
+                                </Card>                    
+                                <FlatList
+                                    data={this.alternativesInYourQuestions(item.uid)}
+                                    keyExtractor={itemAlternative => item.uid.toString()}
+                                    renderItem={({ itemAlternative }) => (
+                                            <Card wrapperStyle={styles.questionWrapper}>
+                                                <Text>{itemAlternative.alternative}</Text>
+                                            </Card>
+                                    )}
+                                />
+                            </TouchableWithoutFeedback>
+                        )}
                     />
                 </ScrollView>
             </View>
-        );  
+        );
     }
 }
 
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -63,22 +117,3 @@ const styles = StyleSheet.create({
 
     }
 });
-
-const alternatives = [{
-    id: 0,
-    letter: 'A',
-    answer: "Tenho Sim"
-},
-{
-    id: 1,
-    letter: 'B',
-    answer: "Claro"
-},{
-    id: 2,
-    letter: 'C',
-    answer: "Às Vezes"
-},{
-    id: 3,
-    letter: 'D',
-    answer: "Não"
-}]
