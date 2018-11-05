@@ -75,7 +75,7 @@ export class ProfessorProfile extends Component {
             data={this.state.classes}
             keyExtractor={item => item.uid}
             renderItem={({item}) => (
-              <Card flexDirection="row">
+              <Card flexDirection="row" wrapperStyle={{ flexWrap: 'wrap',}}>
                 <Icon
                   raised
                   containerStyle={{backgroundColor:'#AFAFAF'}}
@@ -84,8 +84,8 @@ export class ProfessorProfile extends Component {
                 />
                 <View style={{marginLeft: 20}}>
                   <Text
-                    style={{fontFamily: 'montserrat'}}
-                    h4>{item.name}</Text>
+                    style={{fontFamily: 'montserrat_light'}}
+                    h5>{item.name}</Text>
                   {/* <Text>{item.professor}</Text>
                   <Text style={{color: "gray"}}>{item.alunos} ALUNOS</Text> */}
                 </View>

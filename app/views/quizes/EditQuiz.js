@@ -76,7 +76,8 @@ export class EditQuiz extends Component {
                 renderItem={({item}) => (
                     <TouchableWithoutFeedback
                     onPress={() => this.props.navigation.navigate('EditQuestion', { questionUid: item.uid })}>
-                    <Card title={item.question} >
+                    <Card>
+                        <Text style={{ alignSelf: 'center', fontFamily: 'montserrat_bold', paddingVertical: 20,}}>{item.question}</Text>
                         {/* <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text> */}
                     </Card>
                     </TouchableWithoutFeedback>

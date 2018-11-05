@@ -20,7 +20,7 @@ export class ChooseRegister extends React.Component {
                     >
                     <Card
                     wrapperStyle={{alignItems: 'center', justifyContent: 'space-around'}}
-                    containerStyle={{backgroundColor: 'whitesmoke'}}
+                    containerStyle={{backgroundColor: 'white'}}
                     flexDirection="row"
                     >   
                         <Image 
@@ -37,7 +37,7 @@ export class ChooseRegister extends React.Component {
                     >
                     <Card
                     wrapperStyle={{alignItems: 'center', justifyContent: 'space-around'}}
-                    containerStyle={{backgroundColor: 'whitesmoke'}}
+                    containerStyle={{backgroundColor: 'white'}}
                     flexDirection="row"
                     >   
                         <Image 
@@ -65,11 +65,9 @@ const styles = StyleSheet.create({
         color: Constants.Colors.Primary,
         alignSelf: 'center',
         marginTop: 20,
+        marginBottom: 30,
     },
     icon: {
       width: 50  
-    },
-    btn: {
-        marginTop: 30
     }
 });

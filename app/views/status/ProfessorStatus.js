@@ -135,10 +135,10 @@ export class ProfessorStatus extends React.Component {
         let usersActive = null;
 
         if (this.state.unsupportedUsers.length == 0) {
-            screen = <Text style={styles.subtitle} h4>Sem solicitações de novos alunos.</Text>
+            screen = <Text style={styles.subtitle} h4>Nenhuma Solicitação</Text>
         } else {
             screen = <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{ marginTop: 20 }} h4>Solicitações</Text>
+                <Text style={{ marginTop: 20, alignSelf: 'center', }} h4>Solicitações</Text>
                 <FlatList
                     data={this.state.unsupportedUsers}
                     keyExtractor={item => item.uid.toString()}
@@ -173,7 +173,8 @@ export class ProfessorStatus extends React.Component {
                     data={this.state.usersAccepted}
                     keyExtractor={item => item.uid.toString()}
                     renderItem={({ item }) => (
-                        <Card title={item.name + ' - ' + item.role}>
+                        <Card>
+                            <Text h5>{item.name + ' - ' + item.role}</Text>
                         </Card>
                     )} />
             </ScrollView>
@@ -198,13 +199,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    xpBar: {
-        width: "80%",
-        height: 5,
-        backgroundColor: "#000",
-        borderRadius: 5,
-    },
     faults: {
         flexDirection: 'row'
+    },
+    subtitle: {
+        marginTop: 10,
+        marginBottom: 20,
+        alignSelf: 'center'
     }
 });
