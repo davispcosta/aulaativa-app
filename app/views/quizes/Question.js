@@ -17,6 +17,7 @@ export class Question extends Component {
             corrects: 0,
             total: 0,
             checked: false,
+            loading: true,
             finished: false
         }
 
@@ -32,7 +33,7 @@ export class Question extends Component {
             querySnapshot.forEach(function (d) {
                 array.push(d.data());
             })
-            this.setState({ alternatives: array })
+            this.setState({ alternatives: array, loading: false })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -84,6 +85,14 @@ export class Question extends Component {
         if (this.state.finished) {
             questionView = <Text style={styles.baseText}>Seu resultado: {this.state.corrects}/{this.state.total} </Text>
         }
+
+        var loadingDiv;
+        if (this.state.loading == true) {
+            loadingDiv = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
+        } else {
+            loadingDiv = null
+        }
+
         if (!this.state.finished) {
             questionView = <View>
                 <View>
@@ -92,6 +101,8 @@ export class Question extends Component {
                     </Card>
                     <Text h4 style={{ alignSelf: 'center', fontWeight: '800', marginVertical: 20 }}>ALTERNATIVAS</Text>
                 </View>
+
+                {loadingDiv}
 
                 <FlatList
                     data={this.state.alternatives}

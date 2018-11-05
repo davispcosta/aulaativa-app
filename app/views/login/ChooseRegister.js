@@ -13,14 +13,14 @@ export class ChooseRegister extends React.Component {
                 <HeaderSection navigation={this.props.navigation} goBack={true} />
 
                 <ScrollView style={styles.container}>
-                    <Text h2 style={styles.title}>Que tipo de usuário você é?</Text>
+                    <Text h4 style={styles.title}>Que tipo de usuário você é?</Text>
 
                     <TouchableWithoutFeedback
                     onPress={() => this.props.navigation.push('RegisterScreen', { rule: 'Professor'})}
                     >
                     <Card
                     wrapperStyle={{alignItems: 'center', justifyContent: 'space-around'}}
-                    containerStyle={{backgroundColor: Constants.Colors.Primary}}
+                    containerStyle={{backgroundColor: 'whitesmoke'}}
                     flexDirection="row"
                     >   
                         <Image 
@@ -28,7 +28,7 @@ export class ChooseRegister extends React.Component {
                         resizeMode='contain'
                         source={require('../../assets/img/professor.png')}
                         />
-                        <Text style={{color: 'white'}} h4>Professor</Text>
+                        <Text style={{color: Constants.Colors.Primary}} h4>Professor</Text>
                     </Card>
                     </TouchableWithoutFeedback>
                     
@@ -37,7 +37,7 @@ export class ChooseRegister extends React.Component {
                     >
                     <Card
                     wrapperStyle={{alignItems: 'center', justifyContent: 'space-around'}}
-                    containerStyle={{backgroundColor: Constants.Colors.Primary}}
+                    containerStyle={{backgroundColor: 'whitesmoke'}}
                     flexDirection="row"
                     >   
                         <Image 
@@ -45,7 +45,7 @@ export class ChooseRegister extends React.Component {
                         resizeMode='contain'
                         source={require('../../assets/img/student.png')}
                         />
-                        <Text style={{color: 'white'}} h4>Aluno</Text>
+                        <Text style={{color: Constants.Colors.Primary}} h4>Aluno</Text>
                     </Card>
                     </TouchableWithoutFeedback>
                 </ScrollView>

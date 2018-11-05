@@ -142,7 +142,7 @@ export class Board extends React.Component {
                 <TouchableWithoutFeedback
                 onPress={() => this.props.navigation.navigate('Rank', { classroom: this.state.classroom })}>
                     
-                    <Card containerStyle={{marginBottom: 20, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
+                    <Card containerStyle={{marginBottom: 5, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
                     flexDirection='row'>
                         <Icon color='#f1f1f1' type='font-awesome' name='trophy'/>
                         <Text h3 style={{color: "white", fontWeight: 'bold',}}>RANK</Text>
