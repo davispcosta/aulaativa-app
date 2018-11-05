@@ -11,6 +11,7 @@ import { Register } from './app//views/login/Register';
 import { ChooseRegister } from './app/views/login/ChooseRegister';
 import { Rank } from './app/views/board/Rank';
 import { NewQuiz } from './app/views/quizes/NewQuiz';
+import { Questions } from './app/views/quizes/Questions';
 import { EditQuiz } from './app/views/quizes/EditQuiz';
 import { Question } from './app/views/quizes/Question';
 import { NewQuestion } from './app/views/quizes/NewQuestion';
@@ -28,6 +29,7 @@ import { NewDoubt } from './app/views/doubts/NewDoubt';
 import { Achievements } from './app/views/achievements/Achievements';
 import { NewAchievement } from './app/views/achievements/NewAchievement';
 import { AchievementToStudents } from './app/views/achievements/AchievementToStudent';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZar2BXYpbFMpxUz5Vt8zeozIdOiwD25M",
@@ -67,8 +69,9 @@ const NavigationStack = createStackNavigator({
     SubscribeClass: { screen: SubscribeClass },
     Achievements: { screen: Achievements },
     NewAchievement: { screen: NewAchievement },
-    AchievementToStudents: { screen: AchievementToStudents }
-}, {
+    AchievementToStudents: { screen: AchievementToStudents },
+    Questions: {screen: Questions }
+  }, {
     navigationOptions: {
       header: null
     }

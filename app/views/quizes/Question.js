@@ -1,106 +1,131 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Card, Header, Text } from 'react-native-elements'
+import React, { Component } from 'react';
+import { StyleSheet, View, ScrollView, Picker, Image, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
+import { Card, Text, Button, FormInput, Icon } from 'react-native-elements';
 import { HeaderSection } from '../../sections/HeaderSection';
+import { Constants } from '../../Constants';
+import * as firebase from 'firebase';
 
-export class Question extends React.Component {
-
-    static navigationOption = {
-        header: null
-    }
+export class Question extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            quizUid: this.props.navigation.state.params.quizUid,
-            questions: [],
-            allAlternatives: []
-        };
+            questions: this.props.questions,
+            question: {},
+            alternatives: [],
+            numberQuestion: 0,
+            corrects: 0,
+            total: 0,
+            checked: false,
+            finished: false
+        }
+
+        this.loadAlternatives(this.state.questions[this.state.numberQuestion].uid);
     }
 
-    loadQuestions = () => {
+    loadAlternatives = (uid) => {
         const { currentUser } = firebase.auth();
 
-        ref = firebase.firestore().collection("questions")
+        ref = firebase.firestore().collection("alternatives")
         let array = []
-        ref.where("quizUid", "==", this.state.quizUid).get().then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-                array.push(doc.data());
+        ref.where("questionUid", "==", uid).get().then(function (querySnapshot) {
+            querySnapshot.forEach(function (d) {
+                array.push(d.data());
             })
-            this.setState({ questions: array, refreshing: false, loading: false }, () => this.loadAlternatives())
+            this.setState({ alternatives: array })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
         })
     }
 
-    loadAlternatives = () => {
-        const { currentUser } = firebase.auth();
-
-        ref = firebase.firestore().collection("alternatives")
-        let array = []
-        this.state.questions.forEach(function (doc) {
-            ref.where("questionUid", "==", doc.uid).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    array.push(doc.data());
-                })
-                this.setState({ allAlternatives: array, refreshing: false, loading: false }, () => this.mountQuiz())
-            }.bind(this)).catch(function (error) {
-                console.log(error)
-                alert(error.message)
-            })
-        })
-    }
-
-    alternativesInYourQuestions = (uid) => {
-        let array = []
-        this.state.answers.forEach(function (doc){
-            if(doc.questionUid == uid){
-                array.push(doc);
-            }
-        })
-        return array;
-    }
-
     verifyAlternative = (item) => {
-        if(item.isRight){
-            //pintar a alternativa de verde
+        if (!item.isRight) {
+            alert("Resposta errada.")
         } else {
-            //pintar a alternativa de vermelho
+            alert("Resposta correta.")
+            let correct = this.state.corrects + 1;
+            this.setState({ corrects: correct })
         }
 
-        //bloquear troca de alternativa
+        this.setState({ checked: true })
     }
 
+    changeQuestion = (navigation) => {
+        let number = this.state.numberQuestion + 1;
+
+        if (number <= this.state.questions.length - 1) {
+            this.setState({ numberQuestion: number })
+            this.loadAlternatives(this.state.questions[this.state.numberQuestion].uid)
+        }
+
+        if (number == this.state.questions.length) {
+            this.setState({ total: this.state.questions.length })
+            this.setState({ finished: true })
+        }
+
+        this.setState({ checked: false })
+    }
     render() {
-        return (
-            <View style={styles.container}>
-                <HeaderSection navigation={this.props.navigation} goBack={true} />
-                <ScrollView>
-                    <FlatList
-                        data={this.state.classes}
-                        keyExtractor={item => item.uid.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableWithoutFeedback
-                                onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classroom: item })}>
-                                <Card wrapperStyle={styles.questionWrapper}>
-                                    <Text onPress={this.verifyAlternative(item)}>{item.question}</Text>
-                                </Card>                    
-                                <FlatList
-                                    data={this.alternativesInYourQuestions(item.uid)}
-                                    keyExtractor={itemAlternative => item.uid.toString()}
-                                    renderItem={({ itemAlternative }) => (
-                                            <Card wrapperStyle={styles.questionWrapper}>
-                                                <Text>{itemAlternative.alternative}</Text>
-                                            </Card>
-                                    )}
+        let btnPassQuestion = null;
+        let questionView = null;
+
+        if (this.state.checked && !this.state.finished) {
+            btnPassQuestion = <Icon
+                raised
+                containerStyle={{ backgroundColor: '#AFAFAF' }}
+                type='font-awesome'
+                name='arrow-right'
+                color='#f1f1f1'
+                onPress={() => this.changeQuestion(this.props.navigation)}
+            />
+        }
+
+        if (this.state.finished) {
+            questionView = <Text style={styles.baseText}>Seu resultado: {this.state.corrects}/{this.state.total} </Text>
+        }
+        if (!this.state.finished) {
+            questionView = <View>
+                <View>
+                    <Card wrapperStyle={styles.questionWrapper}>
+                        <Text>{this.state.questions[this.state.numberQuestion].question}</Text>
+                    </Card>
+                    <Text h4 style={{ alignSelf: 'center', fontWeight: '800', marginVertical: 20 }}>ALTERNATIVAS</Text>
+                </View>
+
+                <FlatList
+                    data={this.state.alternatives}
+                    keyExtractor={item => item.uid.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableWithoutFeedback onPress={() => this.verifyAlternative(item)}>
+                            <Card flexDirection="row" style={{ color: Constants.Colors.Primary }}>
+                                <Icon
+                                    raised
+                                    containerStyle={{ backgroundColor: '#AFAFAF' }}
+                                    name='class'
+                                    color='#f1f1f1'
                                 />
-                            </TouchableWithoutFeedback>
-                        )}
-                    />
+                                <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
+                                    <Text
+                                        fontFamily='montserrat_semi_bold'
+                                        style={{ color: Constants.Colors.Primary }}
+                                        h5>{item.alternative}</Text>
+                                </View>
+                            </Card>
+                        </TouchableWithoutFeedback>
+                    )}
+                />
+            </View>
+        }
+
+        return (
+            <View>
+                <ScrollView>
+                    {questionView}
+                    {btnPassQuestion}
                 </ScrollView>
             </View>
-        );
+        )
     }
 }
 
@@ -114,6 +139,11 @@ const styles = StyleSheet.create({
         borderColor: '#9C00FF',
     },
     alternative: {
-
+    }, 
+    baseText: {
+        color: Constants.Colors.Primary,
+        paddingHorizontal: 20,
+        paddingTop: 20,
+        fontFamily: "montserrat_bold"
     }
 });

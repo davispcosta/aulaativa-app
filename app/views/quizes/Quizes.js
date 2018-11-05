@@ -24,14 +24,14 @@ export class Quizes extends React.Component {
 
     loadQuizes = () => {
         const { currentUser } = firebase.auth();
-        
+
         ref = firebase.firestore().collection("quizes")
         let array = []
-        ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc) {
+        ref.where("classUid", "==", this.state.classUid).get().then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
                 array.push(doc.data());
             })
-            this.setState({ quizes: array, refreshing: false, loading: false})
+            this.setState({ quizes: array, refreshing: false, loading: false })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -39,72 +39,72 @@ export class Quizes extends React.Component {
     }
 
     onRefresh = () => {
-        this.setState({ refreshing: true})
+        this.setState({ refreshing: true })
         this.loadQuizes()
     }
 
     clickOnQuestion = (navigation, item) => {
-        if(this.state.user.role == "Professor") {
-            navigation.navigate("EditQuiz", { quizUid: item.uid})
+        if (this.state.user.role == "Professor") {
+            navigation.navigate("EditQuiz", { quizUid: item.uid })
         } else {
-            navigation.navigate("Question", { quizUid: item.uid})
+            navigation.navigate("Questions", { quizUid: item.uid })
         }
     }
 
     render() {
         let newQuiz = null;
-        if(this.state.user.role == "Professor") {
+        if (this.state.user.role == "Professor") {
             newQuiz = <Button
-                            title="ADICIONAR QUIZ" 
-                            titleStyle={{ fontWeight: '700'}}
-                            buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-                            onPress={() => this.props.navigation.navigate('NewQuiz', { classUid: this.state.classUid})}
-                        />
+                title="ADICIONAR QUIZ"
+                titleStyle={{ fontWeight: '700' }}
+                buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
+                onPress={() => this.props.navigation.navigate('NewQuiz', { classUid: this.state.classUid })}
+            />
         }
 
         var emptyDiv;
-        if(this.state.quizes.length == 0 && !this.state.loading) {
+        if (this.state.quizes.length == 0 && !this.state.loading) {
             emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Nada de questionários por aqui.</Text>
-                        <Image 
-                        style={styles.emptyIcon} 
-                        resizeMode='contain'
-                        source={require('../../assets/img/pencils.png')}
-                        />
-                    </View>
+                <Text style={{ color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30 }} h4>Nada de questionários por aqui.</Text>
+                <Image
+                    style={styles.emptyIcon}
+                    resizeMode='contain'
+                    source={require('../../assets/img/pencils.png')}
+                />
+            </View>
         } else {
             emptyDiv = null;
         }
 
         var loadingDiv;
-        if(this.state.loading == true) {
-            loadingDiv = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
+        if (this.state.loading == true) {
+            loadingDiv = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
         } else {
             loadingDiv = null
         }
 
-        return(
+        return (
             <ScrollView style={styles.container}
-            refreshControl={
-                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
-            }>
+                refreshControl={
+                    <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                }>
 
-                { newQuiz }
+                {newQuiz}
 
-                { loadingDiv }
-                { emptyDiv }
+                {loadingDiv}
+                {emptyDiv}
 
                 <FlatList
-                data={this.state.quizes}
-                keyExtractor={item => item.uid.toString()}
-                renderItem={({item}) => (
-                    <TouchableWithoutFeedback
-                    onPress={() => this.clickOnQuestion(this.props.navigation, item)}>
-                    <Card title={item.title} >
-                        {/* <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text> */}
-                    </Card>
-                    </TouchableWithoutFeedback>
-                )}
+                    data={this.state.quizes}
+                    keyExtractor={item => item.uid.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableWithoutFeedback
+                            onPress={() => this.clickOnQuestion(this.props.navigation, item)}>
+                            <Card title={item.title} >
+                                {/* <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text> */}
+                            </Card>
+                        </TouchableWithoutFeedback>
+                    )}
                 />
             </ScrollView>
         );
@@ -112,7 +112,7 @@ export class Quizes extends React.Component {
 
 }
 
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
