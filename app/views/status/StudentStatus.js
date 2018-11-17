@@ -41,7 +41,7 @@ export class StudentStatus extends React.Component {
         })
     }
 
-    addFault = () => {
+    addFault = (qntAbsence) => {
         const { currentUser } = firebase.auth();
 
         ref = firebase.firestore().collection("subscriptions")
@@ -50,7 +50,7 @@ export class StudentStatus extends React.Component {
             .get()
             .then(function (querySnapshot) {
                 querySnapshot.forEach(function (doc) {
-                    ref.doc(doc.id).update({ qntAbsence: this.state.status.qntAbsence + 1 })
+                    ref.doc(doc.id).update({ qntAbsence: qntAbsence + 1 })
                 })
             })
     }
@@ -82,10 +82,10 @@ export class StudentStatus extends React.Component {
                     {this.generateFaults(this.props.classroom.qntAbsence, this.state.status.qntAbsence)}                        
                 </View>
                 <Button
-                    title="Adicionar Faulta"
+                    title="Adicionar falta"
                     titleStyle={{ fontWeight: '700' }}
                     buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                    onPress={() => this.addFault()}
+                    onPress={() => this.addFault(this.state.status.qntAbsence)}
                 />
                 <Text style={styles.subtitle} h4>CONQUISTAS</Text>
                 <FlatList
