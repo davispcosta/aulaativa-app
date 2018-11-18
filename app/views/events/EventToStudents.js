@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, Image, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, View, ScrollView, Image, ActivityIndicator, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
 import { Card, Text, Button, CheckBox } from 'react-native-elements';
 import { Constants } from '../../Constants';
 import { HeaderSection } from '../../sections/HeaderSection';
@@ -10,7 +10,7 @@ export class EventToStudents extends Component {
       super(props);
       this.state = {
         event: this.props.navigation.state.params.event,
-        loading: false,
+        loading: true,
         students: [],
         subsAccepted: []
       }
@@ -19,13 +19,13 @@ export class EventToStudents extends Component {
     
     loadSupportedSubscriptions = () => {
         ref = firebase.firestore().collection("subscriptions")
-        ref.where("classUid", "==", this.state.achievement.classUid)
+        ref.where("classUid", "==", this.state.event.classUid)
             .where("accepted", "==", true).get().then(function (querySnapshot) {
                 var sub = []
                 querySnapshot.forEach(function (doc) {
                     sub.push(doc.data())
                 })
-                this.setState({ subsAccepted: sub, loading: false }, () => { this.loadAcceptedUsers() })
+                this.setState({ subsAccepted: sub}, () => { this.loadAcceptedUsers() })
             }.bind(this)).catch(function (error) {
                 console.log(error)
                 alert(error.message)
@@ -42,7 +42,7 @@ export class EventToStudents extends Component {
                         array.push(doc.data())
                     });
                     array.forEach(function (obj) { obj.checked = false })
-                    this.setState({ students: array })                    
+                    this.setState({ students: array, loading: false  })                    
                 }.bind(this)).catch(function (error) {
                     console.log(error)
                     alert(error.message)
@@ -76,39 +76,55 @@ export class EventToStudents extends Component {
                 var newKey = firebase.database().ref().child('studentEvents').push().key;
 
                 ref = firebase.firestore().collection('studentEvents') 
-                ref.add({ uid: newKey, 
-                studentUid: student.uid,
-                eventUid: this.state.event.uid
-                }).then((response) => {
-                    this.props.navigation.goBack()
-                }).catch((error) => {
-                    alert(error.message)
+                    ref.add({ uid: newKey, 
+                    studentUid: student.uid,
+                    eventUid: this.state.event.uid
+                    }).then((response) => {
+                        this.props.navigation.goBack()
+                    }).catch((error) => {
+                        alert(error.message)
+                    })
+
+                firebase.firestore().collection("subscriptions").where("studentUid", "==", student.uid).where("classUid", "==", this.state.event.classUid)
+                .get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach( (doc) => {
+                        var newExp = doc.data().exp + this.state.event.exp;
+                        firebase.firestore().collection("subscriptions").doc(doc.id).update({exp: newExp }).then(() =>{            
+                            this.props.navigation.goBack();
+                        });
+                    });
                 })
             }            
         })          
     }
 
     render() {
-
-        var emptyDiv;
-        if(this.state.students.length == 0) {
-            emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Não há alunos na turma.</Text>
-                        <Image 
-                        style={styles.emptyIcon} 
-                        resizeMode='contain'
-                        source={require('../../assets/img/student.png')}
-                        />
-                    </View>
-        } else {
-            emptyDiv = null;
-        }
-
-        var loadingDiv;
+        var content;
         if(this.state.loading == true) {
-            loadingDiv = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
+            content = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
         } else {
-            loadingDiv = null
+            if(this.state.students.length == 0) {
+                content = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Não há alunos na turma.</Text>
+                    <Image 
+                    style={styles.emptyIcon} 
+                    resizeMode='contain'
+                    source={require('../../assets/img/student.png')}
+                    />
+                </View>
+            } else {
+                content = <FlatList
+                    data={this.state.students}
+                    keyExtractor={item => item.uid.toString()}
+                    renderItem={({item, index}) => (
+                        <TouchableWithoutFeedback
+                        onPress={() => this.toogleStudent(index)}>
+                        { this.getStudentCard(item, index) }                
+                        </TouchableWithoutFeedback>
+                    )}
+                />
+            }
         }
     
         return (
@@ -117,20 +133,8 @@ export class EventToStudents extends Component {
     
             <ScrollView>
     
-              { emptyDiv }
-              { loadingDiv }
+              { content }
     
-              <FlatList
-                data={this.state.students}
-                keyExtractor={item => item.uid.toString()}
-                renderItem={({item, index}) => (
-                    <TouchableWithoutFeedback
-                    onPress={() => this.toogleStudent(index)}>
-                    { this.getStudentCard(item, index) }                
-                    </TouchableWithoutFeedback>
-                )}
-              />
-
               <Button
                 small
                 backgroundColor={Constants.Colors.Primary}

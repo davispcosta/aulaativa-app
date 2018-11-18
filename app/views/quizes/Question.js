@@ -27,8 +27,6 @@ export class Question extends Component {
     }
 
     loadAlternatives = (uid) => {
-        const { currentUser } = firebase.auth();
-
         ref = firebase.firestore().collection("alternatives")
         let array = []
         ref.where("questionUid", "==", uid).get().then(function (querySnapshot) {
@@ -67,7 +65,7 @@ export class Question extends Component {
 
         let answer = this.verifyAnswerQuestion(item.uid);
 
-        if (answer.uid == undefined) {
+        if (answer == null) {
             ref = firebase.firestore().collection('studentAlternatives')
             ref.add({
                 uid: newKey,
@@ -91,7 +89,6 @@ export class Question extends Component {
             } else {
                 alert("Resposta errada.")
             }
-
         }
     }
     changeQuestion = () => {

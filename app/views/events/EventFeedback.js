@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, View } from 'react-native';
-import { FormLabel, FormInput, FormValidationMessage, Button, Text, Header } from 'react-native-elements'
+import { StyleSheet, ScrollView, Picker, View } from 'react-native';
+import { FormLabel, FormInput, Button, Text, Header } from 'react-native-elements'
 import { HeaderSection } from '../../sections/HeaderSection'
 import { Constants } from '../../Constants';
 import * as firebase from 'firebase';
@@ -11,17 +11,29 @@ export class EventFeedback extends Component {
     super(props);
     this.state = {
       feedback: 1,
+      event: this.props.navigation.state.params.event,
+      user: this.props.navigation.state.params.user
     };
   }
 
   markFeedback = () => {
-    
+    var newKey = firebase.database().ref().child('eventFeedbacks').push().key;
+      ref = firebase.firestore().collection('eventFeedbacks') 
+      ref.add({ uid: newKey, 
+      studentUid: this.state.user.uid,
+      eventUid: this.state.event.uid,
+      feedback: this.state.feedback
+      }).then((response) => {
+          this.props.navigation.goBack()
+      }).catch((error) => {
+          alert(error.message)
+      })
   }
 
   render() {
-    var label = <Text h5>{feedbacks[this.state.feedback]}</Text>
+    
     let items = feedbacks.map( (feedback) => {
-        return <Picker.Item key={feedback.value} value={feedback.value} label={feedback.label} />
+        return <Picker.Item key={feedback['value']} value={feedback['value']} label={feedback['label']} />
     });
 
     return (
@@ -29,11 +41,9 @@ export class EventFeedback extends Component {
         <HeaderSection navigation={this.props.navigation} goBack={true} />
 
         <ScrollView keyboardShouldPersistTaps={"always"} style={styles.formContainer}>          
-          { label }
-
             <Picker
                 selectedValue={this.state.feedback}
-                style={{ height: 50, width: 100 }}
+                style={{ height: 50, width: 200 }}
                 onValueChange={(itemValue, itemIndex) => this.setState({feedback: itemValue})}>
                 { items }
             </Picker>
@@ -56,7 +66,7 @@ export class EventFeedback extends Component {
   }
 }
 
-var feedbacks = [{
+const feedbacks = [{
     label: 'Bom',
     value: 1
 },

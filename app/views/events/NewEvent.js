@@ -13,6 +13,7 @@ export class NewEvent extends Component {
       classUid: this.props.navigation.state.params.classUid,
       title: '',
       description: '',
+      exp: 0,
       date: ''
     };
   }
@@ -27,7 +28,8 @@ export class NewEvent extends Component {
       title: this.state.title, 
       description: this.state.description, 
       classUid: this.state.classUid, 
-      date: this.state.date
+      date: this.state.date,
+      exp: parseInt(this.state.exp)
     }).then((response) => {
         this.props.navigation.goBack()
     }).catch((error) => {
@@ -51,6 +53,11 @@ export class NewEvent extends Component {
           <FormInput placeholder="Descrição"
           multiline={true}
           onChangeText={(description) => this.setState({description})}
+          />
+
+          <FormInput placeholder="Experiência"
+          keyboardType="numeric"
+          onChangeText={(exp) => this.setState({exp})}
           />
 
           <FormInput placeholder="Data"

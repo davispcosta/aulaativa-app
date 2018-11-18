@@ -23,6 +23,8 @@ import { Classes } from './app/views/classes/Classes';
 import { EditClass } from './app/views/classes/EditClass';
 import { NewClass } from './app/views/classes/NewClass';
 import { NewEvent } from './app/views/events/NewEvent';
+import { EventToStudents } from './app/views/events/EventToStudents';
+import { EventFeedback } from './app/views/events/EventFeedback';
 import { SubscribeClass } from './app/views/classes/SubscribeClass';
 import { NewNotification } from './app/views/board/NewNotification';
 import { Doubt } from './app/views/doubts/Doubt';
@@ -54,6 +56,8 @@ const NavigationStack = createStackNavigator({
     NewClass: { screen: NewClass},
     EditClass: { screen: EditClass},
     NewEvent: { screen: NewEvent },
+    EventToStudents: { screen: EventToStudents },
+    EventFeedback: { screen: EventFeedback },
     SubscribeClass: { screen: SubscribeClass},
     Doubt: { screen: Doubt},
     NewDoubt: { screen: NewDoubt },
