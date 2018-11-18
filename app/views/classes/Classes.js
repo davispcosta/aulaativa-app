@@ -1,9 +1,9 @@
 import React from 'react';
-import { Image, StyleSheet, View, ScrollView, Alert, FlatList, ActivityIndicator, TouchableWithoutFeedback, RefreshControl } from 'react-native';
-import { Card, Text, Icon, Button } from 'react-native-elements'
-import { HeaderSection } from '../../sections/HeaderSection'
-import { Constants } from '../../Constants'
+import { StyleSheet, View } from 'react-native';;
+import { HeaderSection } from '../../sections/HeaderSection';
 import * as firebase from 'firebase';
+import { ProfessorClasses } from './ProfessorClasses';
+import { StudentClasses } from './StudentClasses';
 
 export class Classes extends React.Component {
 
@@ -14,15 +14,9 @@ export class Classes extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            classes: [],
-            myclasses: [],
-            subscription: {},
-            refreshing: false,
-            loading: true,
-            user: {},
-            subscriptions: []
+            user: {}
         }
-        this.loadUser()
+        this.loadUser();
     }
 
     loadUser = () => {
@@ -34,264 +28,24 @@ export class Classes extends React.Component {
             querySnapshot.forEach(function (doc) {
                 user = doc.data();
             })
-            this.setState({ user: user },
-                () => { this.loadClasses() },
-                () => { this.loadUsersSubscriptions() })
+            this.setState({ user: user })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
         })
     }
-
-    loadClasses = () => {
-        const { currentUser } = firebase.auth();
-
-        ref = firebase.firestore().collection("classes")
-        let array = []
-
-        let uid;
-        let userUid;
-
-        if (this.state.user.role == "Professor") {
-            uid = "professorUid"
-            userUid = currentUser.uid
-        } else {
-            uid = "instituitionUid"
-            userUid = this.state.user.instituitionUid
-        }
-
-        ref.where(uid, "==", userUid).get().then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-                array.push(doc.data());
-            })
-            this.setState({ classes: array, refreshing: false, loading: false })
-        }.bind(this)).catch(function (error) {
-            console.log(error)
-            alert(error.message)
-        })
-
-    }
-
-    loadUsersSubscriptions = () => {
-        ref = firebase.firestore().collection("subscriptions")
-        ref.where("studentUid", "==", this.state.user.uid)
-            .where("accepted", "==", true).get().then(function (querySnapshot) {
-                var subs = []
-                querySnapshot.forEach(function (doc) {
-                    subs.push(doc.data())
-                })
-                this.setState({ subscriptions: subs }, () => { this.myclasses() })
-            }.bind(this)).catch(function (error) {
-                console.log(error)
-                alert(error.message)
-            })
-    }
-
-    myClasses = () => {
-        if (this.state.user.role == "Student") {
-            let array = []
-            this.state.classes.forEach(function (classes) {
-                this.state.subscriptions.forEach(function (subs) {
-                    if (classes.uid == subs.classUid) {
-                        this.state.myclasses.push(classes)
-                    } else {
-                        array.push(classes)
-                    }
-                })
-            })
-            this.setState({ classes: array })
-        }
-    }
-
-    loadSubscription = (userUid, classroom) => {
-        const { currenstUser } = firebase.auth();
-
-        ref = firebase.firestore().collection('subscriptions')
-        let subs = {}
-        ref.where("studentUid", "==", userUid)
-            .where("classUid", "==", classroom.uid).get().then(function (querySnapshot) {
-                querySnapshot.forEach(function (doc) {
-                    subs = doc.data();
-                })
-                this.setState({ subscription: subs }, () => {
-                    this.verifySubscription(classroom)
-                })
-            }.bind(this)).catch(function (error) {
-                console.log(error)
-                alert(error.message)
-            })
-    }
-
-    verifySubscription = (classroom) => {
-        if (this.state.subscription.uid == undefined) {
-            Alert.alert(
-                'Atenção!',
-                'Você não está inscrito nessa disciplina.',
-                [
-                    { text: 'Inscrever-se?', onPress: () => this.seekSubscription(classroom.uid) },
-                    { text: 'Cancelar', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                    { text: 'Ok', onPress: () => console.log('OK Pressed') },
-                ],
-                { cancelable: false }
-            )
-        } else if (!this.state.subscription.accepted) {
-            Alert.alert(
-                'Atenção!',
-                'Sua requisição para essa disciplina ainda não foi aceita.',
-                [
-                    { text: 'Cancelar', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                    { text: 'Ok', onPress: () => console.log('OK Pressed') },
-                ],
-                { cancelable: false }
-            )
-        } else {
-            this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classroom: classroom })
-        }
-    }
-
-    seekSubscription = (classUid) => {
-        const { currentUser } = firebase.auth();
-
-        var newKey = firebase.database().ref().child('subscriptions').push().key;
-
-        ref = firebase.firestore().collection('subscriptions')
-        ref.add({ name: this.state.user.name, accepted: false, classUid: classUid, exp: 0, qntAbsence: 0, studentUid: currentUser.uid, uid: newKey }).then((response) => {
-            alert('Solicitação enviada com sucesso.')
-        }).catch((error) => {
-            alert(error.message)
-        })
-    }
-
-    onRefresh = () => {
-        this.setState({ refreshing: true })
-        this.loadUser()
-    }
-   
 
     render() {
-
-        var btnNew;
-        var allClasses;
-        var allMyClasses;
-
-        if (this.state.user.role == "Professor") {
-            
-            btnNew = <Button
-                title="NOVA TURMA"
-                titleStyle={{ fontWeight: '700' }}
-                buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                onPress={() => this.props.navigation.navigate('NewClass', { instituitionUid: this.state.user.instituitionUid })}
-            />
-            allClasses = <View>
-                <Text style={styles.baseText} h5> Minhas disciplinas: </Text>
-                <FlatList
-                    data={this.state.classes}
-                    keyExtractor={item => item.uid.toString()}
-                    renderItem={({ item }) => (
-                        <TouchableWithoutFeedback
-                            onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classroom: item })}
-                        >
-                            <Card flexDirection="row" wrapperStyle={{alignItems: 'center'}}>
-                                <Icon                                    
-                                    name='class'
-                                    color={Constants.Colors.Primary}
-                                />
-                                <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
-                                    <Text
-                                        fontFamily='montserrat_semi_bold'
-                                        style={{ color: Constants.Colors.Primary }}
-                                        h5>{item.name}</Text>
-                                </View>
-                            </Card>
-                        </TouchableWithoutFeedback>
-                    )}
-                />
-            </View>
-        } else if(this.state.user.role == "Student") { 
-            if (this.state.myclasses.length == 0) { 
-                allMyClasses = <Text style={styles.baseText} h5>Você ainda não se cadastrou em nenhuma disciplina.</Text>
-            } else {
-                allMyClasses = <View>
-                    <Text h4 style={styles.baseText} h5>Minhas disciplinas: </Text>
-                    <FlatList
-                        data={this.state.myclasses}
-                        keyExtractor={item => item.uid.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableWithoutFeedback
-                                onPress={() => this.verifySubscription(item)}
-                            >
-                                <Card flexDirection="row" wrapperStyle={{alignItems: 'center'}}>
-                                    <Icon
-                                        name='class'
-                                        color={Constants.Colors.Primary}
-                                    />
-                                    <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
-                                        <Text
-                                            fontFamily='montserrat_semi_bold'
-                                            style={{ color: Constants.Colors.Primary }}
-                                            h5>{item.name}</Text>
-                                    </View>
-                                </Card>
-                            </TouchableWithoutFeedback>
-                        )} />
-                </View>
-            }
-
-            allClasses = <FlatList
-                data={this.state.classes}
-                keyExtractor={item => item.uid.toString()}
-                renderItem={({ item }) => (
-                    <TouchableWithoutFeedback
-                        onPress={() => this.loadSubscription(this.state.user.uid, item)}
-                    >
-                        <Card flexDirection="row"  wrapperStyle={{alignItems: 'center'}}>
-                            <Icon                                
-                                name='class'
-                                color={Constants.Colors.Primary}
-                            />
-                            <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
-                                <Text
-                                    fontFamily='montserrat_semi_bold'
-                                    style={{ color: Constants.Colors.Primary }}
-                                    h5>{item.name}</Text>
-                            </View>
-                        </Card>
-                    </TouchableWithoutFeedback>
-                )} />
+        var screen;
+        if(this.state.user.role == "Professor") {
+            screen = <ProfessorClasses user={this.state.user} navigation={this.props.navigation}/>
+        } else if(this.state.user.role == "Student"){
+            screen = <StudentClasses user={this.state.user} navigation={this.props.navigation}/>
         }
-
-        var emptyDiv;
-        if (this.state.classes.length == 0 && !this.state.loading) {
-            emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30 }} h4>Você não possui classes adicionadas ainda.</Text>
-                <Image
-                    style={styles.emptyIcon}
-                    resizeMode='contain'
-                    source={require('../../assets/img/pencils.png')}
-                />
-            </View>
-        } else {
-            emptyDiv = null;
-        }
-
-        var loadingDiv;
-        if (this.state.loading == true) {
-            loadingDiv = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
-        } else {
-            loadingDiv = null
-        }
-
         return (
             <View style={styles.container}>
                 <HeaderSection title="Turmas" navigation={this.props.navigation} logOut={true} goToProfile={true} />
-                <ScrollView>
-                    {btnNew}
-                    {allMyClasses}
-                    {allClasses}
-                    
-                    {loadingDiv}
-                    {emptyDiv}                
-                </ScrollView>
+                { screen }
             </View>
         );
     }
@@ -300,14 +54,5 @@ export class Classes extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1
-    },
-    emptyIcon: {
-        width: 100
-    },
-    baseText: {
-        color: Constants.Colors.Primary,
-        paddingHorizontal: 20,
-        paddingTop: 20,
-        fontFamily: "montserrat_bold"
     }
 });

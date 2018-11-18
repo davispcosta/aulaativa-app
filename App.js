@@ -20,6 +20,7 @@ import { MaterialTabs } from './app/sections/MaterialTabs';
 import { UserProfile } from './app/views/profile/UserProfile';
 import { ProfessorProfile } from './app/views/profile/ProfessorProfile';
 import { Classes } from './app/views/classes/Classes';
+import { EditClass } from './app/views/classes/EditClass';
 import { NewClass } from './app/views/classes/NewClass';
 import { NewEvent } from './app/views/events/NewEvent';
 import { SubscribeClass } from './app/views/classes/SubscribeClass';
@@ -51,6 +52,7 @@ const NavigationStack = createStackNavigator({
     RegisterScreen: { screen: Register },
     Classes: { screen: Classes },
     NewClass: { screen: NewClass},
+    EditClass: { screen: EditClass},
     NewEvent: { screen: NewEvent },
     SubscribeClass: { screen: SubscribeClass},
     Doubt: { screen: Doubt},

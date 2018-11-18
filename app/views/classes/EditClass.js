@@ -1,39 +1,32 @@
 import React, { Component } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
-import { FormLabel, FormInput, FormValidationMessage, Button, Text, Header } from 'react-native-elements'
+import { FormLabel, FormInput, CheckBox, Button, Text, Header } from 'react-native-elements'
 import { HeaderSection } from '../../sections/HeaderSection'
 import { Constants } from '../../Constants';
 import * as firebase from 'firebase';
 import '@firebase/firestore'
 
-export class NewClass extends Component {
+export class EditClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      qntAbsence: '',
-      active: false,
-      instituitionUid: this.props.navigation.state.params.instituitionUid
+      classroom: this.props.navigation.state.params.classroom,
+      name: this.props.navigation.state.params.classroom.name,
+      active: this.props.navigation.state.params.classroom.active,
     };
   }
 
-  newClass = () => {
-    const { currentUser } = firebase.auth();
-
-    var newKey = firebase.database().ref().child('classes').push().key;
-
-    ref = firebase.firestore().collection('classes') 
-    ref.add({ uid: newKey, 
-      qntAbsence: this.state.qntAbsence, 
-      name: this.state.name, 
-      professorUid: currentUser.uid,
-      active: this.state.active,
-      instituitionUid: this.state.instituitionUid}).then((response) => {
-        this.props.navigation.goBack()
-    }).catch((error) => {
-        alert(error.message)
+  updateClass = () => {
+    firebase.firestore().collection("classes").where("uid", "==", classroom.uid)
+    .get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach( (doc) => {
+            firebase.firestore().collection("classes").doc(doc.id).update({name: this.state.name, active: this.state.active}).then(() =>{            
+              this.props.navigation.goBack();
+              setTimeout(() => this.props.navigation.setParams({classroom: { classroom: this.state.id, name: this.state.name, active: this.state.name }}), 10)
+            });
+        });
     })
-
   }
 
   render() {
@@ -42,21 +35,23 @@ export class NewClass extends Component {
         <HeaderSection navigation={this.props.navigation} goBack={true} />
 
         <ScrollView keyboardShouldPersistTaps={"always"} style={styles.formContainer}>          
-          <Text h2 style={styles.title}>NOVA TURMA</Text>
+          <Text h2 style={styles.title}>EDITAR</Text>
 
           <FormInput placeholder="Nome"
+          value={this.state.name}
           onChangeText={(name) => this.setState({name})}
           />
 
           <CheckBox
             center
             title='Ativo'
+            iconRight
+            iconType='material'
+            checkedIcon='alarm-on'
+            uncheckedIcon='alarm-off'
+            checkedColor='green'
             checked={this.state.active}
-          />
-
-          <FormInput placeholder="Quantidade de Faltas"
-          keyboardType="numeric"
-          onChangeText={(qntAbsence) => this.setState({qntAbsence})}
+            onPress={() => { this.setState({ active: !this.state.active }) }}
           />
 
           <Button
@@ -64,9 +59,9 @@ export class NewClass extends Component {
             backgroundColor={Constants.Colors.Primary}
             color='#FFFFFF'
             buttonStyle={styles.registerBtn}
-            onPress={ () => this.newClass()}
+            onPress={ () => this.updateClass()}
             rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
-            title='CONTINUAR'
+            title='SALVAR'
             rounded={true}
             fontWeight='800' />
         
