@@ -100,8 +100,8 @@ export class Quizes extends React.Component {
                     renderItem={({ item }) => (
                         <TouchableWithoutFeedback
                             onPress={() => this.clickOnQuestion(this.props.navigation, item)}>
-                            <Card title={item.title} >
-                                {/* <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text> */}
+                            <Card wrapperStyle={{paddingVertical: 20, alignItems: 'center'}}>
+                                <Text h5 style={{fontFamily: 'montserrat_bold',}}>{item.title}</Text>
                             </Card>
                         </TouchableWithoutFeedback>
                     )}

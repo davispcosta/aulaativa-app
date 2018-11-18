@@ -139,26 +139,26 @@ export class Board extends React.Component {
                 { loadingProfessorDiv }
                 { profCard }
                 
-                <TouchableWithoutFeedback
-                onPress={() => this.props.navigation.navigate('Rank', { classroom: this.state.classroom })}>
-                    
-                    <Card containerStyle={{marginBottom: 20, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
-                    flexDirection='row'>
-                        <Icon color='#f1f1f1' type='font-awesome' name='trophy'/>
-                        <Text h3 style={{color: "white", fontWeight: 'bold',}}>RANK</Text>
-                        <Icon color='#f1f1f1' type='materialicons' name='keyboard-arrow-right' />
-                    </Card>
-                </TouchableWithoutFeedback>
+                <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                    <TouchableWithoutFeedback
+                    onPress={() => this.props.navigation.navigate('Rank', { classroom: this.state.classroom })}>
+                        
+                        <Card containerStyle={{width: '45%', height: 100, marginBottom: 30, backgroundColor: 'white'}} wrapperStyle={styles.rankBtn}
+                        flexDirection='column' alignItems='center'>
+                            <Icon color={Constants.Colors.Primary} type='font-awesome' name='trophy'/>
+                            <Text h5 style={{color: Constants.Colors.Primary, fontWeight: 'bold',}}>RANK</Text>
+                        </Card>
+                    </TouchableWithoutFeedback>
 
-                <TouchableWithoutFeedback
-                onPress={() => this.props.navigation.navigate('Achievements', { classroom: this.state.classroom })}>                    
-                    <Card containerStyle={{marginBottom: 20, backgroundColor: Constants.Colors.Primary}} wrapperStyle={styles.rankBtn}
-                    flexDirection='row'>
-                        <Icon color='#f1f1f1' type='ionicon' name='ios-medal'/>
-                        <Text h3 style={{color: "white", fontWeight: 'bold',}}>CONQUISTAS</Text>
-                        <Icon color='#f1f1f1' type='materialicons' name='keyboard-arrow-right' />
-                    </Card>
-                </TouchableWithoutFeedback>
+                    <TouchableWithoutFeedback
+                    onPress={() => this.props.navigation.navigate('Achievements', { classroom: this.state.classroom })}>                    
+                        <Card containerStyle={{width: '45%', height: 100, marginBottom: 30, backgroundColor: 'white'}} wrapperStyle={styles.rankBtn}
+                        flexDirection='column'>
+                            <Icon color={Constants.Colors.Primary} type='ionicon' name='ios-medal'/>
+                            <Text h5 style={{color: Constants.Colors.Primary, fontWeight: 'bold',}}>CONQUISTAS</Text>
+                        </Card>
+                    </TouchableWithoutFeedback>
+                </View>
 
                 <Text h5 style={styles.subtitle}>MURAL</Text>
 
@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         alignSelf: 'center',
+        fontFamily: 'montserrat_bold',
     }, 
     list: {
         marginBottom: 20

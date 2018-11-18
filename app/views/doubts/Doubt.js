@@ -84,6 +84,8 @@ export class Doubt extends Component {
           }
         >
 
+        <Text h5 style={styles.subtitle}>RESPOSTAS</Text>
+
         <FlatList
           data={this.state.answers}
           keyExtractor={item => item.uid.toString()}
@@ -110,6 +112,11 @@ const styles = StyleSheet.create({
       marginTop: 20,
     },
     registerBtn: {
+      marginTop: 20
+    },
+    subtitle: {
+      alignSelf: 'center',
+      fontFamily: 'montserrat_bold',
       marginTop: 20
     }
 });

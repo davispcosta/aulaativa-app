@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, Picker, Image, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, ScrollView, Picker, Image, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
 import { Card, Text, Button, FormInput, Icon } from 'react-native-elements';
 import { HeaderSection } from '../../sections/HeaderSection';
 import { Constants } from '../../Constants';
@@ -16,10 +16,11 @@ export class Question extends Component {
             corrects: 0,
             total: 0,
             checked: false,
-            finished: false,
             isCorrect: false,
             answersStudents: [],
-            answerCorrect: null
+            answerCorrect: null,
+            loading: true,
+            finished: false
         }
 
         this.loadAlternatives(this.state.questions[this.state.numberQuestion].uid);
@@ -34,7 +35,7 @@ export class Question extends Component {
             querySnapshot.forEach(function (d) {
                 array.push(d.data());
             })
-            this.setState({ alternatives: array }, () => { this.loadAnswersStudent() })
+            this.setState({ alternatives: array, loading: false })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -134,28 +135,15 @@ export class Question extends Component {
             />
         }
 
-        // if (this.state.isCorrect && this.state.checked) {
-        //     answerCorrect = <Icon
-        //         raised
-        //         containerStyle={{ backgroundColor: 'white' }}
-        //         type='font-awesome'
-        //         name='check-circle'
-        //         color='#32CD32'
-        //     />
-        // }
-
-        // if (!this.state.isCorrect && this.state.checked) {
-        //     answerCorrect = <Icon
-        //         raised
-        //         containerStyle={{ backgroundColor: 'white' }}
-        //         type='font-awesome'
-        //         name='times-circle'
-        //         color='#DC143C'
-        //     />
-        // }
-
         if (this.state.finished) {
             questionView = <Text style={styles.baseText}>Seu resultado: {this.state.corrects}/{this.state.total} </Text>
+        }
+
+        var loadingDiv;
+        if (this.state.loading == true) {
+            loadingDiv = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
+        } else {
+            loadingDiv = null
         }
 
         if (!this.state.finished) {
@@ -169,33 +157,32 @@ export class Question extends Component {
                     </View>
 
                     <FlatList
-                        data={this.state.alternatives}
-                        keyExtractor={item => item.uid.toString()}
-                        renderItem={({ item }) => (
-                            <TouchableWithoutFeedback onPress={() => this.verifyAlternative(item)}>
-                                <Card flexDirection="row" style={{ color: Constants.Colors.Primary }}>
-                                    <Icon
-                                        raised
-                                        containerStyle={{ backgroundColor: '#AFAFAF' }}
-                                        name='class'
-                                        color='#f1f1f1'
-                                    />
-                                    <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
-                                        <Text
-                                            fontFamily='montserrat_semi_bold'
-                                            style={{ color: Constants.Colors.Primary }}
-                                            h5>{item.alternative}</Text>
-                                    </View>
-                                    <View>
-                                        {this.state.answerCorrect}
-                                    </View>
-                                </Card>
-                            </TouchableWithoutFeedback>
-                        )}
-                    />
+                    data={this.state.alternatives}
+                    keyExtractor={item => item.uid.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableWithoutFeedback onPress={() => this.verifyAlternative(item)}>
+                            <Card flexDirection="row" style={{ color: Constants.Colors.Primary }}>
+                                <Icon
+                                    raised
+                                    containerStyle={{ backgroundColor: '#AFAFAF' }}
+                                    name='class'
+                                    color='#f1f1f1'
+                                />
+                                <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
+                                    <Text
+                                        fontFamily='montserrat_semi_bold'
+                                        style={{ color: Constants.Colors.Primary }}
+                                        h5>{item.alternative}</Text>
+                                </View>
+                            </Card>
+                        </TouchableWithoutFeedback>
+                    )}
+                />
                 </View>
-        }
 
+                {loadingDiv}
+
+        }
         return (
             <View>
                 <ScrollView>

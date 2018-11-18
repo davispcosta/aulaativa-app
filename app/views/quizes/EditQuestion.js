@@ -113,7 +113,8 @@ export class EditQuestion extends Component {
                 renderItem={({item}) => (
                     <TouchableWithoutFeedback
                     onPress={() => console.log(item.alternative)}>
-                    <Card title={item.alternative} >
+                    <Card >
+                        <Text style={{ alignSelf: 'center', fontFamily: 'montserrat_bold', paddingVertical: 20,}}>{item.alternative}</Text>
                     </Card>
                     </TouchableWithoutFeedback>
                 )}

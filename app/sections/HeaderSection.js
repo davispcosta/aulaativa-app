@@ -21,7 +21,7 @@ export class HeaderSection extends Component {
       firebase.auth().signOut().then(function(){
         const resetAction = StackActions.reset({
           index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'LoginScreen'})]
+          actions: [NavigationActions.navigate({ routeName: 'Login'})]
         });
           navigation.dispatch(resetAction)
       }).catch(function (error) {

@@ -66,17 +66,16 @@ export class ProfessorProfile extends Component {
           
           <View style={{paddingLeft: 20, marginVertical: 20}}>
             <Text h3>{ this.state.user.name }</Text>
-            <Text h4>Contato</Text>
             <Text>{ this.state.user.email }</Text>
           </View>
 
-          <Text h4 style={{alignSelf: 'center',}}>Disciplinas</Text>
+          <Text h5 style={{alignSelf: 'center',}}>Disciplinas</Text>
 
           <FlatList
             data={this.state.classes}
             keyExtractor={item => item.uid}
             renderItem={({item}) => (
-              <Card flexDirection="row">
+              <Card flexDirection="row" wrapperStyle={{ flexWrap: 'wrap',}}>
                 <Icon
                   raised
                   containerStyle={{backgroundColor:'#AFAFAF'}}
@@ -85,8 +84,8 @@ export class ProfessorProfile extends Component {
                 />
                 <View style={{marginLeft: 20}}>
                   <Text
-                    style={{fontFamily: 'montserrat'}}
-                    h4>{item.name}</Text>
+                    style={{fontFamily: 'montserrat_light'}}
+                    h5>{item.name}</Text>
                   {/* <Text>{item.professor}</Text>
                   <Text style={{color: "gray"}}>{item.alunos} ALUNOS</Text> */}
                 </View>

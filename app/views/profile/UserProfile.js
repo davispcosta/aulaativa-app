@@ -66,6 +66,33 @@ export class UserProfile extends Component {
   }
 
   render() {
+    var disciplinas = null
+    if(this.state.user.role == "Professor") {
+      disciplinas = <View>
+        <Text h5 style={{alignSelf: 'center',}}>Disciplinas</Text>
+
+        <FlatList
+          data={this.state.classes}
+          keyExtractor={item => item.uid}
+          renderItem={({item}) => (
+            <Card flexDirection="row" wrapperStyle={{ flexWrap: 'wrap',}}>
+              <Icon
+                raised
+                containerStyle={{backgroundColor:'#AFAFAF'}}
+                name='class'
+                color='#f1f1f1'
+              />
+              <View style={{marginLeft: 20}}>
+                <Text
+                  style={{fontFamily: 'montserrat_light'}}
+                  h5>{item.name}</Text>
+                {/* <Text>{item.professor}</Text>
+                <Text style={{color: "gray"}}>{item.alunos} ALUNOS</Text> */}
+              </View>
+            </Card>
+          )}
+      /></View>
+    }
     return (
       <View style={styles.container}>
 
@@ -79,33 +106,10 @@ export class UserProfile extends Component {
           
           <View style={{paddingLeft: 20, marginVertical: 20}}>
             <Text h3>{ this.state.user.name }</Text>
-            <Text h4>Contato</Text>
             <Text>{ this.state.user.email }</Text>
           </View>
 
-          <Text h4 style={{alignSelf: 'center',}}>Disciplinas</Text>
-
-          <FlatList
-            data={this.state.classes}
-            keyExtractor={item => item.uid}
-            renderItem={({item}) => (
-              <Card flexDirection="row">
-                <Icon
-                  raised
-                  containerStyle={{backgroundColor:'#AFAFAF'}}
-                  name='class'
-                  color='#f1f1f1'
-                />
-                <View style={{marginLeft: 20}}>
-                  <Text
-                    style={{fontFamily: 'montserrat'}}
-                    h4>{item.name}</Text>
-                  {/* <Text>{item.professor}</Text>
-                  <Text style={{color: "gray"}}>{item.alunos} ALUNOS</Text> */}
-                </View>
-              </Card>
-            )}
-        />
+          {disciplinas}
 
       </ScrollView>
       </View>

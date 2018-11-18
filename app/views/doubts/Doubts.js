@@ -91,7 +91,8 @@ export class Doubts extends React.Component {
                     <TouchableWithoutFeedback
                         onPress={() => this.props.navigation.navigate('Doubt', { user: this.state.user, doubt: item })}
                     >
-                    <Card title={item.title}>
+                    <Card wrapperStyle={{paddingVertical: 20, alignItems: 'center'}}>
+                        <Text style={{fontFamily: 'montserrat_bold',}}>{item.title}</Text>
                         {/* <Text>{item.answers} RESPOSTAS</Text>
                         <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text> */}
                     </Card>

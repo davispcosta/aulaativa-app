@@ -48,19 +48,12 @@ export class Rank extends React.Component {
 
                     <FlatList
                     data={this.state.rank}
-                    keyExtractor={item => item.title}
+                    keyExtractor={item => item.uid}
                     renderItem={({item, index}) => (
                         <Card flexDirection='row' wrapperStyle={styles.studentCard}>
-                            <Icon
-                                raised
-                                containerStyle={{backgroundColor:'#AFAFAF'}}
-                                name='user'
-                                type='font-awesome'
-                                color='#f1f1f1'
-                            /> 
+                            <Text h3>{index+1}º</Text> 
                             <Text>{item.name}</Text>
-                            <Text>{index+1}º</Text> 
-                            <Text>{item.exp}exp</Text> 
+                            <Text>{item.exp} exp</Text> 
                         </Card>
                     )}
                     />

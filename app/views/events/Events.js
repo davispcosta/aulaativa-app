@@ -62,7 +62,7 @@ export class Events extends React.Component {
         let newEvent = null;
         if(this.state.user.role == "Professor") {
             newEvent = <Button
-                            title="ADICIONAR EVENTO" 
+                            title="ADICIONAR ATIVIDADE" 
                             titleStyle={{ fontWeight: '700'}}
                             buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
                             onPress={() => this.props.navigation.navigate('NewEvent', { classUid: this.state.classUid})}

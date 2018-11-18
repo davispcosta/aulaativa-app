@@ -25,7 +25,7 @@ export class AchievementToStudents extends Component {
                 querySnapshot.forEach(function (doc) {
                     sub.push(doc.data())
                 })
-                this.setState({ subsAccepted: sub }, () => { this.loadAcceptedUsers() })
+                this.setState({ subsAccepted: sub, loading: false }, () => { this.loadAcceptedUsers() })
             }.bind(this)).catch(function (error) {
                 console.log(error)
                 alert(error.message)
@@ -57,13 +57,15 @@ export class AchievementToStudents extends Component {
         this.setState({students: array})        
     }
 
-    getStudentCard = (item) => {
+    getStudentCard = (item, index) => {
         if(item.checked) {
-            return <Card class="checked" title={item.name}>
+            return <Card key={index} title={item.name}>
                 <Text>Esse aluno irá receber a conquista!</Text>
             </Card>
         } else {
-            return <Card title={item.name}></Card>
+            return <Card key={index}>
+                <Text>{item.name}</Text>
+            </Card>
         }
     }
 
@@ -101,6 +103,13 @@ export class AchievementToStudents extends Component {
         } else {
             emptyDiv = null;
         }
+
+        var loadingDiv;
+        if(this.state.loading == true) {
+            loadingDiv = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
+        } else {
+            loadingDiv = null
+        }
     
         return (
           <View style={styles.container}>
@@ -109,6 +118,7 @@ export class AchievementToStudents extends Component {
             <ScrollView>
     
               { emptyDiv }
+              { loadingDiv }
     
               <FlatList
                 data={this.state.students}
@@ -141,9 +151,6 @@ export class AchievementToStudents extends Component {
 const styles = StyleSheet.create({ 
     container: {
         flex: 1
-    },
-    checked: {
-        backgroundColor: 'red'
     },
     registerBtn: {
         marginTop: 40

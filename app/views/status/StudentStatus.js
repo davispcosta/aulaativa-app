@@ -73,7 +73,7 @@ export class StudentStatus extends React.Component {
         let screen = null;
 
         screen =
-            <View>
+            <View style={{alignItems: 'center',}}>
                 <Text style={styles.subtitle} h4>EXPERIÊNCIA</Text>
                 <View style={styles.xpBar}></View>
                 <Text h5>{this.state.status.exp} xp</Text>
@@ -118,5 +118,9 @@ const styles = StyleSheet.create({
     },
     faults: {
         flexDirection: 'row'
+    },
+    subtitle: {
+        marginTop: 20,
+        marginBottom: 5,
     }
 });

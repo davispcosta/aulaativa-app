@@ -191,12 +191,10 @@ export class Classes extends React.Component {
                         <TouchableWithoutFeedback
                             onPress={() => this.props.navigation.navigate('MaterialTabs', { user: this.state.user, classroom: item })}
                         >
-                            <Card flexDirection="row">
-                                <Icon
-                                    raised
-                                    containerStyle={{ backgroundColor: '#AFAFAF' }}
+                            <Card flexDirection="row" wrapperStyle={{alignItems: 'center'}}>
+                                <Icon                                    
                                     name='class'
-                                    color='#f1f1f1'
+                                    color={Constants.Colors.Primary}
                                 />
                                 <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
                                     <Text
@@ -222,12 +220,10 @@ export class Classes extends React.Component {
                             <TouchableWithoutFeedback
                                 onPress={() => this.verifySubscription(item)}
                             >
-                                <Card flexDirection="row">
+                                <Card flexDirection="row" wrapperStyle={{alignItems: 'center'}}>
                                     <Icon
-                                        raised
-                                        containerStyle={{ backgroundColor: '#AFAFAF' }}
                                         name='class'
-                                        color='#f1f1f1'
+                                        color={Constants.Colors.Primary}
                                     />
                                     <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
                                         <Text
@@ -248,12 +244,10 @@ export class Classes extends React.Component {
                     <TouchableWithoutFeedback
                         onPress={() => this.loadSubscription(this.state.user.uid, item)}
                     >
-                        <Card flexDirection="row">
-                            <Icon
-                                raised
-                                containerStyle={{ backgroundColor: '#AFAFAF' }}
+                        <Card flexDirection="row"  wrapperStyle={{alignItems: 'center'}}>
+                            <Icon                                
                                 name='class'
-                                color='#f1f1f1'
+                                color={Constants.Colors.Primary}
                             />
                             <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
                                 <Text

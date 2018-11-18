@@ -42,7 +42,7 @@ export class NewEvent extends Component {
 
         <ScrollView keyboardShouldPersistTaps={"always"} style={styles.formContainer}>
 
-          <Text h2 style={styles.title}>NOVO EVENTO</Text>
+          <Text h2 style={styles.title}>NOVA ATIVIDADE</Text>
 
           <FormInput placeholder="Título"
           onChangeText={(title) => this.setState({title})}
