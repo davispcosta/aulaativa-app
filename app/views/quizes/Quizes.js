@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, ScrollView, Image, View, ActivityIndicator, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
-import { Card, Text, Button } from 'react-native-elements';
+import { Card, Text, Button, Icon } from 'react-native-elements';
 import { Constants } from '../../Constants';
 import * as firebase from 'firebase';
 
@@ -51,7 +51,12 @@ export class Quizes extends React.Component {
         }
     }
 
+    reports = (navigation, uid) => {
+        navigation.navigate("Reports", { quizUid: uid });
+    }
+
     render() {
+        let reports = null;
         let newQuiz = null;
         if (this.state.user.role == "Professor") {
             newQuiz = <Button
@@ -100,8 +105,16 @@ export class Quizes extends React.Component {
                     renderItem={({ item }) => (
                         <TouchableWithoutFeedback
                             onPress={() => this.clickOnQuestion(this.props.navigation, item)}>
-                            <Card wrapperStyle={{paddingVertical: 20, alignItems: 'center'}}>
-                                <Text h5 style={{fontFamily: 'montserrat_bold',}}>{item.title}</Text>
+                            <Card wrapperStyle={{ paddingVertical: 20, alignItems: 'center' }}>
+                                <Text h5 style={{ fontFamily: 'montserrat_bold', }}>{item.title}</Text>
+                                <Icon
+                                    raised
+                                    containerStyle={{ backgroundColor: '#AFAFAF' }}
+                                    type='font-awesome'
+                                    name='file-chart-line'
+                                    color='#f1f1f1'
+                                    onPress={() => this.reports(this.props.navigation, item.uid)}
+                                />
                             </Card>
                         </TouchableWithoutFeedback>
                     )}

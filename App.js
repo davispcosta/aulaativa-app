@@ -32,6 +32,7 @@ import { NewDoubt } from './app/views/doubts/NewDoubt';
 import { Achievements } from './app/views/achievements/Achievements';
 import { NewAchievement } from './app/views/achievements/NewAchievement';
 import { AchievementToStudents } from './app/views/achievements/AchievementToStudent';
+import { Reports } from './app/views/quizes/Reports';
 
 
 const firebaseConfig = {
@@ -76,7 +77,8 @@ const NavigationStack = createStackNavigator({
     Achievements: { screen: Achievements },
     NewAchievement: { screen: NewAchievement },
     AchievementToStudents: { screen: AchievementToStudents },
-    Questions: {screen: Questions }
+    Questions: {screen: Questions },
+    Reports : {screen: Reports }
   }, {
     navigationOptions: {
       header: null
