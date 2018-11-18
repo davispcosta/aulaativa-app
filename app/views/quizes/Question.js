@@ -85,9 +85,11 @@ export class Question extends Component {
                 alert("Resposta correta.")
                 let correct = this.state.corrects + 1;
                 this.setState({ corrects: correct })
+                this.changeQuestion()
 
             } else {
                 alert("Resposta errada.")
+                this.changeQuestion()
             }
         }
     }

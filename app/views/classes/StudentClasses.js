@@ -26,21 +26,6 @@ export class StudentClasses extends React.Component {
     }
 
     loadClasses = () => {
-        // ref = firebase.firestore().collection("classes")
-        // let array = []
-        // ref.where("instituitionUid", "==", this.props.user.instituitionUid).get().then(function (querySnapshot) {
-        //     querySnapshot.forEach(function (doc) {
-        //         var classroom = doc.data()
-        //         if(classroom.active) {
-        //             array.push(classroom);
-        //         }
-        //     })
-        //     this.setState({ classes: array, refreshing: false, loading: false })
-        // }.bind(this)).catch(function (error) {
-        //     console.log(error)
-        //     alert(error.message)
-        // })
-
         ref = firebase.firestore().collection("classes")
         let classrooms = []
         let professors = []
@@ -159,6 +144,11 @@ export class StudentClasses extends React.Component {
         </Card>
     }
 
+    onRefresh = () => {
+        this.setState({ refreshing: true})
+        this.loadClasses()
+    }
+
     render() {
         var classes = null;
         if (this.state.loading == true) {
@@ -187,7 +177,10 @@ export class StudentClasses extends React.Component {
             }
         }
         return (
-            <ScrollView>                
+            <ScrollView
+            refreshControl={
+                <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
+            }>                
                 { classes }
             </ScrollView>
         );

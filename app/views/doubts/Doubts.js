@@ -15,7 +15,11 @@ export class Doubts extends React.Component {
             loading: true,
             doubts: []
         }
-        this.loadDoubts()
+    }
+
+    componentDidMount = () => {
+        this.setState({ loading: true})
+        this.loadDoubts()    
     }
 
     loadDoubts = () => {
@@ -77,7 +81,7 @@ export class Doubts extends React.Component {
                     title="NOVA DÚVIDA" 
                     titleStyle={{ fontWeight: '700'}}
                     buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-                    onPress={() => this.props.navigation.navigate('NewDoubt', { classUid: this.state.classUid})}
+                    onPress={() => this.props.navigation.navigate('NewDoubt', { classUid: this.state.classUid, user: this.state.user, onNavigateBack: this.componentDidMount})}
                 />
 
                 { loadingDiv }

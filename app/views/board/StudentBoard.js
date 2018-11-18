@@ -78,12 +78,10 @@ export class StudentBoard extends React.Component {
             profCard = <TouchableWithoutFeedback
                 onPress={() => this.props.navigation.navigate('ProfessorProfile', { uid: this.state.professor.uid})}>
                     <Card flexDirection="row" wrapperStyle={{alignItems: 'center',}}>
-                        <Icon
-                            raised
-                            containerStyle={{backgroundColor:'#AFAFAF'}}
-                            name='user'
-                            type='font-awesome'
-                            color='#f1f1f1'
+                        <Image 
+                        resizeMode='contain'
+                        style={styles.professorIcon}
+                        source={require('../../assets/img/professor.png')}
                         />
 
                         <View style={{marginLeft: 20}}>
@@ -113,7 +111,8 @@ export class StudentBoard extends React.Component {
                 style={styles.list}
                 keyExtractor={item => item.uid.toString()}
                 renderItem={({item}) => (
-                    <Card title={item.title}>
+                    <Card>
+                        <Text h5 style={{fontWeight: '800'}}>{item.title}</Text>
                         <Text>{item.description}</Text>
                     </Card>
                 )}
@@ -132,23 +131,23 @@ export class StudentBoard extends React.Component {
                 
                 <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
                     <TouchableWithoutFeedback
-                    onPress={() => this.props.navigation.navigate('Rank', { classroom: this.state.classroom })}>
-                        
-                        <Card containerStyle={{width: '45%', height: 100, marginBottom: 30, backgroundColor: 'white'}} wrapperStyle={styles.rankBtn}
-                        flexDirection='column' alignItems='center'>
-                            <Icon color={Constants.Colors.Primary} type='font-awesome' name='trophy'/>
-                            <Text h5 style={{color: Constants.Colors.Primary, fontWeight: 'bold',}}>RANK</Text>
-                        </Card>
-                    </TouchableWithoutFeedback>
+                        onPress={() => this.props.navigation.navigate('Rank', { classroom: this.state.classroom })}>
+                            <View
+                            style={{marginVertical: 30}} wrapperStyle={styles.rankBtn}
+                            flexDirection='column' alignItems='center'>
+                                <Icon color={Constants.Colors.Primary} type='font-awesome' name='trophy'/>
+                                <Text h5 style={{color: Constants.Colors.Primary, fontWeight: 'bold',}}>RANK</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
 
-                    <TouchableWithoutFeedback
-                    onPress={() => this.props.navigation.navigate('Achievements', { classroom: this.state.classroom })}>                    
-                        <Card containerStyle={{width: '45%', height: 100, marginBottom: 30, backgroundColor: 'white'}} wrapperStyle={styles.rankBtn}
-                        flexDirection='column'>
-                            <Icon color={Constants.Colors.Primary} type='ionicon' name='ios-medal'/>
-                            <Text h5 style={{color: Constants.Colors.Primary, fontWeight: 'bold',}}>CONQUISTAS</Text>
-                        </Card>
-                    </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback
+                        onPress={() => this.props.navigation.navigate('Achievements', { classroom: this.state.classroom, user: this.state.user })}>                    
+                            <View style={{marginVertical: 30}} wrapperStyle={styles.rankBtn}
+                            flexDirection='column'>
+                                <Icon color={Constants.Colors.Primary} type='ionicon' name='ios-medal'/>
+                                <Text h5 style={{color: Constants.Colors.Primary, fontWeight: 'bold',}}>CONQUISTAS</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
                 </View>
 
                 <Text h5 style={styles.subtitle}>MURAL</Text>
@@ -169,6 +168,10 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         fontFamily: 'montserrat_bold',
     }, 
+    professorIcon: {
+        width: 50,
+        height: 50
+    },
     list: {
         marginBottom: 20
     },

@@ -10,22 +10,23 @@ export class NewDoubt extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      user: this.props.navigation.state.params.user,
       classUid: this.props.navigation.state.params.classUid,
       title: '',
     };
   }
 
   newDoubt = () => {
-    const { currentUser } = firebase.auth();
-
     var newKey = firebase.database().ref().child('doubts').push().key;
 
     ref = firebase.firestore().collection('doubts') 
     ref.add({ uid: newKey, 
       title: this.state.title, 
-      classUid: this.state.classUid, 
+      classUid: this.state.classUid,
+      userUid: this.state.user.uid,
       date: new Date()
     }).then((response) => {
+        this.props.navigation.state.params.onNavigateBack()
         this.props.navigation.goBack()
     }).catch((error) => {
         alert(error.message)

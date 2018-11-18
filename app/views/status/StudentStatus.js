@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Image, KeyboardAvoidingView, FlatList } from 'react-native';
+import { StyleSheet, ScrollView, View, Image, ActivityIndicator, FlatList } from 'react-native';
 import { Card, Header, Text, Icon, Button } from 'react-native-elements'
 import * as firebase from 'firebase';
 import { Constants } from '../../Constants';
@@ -15,6 +15,7 @@ export class StudentStatus extends React.Component {
         this.state = {
             classUid: this.props.classUid,
             user: {},
+            loading: true,
             status: {},
             achievements: []
         }
@@ -25,7 +26,6 @@ export class StudentStatus extends React.Component {
     }
 
     loadStatus = () => {
-        console.log('status')
         const { currentUser } = firebase.auth();
 
         ref = firebase.firestore().collection("subscriptions").where("classUid", "==", this.state.classUid)
@@ -34,7 +34,7 @@ export class StudentStatus extends React.Component {
             querySnapshot.forEach(function (doc) {
                 status = doc.data();
             })
-            this.setState({ status: status }, () => { console.log(this.state.status)})
+            this.setState({ status: status, loading: false }, () => { console.log(this.state.status)})
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -48,16 +48,19 @@ export class StudentStatus extends React.Component {
         ref.where("classUid", "==", this.state.classUid)
             .where("studentUid", "==", currentUser.uid)
             .get()
-            .then(function (querySnapshot) {
+            .then((querySnapshot) => {
                 querySnapshot.forEach(function (doc) {
                     ref.doc(doc.id).update({ qntAbsence: qntAbsence + 1 })
                 })
+                this.setState({loading: true})
+                this.loadStatus()
             })
     }
 
     generateFaults(classFaults, statusFaults) {
         const faults = [];
-        for (let i = 0; i < classFaults; i++) {
+        var lifes = classFaults - statusFaults
+        for (let i = 0; i < lifes; i++) {
             faults.push(
                 <Icon
                     key={i}
@@ -66,41 +69,44 @@ export class StudentStatus extends React.Component {
                 />
             );
         }
+        for (let i = lifes; i < classFaults; i++) {
+            faults.push(
+                <Icon
+                    key={i}
+                    name="favorite"
+                    color="#FFFFFF"
+                />
+            );
+        }
         return faults;
     }
 
     render() {
-        let screen = null;
+        var content = null;
+        if(this.state.loading == true) {
+            content = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
+        } else {
+            content = <View style={{alignItems: 'center',}}>
 
-        screen =
-            <View style={{alignItems: 'center',}}>
                 <Text style={styles.subtitle} h4>EXPERIÊNCIA</Text>
-                <View style={styles.xpBar}></View>
-                <Text h5>{this.state.status.exp} xp</Text>
+                <Text h3 style={{marginBottom: 20, color: Constants.Colors.Primary}}>{this.state.status.exp} xp</Text>
+
                 <Text style={styles.subtitle} h4>{this.state.status.qntAbsence} FALTAS</Text>
                 <View style={styles.faults}>                        
                     {this.generateFaults(this.props.classroom.qntAbsence, this.state.status.qntAbsence)}                        
                 </View>
                 <Button
-                    title="Adicionar falta"
+                    title="Adicionar Falta"
                     titleStyle={{ fontWeight: '700' }}
-                    buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
+                    buttonStyle={{ marginTop: 20, paddingHorizontal: 30, backgroundColor: Constants.Colors.Primary }}
                     onPress={() => this.addFault(this.state.status.qntAbsence)}
                 />
-                <Text style={styles.subtitle} h4>CONQUISTAS</Text>
-                <FlatList
-                    data={this.state.achievements}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <Card title={item.title}>
-                        </Card>
-                    )}
-                />
             </View>
+        }
 
         return (
             <View style={styles.container}>
-                {screen}
+                {content}
             </View>
         );
     }
