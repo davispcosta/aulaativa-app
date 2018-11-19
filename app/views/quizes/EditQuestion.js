@@ -59,19 +59,33 @@ export class EditQuestion extends Component {
     }
 
   render() {
-
-    var emptyDiv;
-    if(this.state.alternatives.length == 0) {
-        emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui alternativas adicionadas ainda.</Text>
-                    <Image 
-                    style={styles.emptyIcon} 
-                    resizeMode='contain'
-                    source={require('../../assets/img/pencils.png')}
-                    />
-                </View>
+    var content = null;
+    if(this.state.loading == true) {
+        content = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
     } else {
-        emptyDiv = null;
+        if(this.state.alternatives.length == 0) {
+            content = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui alternativas adicionadas ainda.</Text>
+                <Image 
+                style={styles.emptyIcon} 
+                resizeMode='contain'
+                source={require('../../assets/img/pencils.png')}
+                />
+            </View>
+        } else {
+            content = <FlatList
+                data={this.state.alternatives}
+                keyExtractor={item => item.uid.toString()}
+                renderItem={({item}) => (
+                    <TouchableWithoutFeedback
+                    onPress={() => console.log(item.alternative)}>
+                    <Card >
+                        <Text style={{ alignSelf: 'center', fontFamily: 'montserrat_bold', paddingVertical: 20,}}>{item.alternative}</Text>
+                    </Card>
+                    </TouchableWithoutFeedback>
+                )}
+                />
+        }
     }
 
     return(
@@ -105,20 +119,8 @@ export class EditQuestion extends Component {
                     rounded={true}
                     fontWeight='800' />
 
-                { emptyDiv }
-
-                <FlatList
-                data={this.state.alternatives}
-                keyExtractor={item => item.uid.toString()}
-                renderItem={({item}) => (
-                    <TouchableWithoutFeedback
-                    onPress={() => console.log(item.alternative)}>
-                    <Card >
-                        <Text style={{ alignSelf: 'center', fontFamily: 'montserrat_bold', paddingVertical: 20,}}>{item.alternative}</Text>
-                    </Card>
-                    </TouchableWithoutFeedback>
-                )}
-                />
+                { content }
+                
             </ScrollView>
         </View>
     );

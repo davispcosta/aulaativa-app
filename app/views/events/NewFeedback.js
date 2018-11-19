@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, Picker, View } from 'react-native';
-import { FormLabel, FormInput, Button, Text, Header } from 'react-native-elements'
+import { StyleSheet, ScrollView, Picker, View, Image } from 'react-native';
+import { FormLabel, FormInput, Button, Text } from 'react-native-elements'
 import { HeaderSection } from '../../sections/HeaderSection'
 import { Constants } from '../../Constants';
 import * as firebase from 'firebase';
 import '@firebase/firestore'
 
-export class EventFeedback extends Component {
+export class NewFeedback extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +29,6 @@ export class EventFeedback extends Component {
           alert(error.message)
       })
   }
-
   render() {
     
     let items = feedbacks.map( (feedback) => {
@@ -40,7 +39,18 @@ export class EventFeedback extends Component {
       <View style={styles.container}>
         <HeaderSection navigation={this.props.navigation} goBack={true} />
 
-        <ScrollView keyboardShouldPersistTaps={"always"} style={styles.formContainer}>          
+        <ScrollView keyboardShouldPersistTaps={"always"} style={styles.formContainer}
+        contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
+        >
+
+            <Text h5 style={{fontWeight: '800'}}>Marcar como feito?</Text>
+           
+            <Image 
+            style={styles.icon} 
+            resizeMode='contain'
+            source={feedbacks[this.state.feedback - 1]['image']}
+            />
+
             <Picker
                 selectedValue={this.state.feedback}
                 style={{ height: 50, width: 200 }}
@@ -67,27 +77,46 @@ export class EventFeedback extends Component {
 }
 
 const feedbacks = [{
-    label: 'Bom',
-    value: 1
+    label: 'Fácil',
+    value: 1,
+    image: require('../../assets/img/feedback/facil.png')
 },
 {
-    label: 'Ruim',
-    value: 2
+    label: 'Incrível',
+    value: 2,
+    image: require('../../assets/img/feedback/incrivel.png')
 },
 {
     label: 'Confuso',
-    value: 3
+    value: 3,
+    image: require('../../assets/img/feedback/confuso.png')
+}, 
+{
+  label: 'Difícil',
+  value: 4,
+  image: require('../../assets/img/feedback/dificil.png')
+},
+{
+  label: 'Trabalhoso',
+  value: 5,
+  image: require('../../assets/img/feedback/trabalhoso.png')
 }]
 
 const styles = StyleSheet.create({ 
   container: {
     flex: 1
   },
+  icon: {
+    width: 100,
+    height: 100,
+    marginVertical: 50,
+  },
   formContainer: {
     flex: 1,
     backgroundColor: '#FFF',
     paddingTop: 60,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    flexDirection: 'column',
   },
   title: {
     color: Constants.Colors.Primary,

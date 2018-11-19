@@ -44,7 +44,7 @@ export class Classes extends React.Component {
         }
         return (
             <View style={styles.container}>
-                <HeaderSection title="Turmas" navigation={this.props.navigation} logOut={true} goToProfile={true} />
+                <HeaderSection title="Turmas" navigation={this.props.navigation} logOut={true} />
                 { screen }
             </View>
         );

@@ -23,6 +23,7 @@ export class NewAchievement extends Component {
       title: this.state.title, 
       classUid: this.state.classroom.uid
     }).then((response) => {
+        this.props.navigation.state.params.onNavigateBack()
         this.props.navigation.goBack()
     }).catch((error) => {
         alert(error.message)

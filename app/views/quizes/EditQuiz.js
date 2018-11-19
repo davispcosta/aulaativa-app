@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, Image, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, View, ScrollView, Image, TouchableWithoutFeedback, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { Card, Text, Button } from 'react-native-elements';
 import { Constants } from '../../Constants';
 import { HeaderSection } from '../../sections/HeaderSection';
@@ -12,6 +12,7 @@ export class EditQuiz extends Component {
         this.state = {
             quizUid: this.props.navigation.state.params.quizUid,
             refreshing: false,
+            loading: true,
             questions: []
         }
         this.loadQuestions()
@@ -24,7 +25,7 @@ export class EditQuiz extends Component {
             querySnapshot.forEach(function(doc) {
                 array.push(doc.data());
             })
-            this.setState({ questions: array, refreshing: false})
+            this.setState({ questions: array, refreshing: false, loading: false})
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -38,18 +39,34 @@ export class EditQuiz extends Component {
 
   render() {
 
-    var emptyDiv;
-    if(this.state.questions.length == 0) {
-        emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui questões adicionadas ainda.</Text>
-                    <Image 
-                    style={styles.emptyIcon} 
-                    resizeMode='contain'
-                    source={require('../../assets/img/pencils.png')}
-                    />
-                </View>
+    var content = null;
+    if(this.state.loading == true) {
+        content = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
     } else {
-        emptyDiv = null;
+        if(this.state.questions.length == 0) {
+            content = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Você não possui questões adicionadas ainda.</Text>
+                <Image 
+                style={styles.emptyIcon} 
+                resizeMode='contain'
+                source={require('../../assets/img/pencils.png')}
+                />
+            </View>
+        } else {
+            content = <FlatList
+                data={this.state.questions}
+                keyExtractor={item => item.uid.toString()}
+                renderItem={({item}) => (
+                    <TouchableWithoutFeedback
+                    onPress={() => this.props.navigation.navigate('EditQuestion', { questionUid: item.uid })}>
+                    <Card>
+                        <Text style={{ alignSelf: 'center', fontFamily: 'montserrat_bold', paddingVertical: 20,}}>{item.question}</Text>
+                        {/* <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text> */}
+                    </Card>
+                    </TouchableWithoutFeedback>
+                )}
+                />
+        }
     }
 
     return(
@@ -68,21 +85,9 @@ export class EditQuiz extends Component {
                     onPress={() => this.props.navigation.navigate('NewQuestion', { quizUid: this.state.quizUid})}
                 />
 
-                { emptyDiv }
+                { content }
 
-                <FlatList
-                data={this.state.questions}
-                keyExtractor={item => item.uid.toString()}
-                renderItem={({item}) => (
-                    <TouchableWithoutFeedback
-                    onPress={() => this.props.navigation.navigate('EditQuestion', { questionUid: item.uid })}>
-                    <Card>
-                        <Text style={{ alignSelf: 'center', fontFamily: 'montserrat_bold', paddingVertical: 20,}}>{item.question}</Text>
-                        {/* <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.done} / {item.questions}</Text> */}
-                    </Card>
-                    </TouchableWithoutFeedback>
-                )}
-                />
+                
             </ScrollView>
         </View>
     );

@@ -13,8 +13,12 @@ export class ProfessorAchievements extends Component {
         refreshing: false,
         loading: true,
         achievements: []
-    }
-    this.loadAchievements()
+    }    
+  }
+
+  componentDidMount = () => {
+      this.setState({loading: true})
+      this.loadAchievements()
   }
 
   loadAchievements = () => {    
@@ -77,7 +81,7 @@ export class ProfessorAchievements extends Component {
             title="ADICIONAR CONQUISTA" 
             titleStyle={{ fontWeight: '700'}}
             buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-            onPress={() => this.props.navigation.navigate('NewAchievement', { classroom: this.state.classroom})}
+            onPress={() => this.props.navigation.navigate('NewAchievement', { classroom: this.state.classroom, onNavigateBack: this.componentDidMount})}
           />
 
           { content }        

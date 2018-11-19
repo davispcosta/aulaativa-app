@@ -21,9 +21,9 @@ export class EditClass extends Component {
     .get()
     .then((querySnapshot) => {
         querySnapshot.forEach( (doc) => {
-            firebase.firestore().collection("classes").doc(doc.id).update({name: this.state.name, active: this.state.active}).then(() =>{            
-              this.props.navigation.goBack();
-              setTimeout(() => this.props.navigation.setParams({classroom: { classroom: this.state.id, name: this.state.name, active: this.state.name }}), 10)
+            firebase.firestore().collection("classes").doc(doc.id).update({name: this.state.name, active: this.state.active}).then(() =>{    
+              this.props.navigation.state.params.onNavigateBack()        
+              this.props.navigation.goBack();              
             });
         });
     })

@@ -62,7 +62,7 @@ export class StudentEvents extends React.Component {
                     keyExtractor={item => item.uid.toString()}
                     renderItem={({item}) => (
                         <TouchableWithoutFeedback
-                        onPress={() => this.props.navigation.navigate('EventFeedback', { event: item, user: this.state.user })}>
+                        onPress={() => this.props.navigation.navigate('NewFeedback', { event: item, user: this.state.user })}>
                         <Card title={item.title}>
                             <Text>{item.description}</Text>
                             {/* <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text> */}

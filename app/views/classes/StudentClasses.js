@@ -30,13 +30,13 @@ export class StudentClasses extends React.Component {
         let classrooms = []
         let professors = []
         ref.where("instituitionUid", "==", this.props.user.instituitionUid).get().then( snapshot => {
-
-            snapshot.forEach((doc) => {
+            if(snapshot.length == 0) {
+                this.setState({ refreshing: false, loading: false}) 
+            }
+            snapshot.forEach((doc) => {                
                 let classroom = {}
                 classroom= doc.data();
                 let professorUid = classroom.professorUid;
-                console.log('professorUid')
-                console.log(professorUid)
                 if(classroom.active) {
                     firebase.firestore().collection('users').where("uid", "==", professorUid).get().then( snapshot => {
                         let professor;
@@ -45,12 +45,11 @@ export class StudentClasses extends React.Component {
                         })
                         professors.push(professor);
                         classrooms.push(classroom);
-                        console.log(professors)
-                        console.log(classrooms)
-                        this.setState({ classes: classrooms, professors: professors, refreshing: false, loading: false})  
+                        this.setState({ classes: classrooms, professors: professors})
+                        this.loadUsersSubscriptions();  
                     })
-                }
-            })                  
+                }                
+            })   
         })
     }
 
@@ -86,7 +85,7 @@ export class StudentClasses extends React.Component {
         var newKey = firebase.database().ref().child('subscriptions').push().key;
 
         ref = firebase.firestore().collection('subscriptions')
-        ref.add({ name: this.state.user.name, accepted: false, classUid: classUid, exp: 0, qntAbsence: 0, studentUid: currentUser.uid, uid: newKey }).then((response) => {
+        ref.add({ name: this.props.user.name, accepted: false, classUid: classUid, exp: 0, qntAbsence: 0, studentUid: currentUser.uid, uid: newKey }).then((response) => {
             alert('Solicitação enviada com sucesso.')
         }).catch((error) => {
             alert(error.message)
@@ -101,7 +100,7 @@ export class StudentClasses extends React.Component {
             querySnapshot.forEach(function (doc) {
                 subs.push(doc.data())
             })
-            this.setState({ subscriptions: subs }, () => { this.myclasses() })
+            this.setState({ subscriptions: subs, refreshing: false, loading: false })            
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -126,7 +125,7 @@ export class StudentClasses extends React.Component {
     }
 
     getClasses = (item, index) => {
-        return <Card flexDirection="row" wrapperStyle={{alignItems: 'center'}}>
+        return <Card flexDirection="row" wrapperStyle={{alignItems: 'center', paddingVertical: 20}}>
             <Icon                                
                 name='class'
                 color={Constants.Colors.Primary}
@@ -149,19 +148,38 @@ export class StudentClasses extends React.Component {
         this.loadClasses()
     }
 
+    getMyClass = (item, index) => {        
+        if (this.state.subscriptions.some(e => e.classUid === item.uid)) {
+            return this.getClasses(item, index)
+        }
+    }
+
     render() {
+        var myclasses = null;
+        if (this.state.loading == true) {
+            myclasses = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
+        } else {
+            if(this.state.subscriptions.length == 0) {
+                myclasses = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30 }} h4>Não está matriculado em nenhuma turma.</Text>                
+                </View>
+            } else {
+                myclasses = <FlatList
+                data={this.state.classes}
+                keyExtractor={item => item.uid.toString()}
+                renderItem={({ item, index }) => (
+                    this.getMyClass(item, index)
+                )} />
+            }
+        }
+
         var classes = null;
         if (this.state.loading == true) {
             classes = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
         } else {
             if(this.state.classes.length == 0) {
                 classes = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30 }} h4>Você não possui classes adicionadas ainda.</Text>
-                <Image
-                    style={styles.emptyIcon}
-                    resizeMode='contain'
-                    source={require('../../assets/img/pencils.png')}
-                />
+                <Text style={{ color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30 }} h4>Não há turmas ainda.</Text>                
                 </View>
             } else {
                 classes = <FlatList
@@ -181,6 +199,9 @@ export class StudentClasses extends React.Component {
             refreshControl={
                 <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
             }>                
+                <Text h5 style={{alignSelf: 'center', fontFamily: 'montserrat_bold', marginVertical: 30}}>MINHAS TURMAS</Text>
+                {myclasses}
+                <Text h5 style={{alignSelf: 'center', fontFamily: 'montserrat_bold', marginVertical: 30}}>TODAS TURMAS</Text>
                 { classes }
             </ScrollView>
         );

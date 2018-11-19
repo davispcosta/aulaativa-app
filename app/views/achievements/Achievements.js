@@ -17,7 +17,6 @@ export class Achievements extends Component {
   }
 
   render() {
-
     var screen = null;
     if(this.state.user.role == "Professor") {
       screen = <ProfessorAchievements user={this.state.user} navigation={this.props.navigation} classroom={this.state.classroom} />

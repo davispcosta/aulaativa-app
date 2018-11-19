@@ -13,7 +13,8 @@ export class Doubts extends React.Component {
             classUid: this.props.classroom.uid,
             refreshing: false,
             loading: true,
-            doubts: []
+            doubts: [],
+            users: []
         }
     }
 
@@ -27,12 +28,23 @@ export class Doubts extends React.Component {
         
         ref = firebase.firestore().collection("doubts")
         let array = []
-        ref.where("classUid", "==", this.state.classUid).get().then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc) {
-                array.push(doc.data());
+        let users = []
+        ref.where("classUid", "==", this.state.classUid).get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                let doubt = doc.data()
+                if(doubt.userUid) {
+                    firebase.firestore().collection('users').where("uid", "==", doubt.userUid).get().then( snapshot => {
+                        let user;
+                        snapshot.forEach((doc) => {
+                            user = doc.data();
+                        })
+                        users.push(user);
+                        array.push(doubt);
+                        this.setState({ doubts: array, users: users, refreshing: false, loading: false })  
+                    })
+                }
             })
-            this.setState({ doubts: array, refreshing: false, loading: false})
-        }.bind(this)).catch(function (error) {
+        }).catch(function (error) {
             console.log(error)
             alert(error.message)
         })
@@ -91,14 +103,14 @@ export class Doubts extends React.Component {
                 <FlatList
                 data={this.state.doubts}
                 keyExtractor={item => item.uid.toString()}
-                renderItem={({item}) => (
+                renderItem={({item, index}) => (
                     <TouchableWithoutFeedback
                         onPress={() => this.props.navigation.navigate('Doubt', { user: this.state.user, doubt: item })}
                     >
-                    <Card wrapperStyle={{paddingVertical: 20, alignItems: 'center'}}>
-                        <Text style={{fontFamily: 'montserrat_bold',}}>{item.title}</Text>
-                        {/* <Text>{item.answers} RESPOSTAS</Text>
-                        <Text style={{color: "gray", alignSelf: "flex-end"}}>{item.date}</Text> */}
+                    <Card wrapperStyle={{paddingVertical: 10}}>
+                        <Text style={{fontFamily: 'montserrat_bold', textAlign: 'center', marginBottom: 10}}>{item.title}</Text>
+                        <Text style={{textAlign: 'right', fontSize: 10, fontWeight: '400'}}>Feito por:</Text>
+                        <Text style={{textAlign: 'right', fontWeight: '800'}}>{this.state.users[index].name}</Text>                        
                     </Card>
                     </TouchableWithoutFeedback>
                 )}

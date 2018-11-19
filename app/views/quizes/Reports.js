@@ -10,7 +10,7 @@ export class Reports extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            quizUid = this.props.navigation.state.params.quizUid,
+            quizUid: this.props.navigation.state.params.quizUid,
             answers: [],
             total: 0,
             corrects: 0,

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
-import { FormLabel, FormInput, FormValidationMessage, Button, Text, Header } from 'react-native-elements'
+import { FormLabel, FormInput, CheckBox, Button, Text, Header } from 'react-native-elements'
 import { HeaderSection } from '../../sections/HeaderSection'
 import { Constants } from '../../Constants';
 import * as firebase from 'firebase';
@@ -29,6 +29,7 @@ export class NewClass extends Component {
       professorUid: currentUser.uid,
       active: this.state.active,
       instituitionUid: this.state.instituitionUid}).then((response) => {
+        this.props.navigation.state.params.onNavigateBack()
         this.props.navigation.goBack()
     }).catch((error) => {
         alert(error.message)
@@ -48,15 +49,22 @@ export class NewClass extends Component {
           onChangeText={(name) => this.setState({name})}
           />
 
-          <CheckBox
-            center
-            title='Ativo'
-            checked={this.state.active}
-          />
-
           <FormInput placeholder="Quantidade de Faltas"
           keyboardType="numeric"
           onChangeText={(qntAbsence) => this.setState({qntAbsence})}
+          />
+
+          <CheckBox
+            center
+            title='Inativo'
+            iconRight
+            iconType='material'
+            checkedIcon='alarm-on'
+            uncheckedIcon='alarm-off'
+            checkedColor='green'
+            checkedTitle='Ativo'
+            checked={this.state.active}
+            onPress={() => { this.setState({ active: !this.state.active }) }}
           />
 
           <Button
@@ -66,7 +74,7 @@ export class NewClass extends Component {
             buttonStyle={styles.registerBtn}
             onPress={ () => this.newClass()}
             rightIcon={{name: 'chevron-right', color: '#FFFFFF'}}
-            title='CONTINUAR'
+            title='SALVAR'
             rounded={true}
             fontWeight='800' />
         

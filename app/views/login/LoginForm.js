@@ -13,7 +13,7 @@ export class LoginForm extends React.Component {
         super(props);
         this.state = {
             email: '',
-            password: ''
+            password: '',
         }
     }
 
@@ -31,7 +31,8 @@ export class LoginForm extends React.Component {
         }
     }
     
-    render() { 
+    render() {     
+
         return(
             <View style={styles.container}>
 

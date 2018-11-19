@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Picker } from 'react-native';
+import { StyleSheet, View, ScrollView, Picker, Image } from 'react-native';
 import { FormInput, Button, Text } from 'react-native-elements';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { HeaderSection } from '../../sections/HeaderSection';
@@ -18,7 +18,8 @@ export class Register extends React.Component {
             name: '',
             password: '',
             instituitionUid: '',
-            rule: this.props.navigation.state.params.rule
+            avatar: 1,
+            role: this.props.navigation.state.params.role
         }
 
         this.loadInstituitions()
@@ -51,7 +52,7 @@ export class Register extends React.Component {
             firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then((authData) => {
 
                 ref = firebase.firestore().collection('users') 
-                ref.add({ email: this.state.email, name: this.state.name, role: this.state.rule, uid: authData.user.uid, instituitionUid: this.state.instituitionUid }).then((response) => {
+                ref.add({ email: this.state.email, name: this.state.name, role: this.state.role, avatar: this.state.avatar, uid: authData.user.uid, instituitionUid: this.state.instituitionUid }).then((response) => {
                     this.props.navigation.push('Classes')
                 }).catch((error) => {
                     alert(error.message)
@@ -66,6 +67,10 @@ export class Register extends React.Component {
     }
 
     render() { 
+        let items = avatars.map( (avatar) => {
+            return <Picker.Item key={avatar['value']} value={avatar['value']} label={avatar['label']} />
+        });
+
         return(
             <View style={{flex: 1}} >
                 <HeaderSection navigation={this.props.navigation} goBack={true} />
@@ -89,6 +94,22 @@ export class Register extends React.Component {
                         secureTextEntry={true}
                         onChangeText={(password) => this.setState({password})}/>
                         {/* <FormValidationMessage>Campo inválido</FormValidationMessage> */}
+
+                        <Text h5 style={styles.baseText}>
+                            Escolha seu avatar:
+                        </Text>
+                        <Image 
+                        style={styles.icon} 
+                        resizeMode='contain'
+                        source={avatars[this.state.avatar - 1]['image']}
+                        />
+
+                        <Picker
+                            selectedValue={this.state.avatar}
+                            style={{ height: 50, width: 200 }}
+                            onValueChange={(itemValue, itemIndex) => this.setState({avatar: itemValue})}>
+                            { items }
+                        </Picker>                        
 
                         <Text h5 style={styles.baseText}>
                             Escolha sua instituição:
@@ -120,6 +141,32 @@ export class Register extends React.Component {
     }
 }
 
+const avatars = [{
+    label: '1',
+    value: 1,
+    image: require('../../assets/img/avatars/1.png')
+},
+{
+    label: '2',
+    value: 2,
+    image: require('../../assets/img/avatars/2.png')
+},
+{
+    label: '3',
+    value: 3,
+    image: require('../../assets/img/avatars/3.png')
+}, 
+{
+  label: '4',
+  value: 4,
+  image: require('../../assets/img/avatars/4.png')
+},
+{
+  label: '5',
+  value: 5,
+  image: require('../../assets/img/avatars/5.png')
+}]
+
 const styles = StyleSheet.create({ 
     container: {
         flex: 1,
@@ -127,8 +174,14 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingHorizontal: 20        
     },
+    icon: {
+        width: 100,
+        height: 100,
+        marginVertical: 20,
+    },
     cardContainer: {
         flex: 1,
+        marginBottom: 50,
         backgroundColor: '#FFF',
     },
     title: {

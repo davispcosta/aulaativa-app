@@ -67,7 +67,8 @@ export class MaterialTabs extends React.Component {
 
     views = [
     <Board 
-      navigation={this.props.navigation} 
+      navigation={this.props.navigation}
+      updateClassroom={this.updateClassroom} 
       user={this.props.navigation.state.params.user}
       classroom={this.props.navigation.state.params.classroom}/>, 
     <Events 

@@ -18,6 +18,10 @@ export class ProfessorClasses extends React.Component {
             refreshing: false,
             classes: []
         }
+    }
+
+    componentDidMount = () => {
+        this.setState({loading: true})
         this.loadClasses()
     }
 
@@ -40,7 +44,7 @@ export class ProfessorClasses extends React.Component {
 
     getClasses = (item) => {
         if(item.active) {
-            return <Card flexDirection="row" wrapperStyle={{alignItems: 'center'}}>
+            return <Card flexDirection="row" wrapperStyle={{alignItems: 'center', paddingVertical: 20}}>
                 <Icon                                
                     name='class'
                     color={Constants.Colors.Primary}
@@ -53,7 +57,7 @@ export class ProfessorClasses extends React.Component {
                 </View>
             </Card>
         } else {
-            return <Card flexDirection="row" wrapperStyle={{alignItems: 'center'}}>
+            return <Card flexDirection="row" wrapperStyle={{alignItems: 'center', paddingVertical: 20}}>
                 <Icon                                
                     name='class'
                     color={Constants.Colors.Gray}
@@ -101,7 +105,7 @@ export class ProfessorClasses extends React.Component {
                     title="NOVA TURMA"
                     titleStyle={{ fontWeight: '700' }}
                     buttonStyle={{ marginTop: 20, backgroundColor: Constants.Colors.Primary }}
-                    onPress={() => this.props.navigation.navigate('NewClass', { instituitionUid: this.props.user.instituitionUid })}
+                    onPress={() => this.props.navigation.navigate('NewClass', { instituitionUid: this.props.user.instituitionUid, onNavigateBack: this.componentDidMount })}
                 />
                 <View>
                     <Text style={styles.baseText} h5> Minhas disciplinas: </Text>

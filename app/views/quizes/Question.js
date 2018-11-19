@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, StyleSheet, View, ScrollView, Picker, Image, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, ScrollView, Picker, Alert, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
 import { Card, Text, Button, FormInput, Icon } from 'react-native-elements';
 import { HeaderSection } from '../../sections/HeaderSection';
 import { Constants } from '../../Constants';
@@ -33,6 +33,7 @@ export class Question extends Component {
             querySnapshot.forEach(function (d) {
                 array.push(d.data());
             })
+            array.forEach(function (obj) { obj.checked = false })
             this.setState({ alternatives: array, loading: false })
         }.bind(this)).catch(function (error) {
             console.log(error)
@@ -58,7 +59,7 @@ export class Question extends Component {
             })
     }
 
-    verifyAlternative = (item) => {
+    verifyAlternative = (item, index) => {
         const { currentUser } = firebase.auth();
 
         var newKey = firebase.database().ref().child('studentAlternatives').push().key;
@@ -81,15 +82,17 @@ export class Question extends Component {
                     alert(error.message)
                 })
 
+            var array = [...this.state.alternatives]
+            array[index].checked = !array[index].checked;
+            this.setState({alternatives: array})
+            console.log(this.state.alternatives)
+
             if (item.isRight) {
-                alert("Resposta correta.")
+                Alert.alert("Correto!", "Uhuul, você acertou essa!", [{text: 'Próxima', onPress: () => this.changeQuestion() }], { cancelable: false})
                 let correct = this.state.corrects + 1;
                 this.setState({ corrects: correct })
-                this.changeQuestion()
-
             } else {
-                alert("Resposta errada.")
-                this.changeQuestion()
+                Alert.alert("Errado!", "Vish, quem sabe na próxima!", [{text: 'Próxima', onPress: () => { this.changeQuestion() }}])
             }
         }
     }
@@ -117,6 +120,29 @@ export class Question extends Component {
         });
 
         return answer;
+    }
+
+    getAlternativeCard = (item, index) => {
+        
+        if(item.checked) {
+            return <Card flexDirection="row" style={{ color: Constants.Colors.Primary}}>
+                <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
+                    <Text
+                        fontFamily='montserrat_semi_bold'
+                        style={{ color: Constants.Colors.Primary }}
+                        h5>{item.alternative}</Text>
+                </View>
+            </Card>
+        } else {
+            return <Card flexDirection="row" style={{ color: Constants.Colors.Primary }}>    
+                <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
+                    <Text
+                        fontFamily='montserrat_semi_bold'
+                        style={{ color: Constants.Colors.Primary }}
+                        h5>{item.alternative}</Text>
+                </View>
+            </Card>
+        }
     }
 
     render() {
@@ -158,22 +184,9 @@ export class Question extends Component {
                     <FlatList
                     data={this.state.alternatives}
                     keyExtractor={item => item.uid.toString()}
-                    renderItem={({ item }) => (
-                        <TouchableWithoutFeedback onPress={() => this.verifyAlternative(item)}>
-                            <Card flexDirection="row" style={{ color: Constants.Colors.Primary }}>
-                                <Icon
-                                    raised
-                                    containerStyle={{ backgroundColor: '#AFAFAF' }}
-                                    name='class'
-                                    color='#f1f1f1'
-                                />
-                                <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
-                                    <Text
-                                        fontFamily='montserrat_semi_bold'
-                                        style={{ color: Constants.Colors.Primary }}
-                                        h5>{item.alternative}</Text>
-                                </View>
-                            </Card>
+                    renderItem={({ item, index }) => (
+                        <TouchableWithoutFeedback onPress={() => this.verifyAlternative(item, index)}>
+                            {this.getAlternativeCard(item)}                    
                         </TouchableWithoutFeedback>
                     )}
                 />

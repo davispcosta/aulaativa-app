@@ -51,9 +51,10 @@ export class Doubt extends Component {
           })
           users.push(user);
           array.push(answer);
-          this.setState({ answers: array, users: users, refreshing: false, loading: false})  
+          this.setState({ answers: array, users: users })  
         })        
-      })      
+      })
+      this.setState({ refreshing: false, loading: false})        
     }).catch(function (error) {
       console.log(error)
       alert(error.message)
@@ -70,7 +71,10 @@ export class Doubt extends Component {
     if(this.state.loading == true) {
       content = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
     } else {
-      content = <FlatList
+      if(this.state.answers.length == 0) {
+        content = <Text h5 style={{textAlign: "center", fontWeight: '800'}}>Sem Respostas Ainda</Text>
+      } else {
+        content = <FlatList
           data={this.state.answers}
           keyExtractor={item => item.uid.toString()}
           renderItem={({item, index}) => (
@@ -81,6 +85,7 @@ export class Doubt extends Component {
             </Card>
           )}
         />
+      }      
     }
 
     return (
@@ -88,7 +93,7 @@ export class Doubt extends Component {
 
         <HeaderSection navigation={this.props.navigation} goBack={true} />
         
-        <Text h3 style={styles.title}>{this.state.doubt.title}</Text>
+        <Text h4 style={styles.title}>{this.state.doubt.title}</Text>
 
         <FormInput placeholder="Responder..."
           ref="input"
@@ -130,6 +135,7 @@ const styles = StyleSheet.create({
       color: Constants.Colors.Primary,
       alignSelf: 'center',
       marginTop: 20,
+      fontWeight: '800'
     },
     registerBtn: {
       marginTop: 20

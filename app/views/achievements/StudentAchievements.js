@@ -10,8 +10,10 @@ export class StudentAchievements extends Component {
     super(props);
     this.state = {
         classroom: this.props.classroom,
+        user: this.props.user,
         refreshing: false,
         loadingAll: true,
+        loadingMy: true,
         myachievements: [],
         achievements: []
     }
@@ -26,11 +28,13 @@ export class StudentAchievements extends Component {
   loadMyAchievements = () => {    
     ref = firebase.firestore().collection("studentAchievements")
     let array = []
-    ref.where("classUid", "==", this.state.classroom.uid).get().then(function(querySnapshot) {
+    ref.where("studentUid", "==", this.state.user.uid).get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
             array.push(doc.data());
         })
-        this.setState({ myachievements: array})
+        this.setState({ myachievements: array, refreshing: false, loadingMy: false})
+        console.log('this.state.myachievements')
+        console.log(this.state.myachievements)
         this.loadAchievements();
     }.bind(this)).catch(function (error) {
         console.log(error)
@@ -65,15 +69,30 @@ export class StudentAchievements extends Component {
             <Text style={{fontWeight: '800'}}>{item.title}</Text>
         </Card>
     } else {
-        return <Card>
-            <Text>Conquista:</Text>
-            <Text style={{fontWeight: '800'}}>{item.title}</Text>
-        </Card>
+        return null;
     }
     
   }
 
   render() {
+
+    var myAchievements = null;
+    if(this.state.loadingMy == true) {
+        myAchievements = <View style={{ padding: 10, marginVertical: 20}}><ActivityIndicator size="large" color="#0000ff" /></View>
+    } else {
+        if(this.state.myachievements.length == 0 ) {
+            myAchievements = 
+                <Text h5 style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Não tem conquistas.</Text>
+        } else {
+            myAchievements = <FlatList
+            data={this.state.achievements}
+            keyExtractor={item => item.uid.toString()}
+            renderItem={({item}) => (
+                this.getAchievementCard(item)
+            )}
+            />
+        }
+    }
 
     var allAchievements = null;
     if(this.state.loadingAll == true) {
@@ -93,10 +112,10 @@ export class StudentAchievements extends Component {
             data={this.state.achievements}
             keyExtractor={item => item.uid.toString()}
             renderItem={({item}) => (
-                <TouchableWithoutFeedback
-                onPress={() => this.props.navigation.navigate('AchievementToStudents', { achievement: item })}>
-                { this.getAchievementCard(item) }
-                </TouchableWithoutFeedback>
+                <Card>
+                    <Text>Conquista:</Text>
+                    <Text style={{fontWeight: '800'}}>{item.title}</Text>
+                </Card>
             )}
             />
         }
@@ -107,7 +126,10 @@ export class StudentAchievements extends Component {
             refreshControl={
             <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh}/>
         }>
-          <Text h5 style={{alignSelf: 'center', fontFamily: 'montserrat_bold', marginVertical: 30}}>CONQUISTAS</Text>
+          <Text h5 style={{alignSelf: 'center', fontFamily: 'montserrat_bold', marginVertical: 30}}>MINHAS CONQUISTAS</Text>
+          { myAchievements }
+
+          <Text h5 style={{alignSelf: 'center', fontFamily: 'montserrat_bold', marginVertical: 30}}>TODAS CONQUISTAS</Text>
           { allAchievements }
         </ScrollView>
     );

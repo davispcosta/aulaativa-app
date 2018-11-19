@@ -16,7 +16,7 @@ export class ChooseRegister extends React.Component {
                     <Text h4 style={styles.title}>Que tipo de usuário você é?</Text>
 
                     <TouchableWithoutFeedback
-                    onPress={() => this.props.navigation.push('RegisterScreen', { rule: 'Professor'})}
+                    onPress={() => this.props.navigation.push('RegisterScreen', { role: 'Professor'})}
                     >
                     <Card
                     wrapperStyle={{alignItems: 'center', justifyContent: 'space-around'}}
@@ -33,7 +33,7 @@ export class ChooseRegister extends React.Component {
                     </TouchableWithoutFeedback>
                     
                     <TouchableWithoutFeedback
-                    onPress={() => this.props.navigation.push('RegisterScreen', { rule: 'Student'})}
+                    onPress={() => this.props.navigation.push('RegisterScreen', { role: 'Student'})}
                     >
                     <Card
                     wrapperStyle={{alignItems: 'center', justifyContent: 'space-around'}}

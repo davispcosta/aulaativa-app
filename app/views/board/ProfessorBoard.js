@@ -15,6 +15,10 @@ export class ProfessorBoard extends React.Component {
             refreshing: false,
             notifications: []
         }
+    }
+
+    componentDidMount = () => {
+        this.setState({loadingBoard: true})
         this.loadNotifications()
         this.loadClass()
     }
@@ -25,6 +29,7 @@ export class ProfessorBoard extends React.Component {
             querySnapshot.forEach(function(doc) {
                 classroom = doc.data();
             })
+            this.setState({classroom: classroom})
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -57,7 +62,7 @@ export class ProfessorBoard extends React.Component {
         } else {
             if(this.state.notifications.length == 0) {
                 content = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Relaxa, nenhuma novidade.</Text>
+                    <Text style={{color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30}} h4>Informe seus alunos</Text>
                     <Image 
                     style={styles.emptyIcon} 
                     resizeMode='contain'
@@ -98,7 +103,7 @@ export class ProfessorBoard extends React.Component {
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
-                    onPress={() => this.props.navigation.navigate('Achievements', { classroom: this.state.classroom })}>                    
+                    onPress={() => this.props.navigation.navigate('Achievements', { classroom: this.state.classroom, user: this.state.user })}>                    
                         <View style={{marginVertical: 20}} wrapperStyle={styles.rankBtn}
                         flexDirection='column'>
                             <Icon color={Constants.Colors.Primary} type='ionicon' name='ios-medal'/>
@@ -107,7 +112,7 @@ export class ProfessorBoard extends React.Component {
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
-                    onPress={() => this.props.navigation.navigate('EditClass', { classroom: this.state.classroom })}>                    
+                    onPress={() => this.props.navigation.navigate('EditClass', { classroom: this.state.classroom, onNavigateBack: this.componentDidMount })}>                    
                         <View style={{marginVertical: 20}} wrapperStyle={styles.rankBtn}
                         flexDirection='column'>
                             <Icon color={Constants.Colors.Primary} type='foundation' name='pencil'/>
@@ -122,7 +127,7 @@ export class ProfessorBoard extends React.Component {
                     title="ADICIONAR NO MURAL" 
                     titleStyle={{ fontWeight: '700'}}
                     buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
-                    onPress={() => this.props.navigation.navigate('NewNotification', { classroom: this.state.classroom})}
+                    onPress={() => this.props.navigation.navigate('NewNotification', { classroom: this.state.classroom, onNavigateBack: this.componentDidMount})}
                 />
                 
                 { content }

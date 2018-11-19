@@ -26,8 +26,6 @@ export class Questions extends React.Component {
     }
 
     loadQuestions = () => {
-        const { currentUser } = firebase.auth();
-
         ref = firebase.firestore().collection("questions")
         let array = []
         ref.where("quizUid", "==", this.state.quizUid).get().then(function (querySnapshot) {

@@ -28,6 +28,7 @@ export class NewNotification extends Component {
       classUid: this.state.classroom.uid, 
       date: new Date()
     }).then((response) => {
+        this.props.navigation.state.params.onNavigateBack()
         this.props.navigation.goBack()
     }).catch((error) => {
         alert(error.message)
@@ -41,7 +42,7 @@ export class NewNotification extends Component {
 
         <ScrollView keyboardShouldPersistTaps={"always"} style={styles.formContainer}>
 
-          <Text h2 style={styles.title}>NOVA NOTIFICAÇÃO</Text>
+          <Text h2 style={styles.title}>NOVO NO MURAL</Text>
 
           <FormInput placeholder="Título"
           onChangeText={(title) => this.setState({title})}

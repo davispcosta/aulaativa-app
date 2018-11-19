@@ -59,12 +59,14 @@ export class EventToStudents extends Component {
 
     getStudentCard = (item, index) => {
         if(item.checked) {
-            return <Card key={index} title={item.name}>
-                <Text>Esse aluno irá receber a conquista!</Text>
+            return <Card key={index} containerStyle={{marginVertical: 20, borderWidth: 2, borderColor: Constants.Colors.Primary}}>
+                <Text h5 style={{fontWeight: '800'}}>{item.name}</Text>
+                <Text h5>{item.email}</Text>
             </Card>
         } else {
-            return <Card key={index}>
-                <Text>{item.name}</Text>
+            return <Card key={index} containerStyle={{marginVertical: 20}}>
+                <Text h5 style={{fontWeight: '800'}}>{item.name}</Text>
+                <Text h5>{item.email}</Text>
             </Card>
         }
     }
@@ -132,6 +134,8 @@ export class EventToStudents extends Component {
             <HeaderSection navigation={this.props.navigation} goBack={true} />
     
             <ScrollView>
+
+              <Text h5 style={{textAlign: 'center', fontWeight: '800', marginVertical: 30}}>ADICIONAR PONTOS</Text>
     
               { content }
     

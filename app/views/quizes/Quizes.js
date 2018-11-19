@@ -55,8 +55,23 @@ export class Quizes extends React.Component {
         navigation.navigate("Reports", { quizUid: uid });
     }
 
+    getBtnReport = (item) => {
+        var report = null;
+        if (this.state.user.role == "Professor") {
+            report = <Icon
+                raised
+                containerStyle={{ backgroundColor: '#fff' }}
+                type='entypo'
+                name='pie-chart'
+                color={Constants.Colors.Primary}
+                onPress={() => this.reports(this.props.navigation, item.uid)}
+            />
+        }
+        return report;
+    }
+
     render() {
-        let reports = null;
+        
         let newQuiz = null;
         if (this.state.user.role == "Professor") {
             newQuiz = <Button
@@ -67,25 +82,34 @@ export class Quizes extends React.Component {
             />
         }
 
-        var emptyDiv;
-        if (this.state.quizes.length == 0 && !this.state.loading) {
-            emptyDiv = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30 }} h4>Nada de questionários por aqui.</Text>
-                <Image
-                    style={styles.emptyIcon}
-                    resizeMode='contain'
-                    source={require('../../assets/img/pencils.png')}
-                />
-            </View>
-        } else {
-            emptyDiv = null;
-        }
-
-        var loadingDiv;
+        var content = null;
         if (this.state.loading == true) {
-            loadingDiv = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
+            content = <View style={{ padding: 10, marginVertical: 20 }}><ActivityIndicator size="large" color="#0000ff" /></View>
         } else {
-            loadingDiv = null
+            if (this.state.quizes.length == 0) {
+                content = <View style={{ marginTop: 30, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: Constants.Colors.Primary, textAlign: 'center', marginBottom: 30 }} h4>Sem questionários ainda.</Text>
+                    <Image
+                        style={styles.emptyIcon}
+                        resizeMode='contain'
+                        source={require('../../assets/img/pencils.png')}
+                    />
+                </View>
+            } else {
+                content = <FlatList
+                    data={this.state.quizes}
+                    keyExtractor={item => item.uid.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableWithoutFeedback
+                            onPress={() => this.clickOnQuestion(this.props.navigation, item)}>
+                            <Card wrapperStyle={{ paddingVertical: 20, alignItems: 'center' }}>
+                                <Text h5 style={{ fontFamily: 'montserrat_bold', }}>{item.title}</Text>
+                                {/* {this.getBtnReport(item)}                                */}
+                            </Card>
+                        </TouchableWithoutFeedback>
+                    )}
+                />
+            }
         }
 
         return (
@@ -96,29 +120,7 @@ export class Quizes extends React.Component {
 
                 {newQuiz}
 
-                {loadingDiv}
-                {emptyDiv}
-
-                <FlatList
-                    data={this.state.quizes}
-                    keyExtractor={item => item.uid.toString()}
-                    renderItem={({ item }) => (
-                        <TouchableWithoutFeedback
-                            onPress={() => this.clickOnQuestion(this.props.navigation, item)}>
-                            <Card wrapperStyle={{ paddingVertical: 20, alignItems: 'center' }}>
-                                <Text h5 style={{ fontFamily: 'montserrat_bold', }}>{item.title}</Text>
-                                <Icon
-                                    raised
-                                    containerStyle={{ backgroundColor: '#AFAFAF' }}
-                                    type='font-awesome'
-                                    name='file-chart-line'
-                                    color='#f1f1f1'
-                                    onPress={() => this.reports(this.props.navigation, item.uid)}
-                                />
-                            </Card>
-                        </TouchableWithoutFeedback>
-                    )}
-                />
+                {content}               
             </ScrollView>
         );
     }
