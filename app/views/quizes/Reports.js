@@ -23,8 +23,6 @@ export class Reports extends Component {
     }
 
     loadStudentsAnswers = () => {
-        const { currentUser } = firebase.auth();
-
         ref = firebase.firestore().collection("studentAlternatives")
         let array = []
         ref.where("quizUid", "==", this.state.quizUid).get().then(function (querySnapshot) {
@@ -58,7 +56,11 @@ export class Reports extends Component {
     render() {
         return (
             <View>
-                <Text> Relatórios </Text>
+                <HeaderSection navigation={this.props.navigation} goBack={true} />
+                <ScrollView>
+                    <Text> Relatórios </Text>
+            
+                </ScrollView>
             </View>
         )
     }

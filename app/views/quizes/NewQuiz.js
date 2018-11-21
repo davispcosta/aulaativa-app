@@ -42,6 +42,33 @@ export class NewQuiz extends Component {
             onChangeText={(title) => this.setState({title})}
           />
 
+          <Text>Quantidade de Poderes</Text>
+
+          <FormInput placeholder="Colar"
+            keyboardType="numeric"
+            onChangeText={(qntColar) => this.setState({qntColar})}
+          />
+
+          <FormInput placeholder="Ajuda dos Universitários"
+            keyboardType="numeric"
+            onChangeText={(qntUniversitarios) => this.setState({qntUniversitarios})}
+          />
+
+          <FormInput placeholder="Na Metade"
+            keyboardType="numeric"
+            onChangeText={(qntMetade) => this.setState({qntMetade})}
+          />
+
+          <FormInput placeholder="Menos Um"
+            keyboardType="numeric"
+            onChangeText={(qntMenosUm) => this.setState({qntMenosUm})}
+          />
+
+          <FormInput placeholder="Duas Caras"
+            keyboardType="numeric"
+            onChangeText={(qntDuasCaras) => this.setState({qntDuasCaras})}
+          />
+
           <Button
             small
             backgroundColor={Constants.Colors.Primary}

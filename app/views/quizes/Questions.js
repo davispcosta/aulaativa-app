@@ -18,6 +18,7 @@ export class Questions extends React.Component {
         this.state = {
             quizUid: this.props.navigation.state.params.quizUid,
             questions: [],
+            powers: {},
             numberQuestion: 0
         };
 
@@ -41,7 +42,7 @@ export class Questions extends React.Component {
 
     render() {
         if (this.state.questions.length > 0) {
-            question = <Question questions={this.state.questions} />
+            question = <Question questions={this.state.questions} powers={this.state.powers}/>
         }
 
         return (

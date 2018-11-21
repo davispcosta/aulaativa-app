@@ -13,6 +13,7 @@ export class EditClass extends Component {
       classroom: this.props.navigation.state.params.classroom,
       name: this.props.navigation.state.params.classroom.name,
       active: this.props.navigation.state.params.classroom.active,
+      rank: this.props.navigation.state.params.classroom.rank,
     };
   }
 
@@ -52,6 +53,18 @@ export class EditClass extends Component {
             checkedColor='green'
             checked={this.state.active}
             onPress={() => { this.setState({ active: !this.state.active }) }}
+          />
+
+          <CheckBox
+            center
+            title='Ranqueado'
+            iconRight
+            iconType='material'
+            checkedIcon='alarm-on'
+            uncheckedIcon='alarm-off'
+            checkedColor='green'
+            checked={this.state.active}
+            onPress={() => { this.setState({ rank: !this.state.rank }) }}
           />
 
           <Button

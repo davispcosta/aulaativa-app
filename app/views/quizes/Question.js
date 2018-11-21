@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, StyleSheet, View, ScrollView, Picker, Alert, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
 import { Card, Text, Button, FormInput, Icon } from 'react-native-elements';
-import { HeaderSection } from '../../sections/HeaderSection';
 import { Constants } from '../../Constants';
 import * as firebase from 'firebase';
 
@@ -11,6 +10,7 @@ export class Question extends Component {
         super(props);
         this.state = {
             questions: this.props.questions,
+            powers: this.props.powers,
             alternatives: [],
             numberQuestion: 0,
             corrects: 0,
@@ -145,6 +145,48 @@ export class Question extends Component {
         }
     }
 
+    colar = () => {
+        console.log('COLAR')
+    }
+
+    ajudaDosUniversitarios = () => {
+        console.log('ajudaDosUniversitarios')
+    }
+
+    menosUm = () => {
+        let alt = this.state.alternatives.filter(a => a.isRight == false)
+        if(alt.length == 0) {
+            alert("Inválido", "Não foi possível usar esse poder aqui")
+        } else {
+            var alternatives = this.state.alternatives.filter(a => a.uid != alt[0].uid)
+        this.setState({ alternatives: alternatives})
+        }  
+        
+    }
+
+    naMetade = () => {
+        let alt = this.state.alternatives.filter(a => a.isRight == false);
+        let number = Math.floor(alt.length/2);
+        var alternatives = this.state.alternatives;
+        for(i = 0; i<number; i++) {
+            alternatives = alternatives.filter(a => a.uid != alt[i].uid)
+        }
+        this.setState({ alternatives: alternatives})
+    }
+
+    duasCaras = () => {
+        let wrong = this.state.alternatives.filter(a => a.isRight == false)
+        let right = this.state.alternatives.filter(a => a.isRight == true)
+        var alternatives = []
+        if(wrong.length == 0 || right.length == 0) {
+            alert("Inválido", "Não foi possível usar esse poder aqui")
+        } else {
+            alternatives.push(wrong[0]);
+            alternatives.push(right[0]);
+            this.setState({ alternatives: alternatives})
+        }        
+    }
+
     render() {
         let btnPassQuestion = null;
         let questionView = null;
@@ -193,14 +235,73 @@ export class Question extends Component {
                 </View>
 
                 {loadingDiv}
-
         }
         return (
-            <View>
+            <View style={{flex: 1, height: '100%'}}>
+                <View flexDirection='row' style={{ height: 100, backgroundColor: 'red', justifyContent: 'space-around' }}>
+                    <TouchableWithoutFeedback
+                        onPress={() => this.ajudaDosUniversitarios()}
+                    >
+                        <Icon
+                            type='entypo'
+                            name='copy'
+                            color='#f1f1f1'
+                            onPress={() => this.colar()}
+                        />
+                        <Text h5>0</Text>
+                    </TouchableWithoutFeedback>
+
+                    <TouchableWithoutFeedback
+                        onPress={() => this.ajudaDosUniversitarios()}
+                    >
+                        <Icon
+                            type='font-awesome'
+                            name='university'
+                            color='#f1f1f1'
+                        />
+                        <Text h5>0</Text>
+                    </TouchableWithoutFeedback>
+
+                    <TouchableWithoutFeedback
+                        onPress={() => this.duasCaras()}
+                    >
+                        <Icon
+                            type='font-awesome'
+                            name='users'
+                            color='#f1f1f1'
+                        />
+                        <Text h5>0</Text>
+                    </TouchableWithoutFeedback>
+
+                    <TouchableWithoutFeedback
+                        onPress={() => this.naMetade()}
+                    >
+                        <Icon
+                            type='font-awesome'
+                            name='scissors'
+                            color='#f1f1f1'                        
+                        />
+                        <Text h5>0</Text>
+                    </TouchableWithoutFeedback>
+
+                    <TouchableWithoutFeedback
+                        onPress={() => this.menosUm()}
+                    >
+                        <Icon
+                            type='font-awesome'
+                            name='minus'
+                            color='#f1f1f1'                        
+                        />
+
+                        <Text h5>0</Text>
+                    </TouchableWithoutFeedback>
+                </View>
+
                 <ScrollView>
                     {questionView}
                     {btnPassQuestion}
-                </ScrollView>
+                </ScrollView>               
+                
             </View>
         )
     }

@@ -12,6 +12,7 @@ export class EventToStudents extends Component {
         event: this.props.navigation.state.params.event,
         loading: true,
         students: [],
+        feedbacks: [],
         subsAccepted: []
       }
       this.loadSupportedSubscriptions()
@@ -32,6 +33,20 @@ export class EventToStudents extends Component {
             })
     }
 
+    getFeedbacks = () => {
+        let array = []
+        ref = firebase.firestore().collection("eventFeedbacks")
+        ref.where("eventUid", "==", this.event.uid).get().then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                array.push(doc.data())
+            });
+            this.setState({ feedbacks: array  })
+        }.bind(this)).catch(function (error) {
+            console.log(error)
+            alert(error.message)
+        })
+    }
+
     loadAcceptedUsers = () => {
         if (this.state.subsAccepted.length > 0) {
             let array = []
@@ -42,12 +57,16 @@ export class EventToStudents extends Component {
                         array.push(doc.data())
                     });
                     array.forEach(function (obj) { obj.checked = false })
-                    this.setState({ students: array, loading: false  })                    
+                    this.setState({ students: array  })                                       
                 }.bind(this)).catch(function (error) {
                     console.log(error)
                     alert(error.message)
                 })
+            }, () => {
+                this.getFeedbacks();
             })
+        } else {
+            this.setState({ loading: false  })
         }
     }
 
@@ -57,15 +76,26 @@ export class EventToStudents extends Component {
         this.setState({students: array})        
     }
 
+    getFeedbackInfo = () => {
+        if (this.state.feedbacks.some(e => e.studentUid === item.uid)) {
+            var feedback = this.state.feedbacks.filter(e => e.studentUid === item.uid)
+            return <Text h5>{feedback[0].feedback}</Text>
+        } else {
+            return null;
+        }
+    }
+
     getStudentCard = (item, index) => {
         if(item.checked) {
             return <Card key={index} containerStyle={{marginVertical: 20, borderWidth: 2, borderColor: Constants.Colors.Primary}}>
                 <Text h5 style={{fontWeight: '800'}}>{item.name}</Text>
+                { this.getFeedbackInfo(item) }
                 <Text h5>{item.email}</Text>
             </Card>
         } else {
             return <Card key={index} containerStyle={{marginVertical: 20}}>
                 <Text h5 style={{fontWeight: '800'}}>{item.name}</Text>
+                { this.getFeedbackInfo(item) }
                 <Text h5>{item.email}</Text>
             </Card>
         }

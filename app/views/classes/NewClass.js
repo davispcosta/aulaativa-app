@@ -13,6 +13,7 @@ export class NewClass extends Component {
       name: '',
       qntAbsence: '',
       active: false,
+      rank: false,
       instituitionUid: this.props.navigation.state.params.instituitionUid
     };
   }
