@@ -10,7 +10,6 @@ export class Question extends Component {
         super(props);
         this.state = {
             questions: this.props.questions,
-            powers: this.props.powers,
             alternatives: [],
             numberQuestion: 0,
             corrects: 0,
@@ -18,12 +17,16 @@ export class Question extends Component {
             checked: false,
             isCorrect: false,
             answersStudents: [],
+            quiz: this.props.quiz,
             answerCorrect: null,
             loading: true,
-            finished: false
+            finished: false,
+            answer: ''
         }
-
-        this.loadAlternatives(this.state.questions[this.state.numberQuestion].uid);
+        if(this.props.quiz.type == 1) {
+            this.loadAlternatives(this.state.questions[this.state.numberQuestion].uid);
+        }
+        console.log(this.props.quiz)
     }
 
     loadAlternatives = (uid) => {
@@ -34,7 +37,10 @@ export class Question extends Component {
                 array.push(d.data());
             })
             array.forEach(function (obj) { obj.checked = false })
-            this.setState({ alternatives: array, loading: false })
+            this.setState({ alternatives: array, loading: false }, () => {
+                console.log('this.state.alternatives')
+                console.log(this.state.alternatives)
+            })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -122,8 +128,7 @@ export class Question extends Component {
         return answer;
     }
 
-    getAlternativeCard = (item, index) => {
-        
+    getAlternativeCard = (item, index) => {        
         if(item.checked) {
             return <Card flexDirection="row" style={{ color: Constants.Colors.Primary}}>
                 <View style={{ marginLeft: 20, width: 0, flexGrow: 1, flex: 1 }}>
@@ -146,45 +151,144 @@ export class Question extends Component {
     }
 
     colar = () => {
-        console.log('COLAR')
+        ref = firebase.firestore().collection("studentAlternatives")
+        let array = []
+        if(this.state.qntColar != 0) {
+            ref.where("quizUid", "==", this.state.questions[0].uid)
+            .get().then(function (querySnapshot) {
+                querySnapshot.forEach(function (d) {
+                    array.push(d.data());
+                })                
+            }.bind(this)).catch(function (error) {
+                console.log(error)
+                alert(error.message)
+            })
+            var answers = []
+            this.state.alternatives.forEach((alternativa) => {
+                let answer = array.filter(a => a.alternativeUid == alternativa.uid)
+                answer.forEach(a => {
+                    answers.push(a)
+                })
+            });
+            console.log(answers)
+            if(answers.length == 0) {
+                alert("Inválido - Não foi possível usar esse poder aqui")
+            } else {        
+                let quiz = this.state.quiz;
+                quiz.qntColar -= 1;
+                this.setState({ quiz: quiz})    
+                let alternative = this.state.alternatives.filter(a => a.uid == answers[0].alternativeUid)
+                alert("A alternativa respondida por um dos alunos foi: " + alternative[0].alternative)
+            }
+        } else {
+            alert("Sem esse poder")
+        }        
     }
 
     ajudaDosUniversitarios = () => {
-        console.log('ajudaDosUniversitarios')
-    }
-
-    menosUm = () => {
-        let alt = this.state.alternatives.filter(a => a.isRight == false)
-        if(alt.length == 0) {
-            alert("Inválido", "Não foi possível usar esse poder aqui")
+        if(this.state.qntUniversitarios != 0) {
+            ref = firebase.firestore().collection("studentAlternatives")
+            let array = []
+            ref.where("quizUid", "==", this.state.questions[0].uid)
+                .get().then(function (querySnapshot) {
+                    querySnapshot.forEach(function (d) {
+                        array.push(d.data());
+                    })                
+                }.bind(this)).catch(function (error) {
+                    console.log(error)
+                    alert(error.message)
+                })
+            var answers = []
+            let answerTxt = ''
+            this.state.alternatives.forEach((alternativa) => {
+                let answer = array.filter(a => a.alternativeUid == alternativa.uid)  
+                answerTxt += '  Alternativa: ' + alternativa.alternative + '\n'
+                answerTxt += '  Quantidade: ' + answer.length + '\n'
+                answerTxt += '-------------- \n'
+                if(answer.length == 0)          
+                    answers.push(answer)
+            });
+            alert(answerTxt)
+            let quiz = this.state.quiz;
+            quiz.qntUniversitarios -= 1;
+            this.setState({ quiz: quiz})
         } else {
-            var alternatives = this.state.alternatives.filter(a => a.uid != alt[0].uid)
-        this.setState({ alternatives: alternatives})
-        }  
+            alert("Sem esse poder")
+        }
         
     }
 
+    menosUm = () => {
+        if(this.state.menosUm != 0) {
+            let alt = this.state.alternatives.filter(a => a.isRight == false)
+            if(alt.length == 0) {
+                alert("Inválido", "Não foi possível usar esse poder aqui")
+            } else {
+                var alternatives = this.state.alternatives.filter(a => a.uid != alt[0].uid)
+            let quiz = this.state.quiz;
+            quiz.qntMenosUm -= 1;
+            this.setState({ alternatives: alternatives, quiz: quiz})
+            }  
+        } else {
+            alert("Sem esse poder")
+        }       
+    }
+
     naMetade = () => {
-        let alt = this.state.alternatives.filter(a => a.isRight == false);
-        let number = Math.floor(alt.length/2);
-        var alternatives = this.state.alternatives;
-        for(i = 0; i<number; i++) {
-            alternatives = alternatives.filter(a => a.uid != alt[i].uid)
-        }
-        this.setState({ alternatives: alternatives})
+        if(this.state.naMetade != 0) {
+            let alt = this.state.alternatives.filter(a => a.isRight == false);
+            let number = Math.floor(alt.length/2);
+            var alternatives = this.state.alternatives;
+            for(i = 0; i<number; i++) {
+                alternatives = alternatives.filter(a => a.uid != alt[i].uid)
+            }
+            let quiz = this.state.quiz;
+            quiz.qntMetade -= 1;
+            this.setState({ alternatives: alternatives, quiz: quiz})
+        } else {
+            alert("Sem esse poder")
+        }        
     }
 
     duasCaras = () => {
-        let wrong = this.state.alternatives.filter(a => a.isRight == false)
-        let right = this.state.alternatives.filter(a => a.isRight == true)
-        var alternatives = []
-        if(wrong.length == 0 || right.length == 0) {
-            alert("Inválido", "Não foi possível usar esse poder aqui")
+        if(this.state.duasCaras != 0) {
+            let wrong = this.state.alternatives.filter(a => a.isRight == false)
+            let right = this.state.alternatives.filter(a => a.isRight == true)
+            var alternatives = []
+            if(wrong.length == 0 || right.length == 0) {
+                alert("Inválido", "Não foi possível usar esse poder aqui")
+            } else {
+                alternatives.push(wrong[0]);
+                alternatives.push(right[0]);
+                let quiz = this.state.quiz;
+                quiz.qntDuasCaras -= 1;
+                this.setState({ alternatives: alternatives, quiz: quiz })
+            }      
         } else {
-            alternatives.push(wrong[0]);
-            alternatives.push(right[0]);
-            this.setState({ alternatives: alternatives})
-        }        
+            alert("Sem esse poder")
+        }          
+    }
+
+    saveResposta = () => {
+        const { currentUser } = firebase.auth();
+        
+        var newKey = firebase.database().ref().child('studentAlternatives').push().key;
+
+        ref = firebase.firestore().collection('studentAlternatives')
+        ref.add({
+            uid: newKey,
+            quizUid: this.state.questions[0].quizUid,
+            studentUid: currentUser.uid,
+            data: new Date(),
+            answer: this.state.answer
+        })
+        .then((response) => {
+            console.log('alternativa armazenada')
+            this.setState({answer: ''})
+            this.changeQuestion()
+        }).catch((error) => {
+            alert(error.message)
+        })
     }
 
     render() {
@@ -214,13 +318,35 @@ export class Question extends Component {
         }
 
         if (!this.state.finished) {
+            if(this.state.questions[this.state.numberQuestion].type == 0) {
             questionView =
                 <View>
                     <View>
                         <Card wrapperStyle={styles.questionWrapper}>
                             <Text>{this.state.questions[this.state.numberQuestion].question}</Text>
                         </Card>
-                        <Text h4 style={{ alignSelf: 'center', fontWeight: '800', marginVertical: 20 }}>ALTERNATIVAS</Text>
+                        <Text h4 style={{ alignSelf: 'center', marginVertical: 20 }}>ALTERNATIVAS</Text>
+                    </View>
+
+                    <FormInput placeholder="Resposta"
+                    onChangeText={(answer) => this.setState({answer})}
+                    />
+                    
+                    <Button
+                        title="RESPONDER" 
+                        titleStyle={{ fontWeight: '700'}}
+                        buttonStyle={{marginTop: 20, backgroundColor: Constants.Colors.Primary}}
+                        onPress={() => this.saveResposta()}
+                    />
+                </View>
+            } else if(this.state.questions[this.state.numberQuestion].type == 1) {
+            questionView =
+                <View>
+                    <View>
+                        <Card wrapperStyle={styles.questionWrapper}>
+                            <Text>{this.state.questions[this.state.numberQuestion].question}</Text>
+                        </Card>
+                        <Text h4 style={{ alignSelf: 'center', marginVertical: 20 }}>ALTERNATIVAS</Text>
                     </View>
 
                     <FlatList
@@ -235,65 +361,75 @@ export class Question extends Component {
                 </View>
 
                 {loadingDiv}
+
+            }
         }
         return (
             <View style={{flex: 1, height: '100%'}}>
                 <View flexDirection='row' style={{ height: 100, backgroundColor: 'red', justifyContent: 'space-around' }}>
                     <TouchableWithoutFeedback
-                        onPress={() => this.ajudaDosUniversitarios()}
+                        onPress={() => this.colar()}
                     >
+                        <View justifyContent="center" style={{paddingTop: 20}}>
                         <Icon
                             type='entypo'
                             name='copy'
                             color='#f1f1f1'
-                            onPress={() => this.colar()}
                         />
-                        <Text h5>0</Text>
+                        <Text h5 style={{marginTop: 10, color: "#fff", fontFamily: 'montserrat_bold'}}>{this.state.quiz.qntColar}</Text>
+                        </View>
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
                         onPress={() => this.ajudaDosUniversitarios()}
                     >
+                        <View justifyContent="center" style={{paddingTop: 20}}>
                         <Icon
                             type='font-awesome'
                             name='university'
                             color='#f1f1f1'
                         />
-                        <Text h5>0</Text>
+                        <Text h5 style={{marginTop: 10, color: "#fff", fontFamily: 'montserrat_bold'}}>{this.state.quiz.qntUniversitarios}</Text>
+                        </View>
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
                         onPress={() => this.duasCaras()}
                     >
+                        <View justifyContent="center" style={{paddingTop: 20}}>
                         <Icon
                             type='font-awesome'
                             name='users'
                             color='#f1f1f1'
                         />
-                        <Text h5>0</Text>
+                        <Text h5 style={{marginTop: 10, color: "#fff", fontFamily: 'montserrat_bold'}}>{this.state.quiz.qntDuasCaras}</Text>
+                        </View>
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
                         onPress={() => this.naMetade()}
                     >
+                        <View justifyContent="center" style={{paddingTop: 20}}>
                         <Icon
                             type='font-awesome'
                             name='scissors'
                             color='#f1f1f1'                        
                         />
-                        <Text h5>0</Text>
+                        <Text h5 style={{marginTop: 10, color: "#fff", fontFamily: 'montserrat_bold'}}>{this.state.quiz.qntMetade}</Text>
+                        </View>
                     </TouchableWithoutFeedback>
 
                     <TouchableWithoutFeedback
                         onPress={() => this.menosUm()}
                     >
+                        <View justifyContent="center" style={{paddingTop: 20}}>
                         <Icon
                             type='font-awesome'
                             name='minus'
                             color='#f1f1f1'                        
-                        />
-
-                        <Text h5>0</Text>
+                        />                        
+                        <Text h5 style={{marginTop: 10, color: "#fff", fontFamily: 'montserrat_bold'}}>{this.state.quiz.qntMenosUm}</Text>
+                        </View>
                     </TouchableWithoutFeedback>
                 </View>
 

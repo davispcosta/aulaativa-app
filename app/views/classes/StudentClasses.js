@@ -125,7 +125,10 @@ export class StudentClasses extends React.Component {
     }
 
     getClasses = (item, index) => {
-        return <Card flexDirection="row" wrapperStyle={{alignItems: 'center', paddingVertical: 20}}>
+        return <TouchableWithoutFeedback
+        onPress={() => this.loadSubscription(this.props.user.uid, item)}
+        >
+        <Card flexDirection="row" wrapperStyle={{alignItems: 'center', paddingVertical: 20}}>
             <Icon                                
                 name='class'
                 color={Constants.Colors.Primary}
@@ -141,6 +144,7 @@ export class StudentClasses extends React.Component {
                     h5>{this.state.professors[index].name}</Text>
             </View>
         </Card>
+        </TouchableWithoutFeedback>
     }
 
     onRefresh = () => {

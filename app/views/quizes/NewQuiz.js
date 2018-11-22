@@ -12,6 +12,11 @@ export class NewQuiz extends Component {
     this.state = {
       classUid: this.props.navigation.state.params.classUid,
       title: '',
+      qntColar: 0,
+      qntUniversitarios: 0,
+      qntMetade: 0,
+      qntMenosUm: 0,
+      qntDuasCaras: 0
     };
   }
 
@@ -23,7 +28,12 @@ export class NewQuiz extends Component {
     ref = firebase.firestore().collection('quizes') 
     ref.add({ uid: newKey, 
       title: this.state.title, 
-      classUid: this.state.classUid
+      classUid: this.state.classUid,
+      qntColar: parseInt(this.state.qntColar),
+      qntUniversitarios: parseInt(this.state.qntUniversitarios),
+      qntMetade: parseInt(this.state.qntMetade),
+      qntMenosUm: parseInt(this.state.qntMenosUm),
+      qntDuasCaras: parseInt(this.state.qntDuasCaras)
     }).then((response) => {
         this.props.navigation.navigate('EditQuiz', { quizUid: newKey})
     }).catch((error) => {

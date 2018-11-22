@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet, ScrollView, View, Picker } from 'react-native';
 import { FormLabel, FormInput, FormValidationMessage, Button, Text, Header } from 'react-native-elements'
 import { HeaderSection } from '../../sections/HeaderSection'
 import { Constants } from '../../Constants';
@@ -12,6 +12,7 @@ export class NewQuestion extends Component {
     this.state = {
       quizUid: this.props.navigation.state.params.quizUid,
       question: '',
+      type: 0,
     };
   }
 
@@ -23,9 +24,15 @@ export class NewQuestion extends Component {
     ref = firebase.firestore().collection('questions') 
     ref.add({ uid: newKey, 
       question: this.state.question, 
-      quizUid: this.state.quizUid
+      quizUid: this.state.quizUid,
+      type: this.state.type
     }).then((response) => {
-        this.props.navigation.navigate('EditQuestion', { questionUid: newKey})
+        if(this.state.type == 0) {
+          this.props.navigation.goBack()
+        } else {
+          this.props.navigation.navigate('EditQuestion', { questionUid: newKey})
+        }
+        
     }).catch((error) => {
         alert(error.message)
     })
@@ -41,6 +48,13 @@ export class NewQuestion extends Component {
           <FormInput placeholder="Título"
             onChangeText={(question) => this.setState({question})}
           />
+
+           <Picker
+              selectedValue = {this.state.type}
+              onValueChange={(itemValue, itemIndex) => this.setState({type: itemValue})}>
+                  <Picker.Item label="Textual" value={0} key={0}/>  
+                  <Picker.Item label="De Marcar" value={1} key={1}/>           
+          </Picker>
 
           <Button
             small

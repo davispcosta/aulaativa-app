@@ -36,11 +36,11 @@ export class EventToStudents extends Component {
     getFeedbacks = () => {
         let array = []
         ref = firebase.firestore().collection("eventFeedbacks")
-        ref.where("eventUid", "==", this.event.uid).get().then(function (querySnapshot) {
+        ref.where("eventUid", "==", this.state.event.uid).get().then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
                 array.push(doc.data())
             });
-            this.setState({ feedbacks: array  })
+            this.setState({ feedbacks: array, loading: false  })
         }.bind(this)).catch(function (error) {
             console.log(error)
             alert(error.message)
@@ -57,13 +57,12 @@ export class EventToStudents extends Component {
                         array.push(doc.data())
                     });
                     array.forEach(function (obj) { obj.checked = false })
-                    this.setState({ students: array  })                                       
+                    this.setState({ students: array  }) 
+                    this.getFeedbacks();                                      
                 }.bind(this)).catch(function (error) {
                     console.log(error)
                     alert(error.message)
                 })
-            }, () => {
-                this.getFeedbacks();
             })
         } else {
             this.setState({ loading: false  })
@@ -76,10 +75,12 @@ export class EventToStudents extends Component {
         this.setState({students: array})        
     }
 
-    getFeedbackInfo = () => {
+    getFeedbackInfo = (item) => {
+        console.log('getFEED')
+        console.log(item)
         if (this.state.feedbacks.some(e => e.studentUid === item.uid)) {
             var feedback = this.state.feedbacks.filter(e => e.studentUid === item.uid)
-            return <Text h5>{feedback[0].feedback}</Text>
+            return <Text h5>Marcou que fez e gerou feedback: {feedbacks[feedback[0].feedback - 1]['label']}</Text>
         } else {
             return null;
         }
@@ -185,6 +186,32 @@ export class EventToStudents extends Component {
         );
       }
 }
+
+const feedbacks = [{
+    label: 'Fácil',
+    value: 1,
+    image: require('../../assets/img/feedback/facil.png')
+},
+{
+    label: 'Incrível',
+    value: 2,
+    image: require('../../assets/img/feedback/incrivel.png')
+},
+{
+    label: 'Confuso',
+    value: 3,
+    image: require('../../assets/img/feedback/confuso.png')
+}, 
+{
+  label: 'Difícil',
+  value: 4,
+  image: require('../../assets/img/feedback/dificil.png')
+},
+{
+  label: 'Trabalhoso',
+  value: 5,
+  image: require('../../assets/img/feedback/trabalhoso.png')
+}]
 
 const styles = StyleSheet.create({ 
     container: {

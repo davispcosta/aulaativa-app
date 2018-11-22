@@ -47,7 +47,7 @@ export class Quizes extends React.Component {
         if (this.state.user.role == "Professor") {
             navigation.navigate("EditQuiz", { quizUid: item.uid })
         } else {
-            navigation.navigate("Questions", { quizUid: item.uid })
+            navigation.navigate("Questions", { quiz: item })
         }
     }
 

@@ -16,7 +16,7 @@ export class Questions extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            quizUid: this.props.navigation.state.params.quizUid,
+            quiz: this.props.navigation.state.params.quiz,
             questions: [],
             powers: {},
             numberQuestion: 0
@@ -29,7 +29,7 @@ export class Questions extends React.Component {
     loadQuestions = () => {
         ref = firebase.firestore().collection("questions")
         let array = []
-        ref.where("quizUid", "==", this.state.quizUid).get().then(function (querySnapshot) {
+        ref.where("quizUid", "==", this.state.quiz.uid).get().then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
                 array.push(doc.data());
             })
@@ -42,7 +42,7 @@ export class Questions extends React.Component {
 
     render() {
         if (this.state.questions.length > 0) {
-            question = <Question questions={this.state.questions} powers={this.state.powers}/>
+            question = <Question questions={this.state.questions} quiz={this.state.quiz}/>
         }
 
         return (
